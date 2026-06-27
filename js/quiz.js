@@ -69,17 +69,11 @@ function updateQuestionCounter() {
   if (totalEl) totalEl.textContent = QUESTIONS.length;
 }
 
-function isMobileQuizView() {
-  return window.matchMedia('(max-width: 639px)').matches;
-}
-
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 function scrollToQuizNav() {
-  if (!isMobileQuizView()) return;
-
   const quizScreen = document.getElementById('quiz-screen');
   if (!quizScreen || quizScreen.classList.contains('hidden')) return;
 
@@ -225,12 +219,8 @@ function showQuestion() {
     const selected = scale.querySelector('[aria-checked="true"]');
     const focusTarget = selected || options[2];
     setTimeout(() => {
-      if (isMobileQuizView()) {
-        focusTarget.focus({ preventScroll: true });
-        scrollToQuizNav();
-      } else {
-        focusTarget.focus({ preventScroll: false });
-      }
+      focusTarget.focus({ preventScroll: true });
+      scrollToQuizNav();
     }, 50);
   } else {
     scrollToQuizNav();

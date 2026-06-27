@@ -1386,11 +1386,9 @@ body.modal-open {
     margin: 0 auto;
 }
 
-@media (max-width: 639px) {
-    .quiz-nav {
-        scroll-margin-bottom: 1.25rem;
-        padding-bottom: env(safe-area-inset-bottom, 0);
-    }
+.quiz-nav {
+    scroll-margin-bottom: 1.25rem;
+    padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 /* Animations */
