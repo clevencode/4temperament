@@ -538,7 +538,7 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    width: min(18.5rem, 88vw);
+    width: min(20rem, 88vw);
     height: 100%;
     margin: 0;
     border-radius: 0;
@@ -554,6 +554,13 @@ body {
 
 .nav-mobile-menu.is-open .nav-mobile-menu__panel {
     transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+    .nav-mobile-menu__panel {
+        width: 22rem;
+        border-left: 1px solid var(--border);
+    }
 }
 
 .nav-mobile-menu__item {

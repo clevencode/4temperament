@@ -27,14 +27,8 @@
                 </span>
                 <span class="type-display y2k-heading text-xl sm:text-2xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
             </button>
-            <button type="button" onclick="showAboutModal()" 
-                    class="type-btn hidden md:flex items-center gap-x-2 px-5 py-2 text-[#999] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#444]"
-                    aria-label="À propos des 4 Tempéraments">
-                <i class="icon icon--sm icon--muted fa-solid fa-circle-info mr-1.5" aria-hidden="true"></i>
-                <span>À propos</span>
-            </button>
             <button type="button" id="nav-menu-toggle"
-                    class="nav-hamburger md:hidden flex items-center justify-center w-10 h-10 rounded-xl border border-[#292929] hover:border-[#444] hover:bg-[#111] transition-colors"
+                    class="nav-hamburger flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl border border-[#292929] hover:border-[#444] hover:bg-[#111] transition-colors"
                     onclick="toggleNavMenu()"
                     aria-expanded="false"
                     aria-controls="nav-mobile-menu"
@@ -44,8 +38,8 @@
         </div>
     </nav>
 
-    <!-- Menu mobile (À propos) -->
-    <div id="nav-mobile-menu" class="nav-mobile-menu md:hidden" aria-hidden="true">
+    <!-- Menu navigation (hamburger) -->
+    <div id="nav-mobile-menu" class="nav-mobile-menu" aria-hidden="true">
         <div class="nav-mobile-menu__backdrop" onclick="closeNavMenu()" aria-hidden="true"></div>
         <nav class="nav-mobile-menu__panel y2k-card chrome-border" aria-label="Menu principal">
             <div class="type-caption px-4 pt-4 pb-2 text-[#666]">INFORMATIONS</div>
