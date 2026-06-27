@@ -97,12 +97,35 @@ const HistoryManager = {
 let currentHistoryCache = [];
 let currentEditingId = null;
 
+/**
+ * MELHOR PRÁTICA: Carrega todo o estado do usuário de uma vez no início.
+ * Isso garante que nome + histórico sobrevivam a reinícios do app.
+ */
+function loadUserState() {
+    // Carregar preferências (nome + flag de já completou)
+    const prefs = loadPreferences();
+    if (prefs) {
+        if (prefs.userName) {
+            userName = prefs.userName;
+        }
+    }
+
+    // Carregar histórico completo
+    currentHistoryCache = HistoryManager.load();
+
+    // Se não tiver nome salvo nas prefs, tenta pegar do último resultado do histórico
+    if (!userName && currentHistoryCache.length > 0) {
+        const last = currentHistoryCache[0];
+        if (last.userName && last.userName !== 'Anônimo') {
+            userName = last.userName;
+        }
+    }
+
+    console.log('%c[Quiz] Estado do usuário carregado do localStorage (persistência ativa)', 'color:#4ade80');
+}
+
 function savePreferences() {
-    const prefs = {
-        userName: userName || '',
-        hasCompletedTest: true
-    };
-    localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+    saveUserPreferences({ hasCompletedTest: true });
 }
 
 function loadPreferences() {
@@ -130,15 +153,14 @@ function startQuiz() {
     // Cacher l'écran d'accueil
     document.getElementById('intro-screen').classList.add('hidden');
 
+    // Como loadUserState() já rodou no init, userName já está carregado se existir.
+
     const prefs = loadPreferences();
 
     if (prefs && prefs.hasCompletedTest) {
         // Usuário já fez o teste antes → vai direto para o questionário
         currentEditingId = null;
-        // (pode preencher nome salvo se existir)
-        if (prefs.userName) {
-            userName = prefs.userName;
-        }
+
         document.getElementById('quiz-screen').classList.remove('hidden');
         currentQuestionIndex = 0;
         answers = {};
@@ -149,10 +171,10 @@ function startQuiz() {
     // Primeira vez → pede nome
     document.getElementById('name-screen').classList.remove('hidden');
     
-    // Pré-preencher nome se salvo
-    if (prefs && prefs.userName) {
+    // Pré-preencher nome (já deve estar em userName graças ao loadUserState)
+    if (userName) {
         const nameInput = document.getElementById('user-name-input');
-        if (nameInput) nameInput.value = prefs.userName;
+        if (nameInput) nameInput.value = userName;
     }
 
     // Focus sur le champ nom
@@ -191,14 +213,25 @@ function continueAnonymously() {
     document.getElementById('about-screen').classList.remove('hidden');
 }
 
-// Salva apenas o nome (sem marcar como completado)
-function saveNameOnly() {
+// Melhor prática: função única para salvar preferências do usuário
+function saveUserPreferences(extra = {}) {
     try {
         const existing = localStorage.getItem(PREFS_KEY);
         let prefs = existing ? JSON.parse(existing) : {};
-        prefs.userName = userName || '';
+
+        if (userName) prefs.userName = userName;
+        if (extra.hasCompletedTest) prefs.hasCompletedTest = true;
+
+        Object.assign(prefs, extra);
+
         localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
-    } catch(e) {}
+    } catch(e) {
+        console.warn('Erro ao salvar preferências do usuário');
+    }
+}
+
+function saveNameOnly() {
+    saveUserPreferences();
 }
 
 // === HISTÓRICO DE RESULTADOS FINAIS ===
@@ -233,6 +266,11 @@ function saveResultToHistory(resultData) {
     } else {
         // Novo resultado
         HistoryManager.add(entry);
+    }
+
+    // Garante que o nome do usuário fique salvo nas preferências (melhor prática)
+    if (userName) {
+        saveUserPreferences();
     }
 }
 
@@ -625,6 +663,9 @@ function restartQuiz() {
 
 // Initialisation générale
 function initializeApp() {
+    // === MELHOR PRÁTICA: Carregar estado completo do usuário no início ===
+    loadUserState();
+
     initializeTailwind();
 
     // Support clavier

@@ -16,6 +16,8 @@ function showQuestion() {
     document.getElementById('question-text').innerHTML = question.text;
     document.getElementById('current-question').textContent = currentQuestionIndex + 1;
 
+    hideQuizError(); // Esconde qualquer erro anterior ao mostrar nova pergunta
+
     updateProgress();
 
     // Renderizar opções
@@ -93,27 +95,21 @@ function selectOption(questionId, type, element) {
     }
 
     answers[questionId] = type;
+
+    // Esconde o erro quando uma opção é selecionada
+    hideQuizError();
 }
 
 function nextQuestion() {
     const currentQ = QUESTIONS[currentQuestionIndex];
     
     if (!answers[currentQ.id]) {
-        // Seleciona automaticamente a primeira opção
-        const container = document.getElementById('options-container');
-        if (container.children.length > 0) {
-            const first = container.children[0];
-            const option = currentQ.options[0];
-            answers[currentQ.id] = option.type;
-            
-            first.classList.add('selected', 'border-[#c9c9c9]');
-            first.classList.remove('border-[#292929]');
-            const circle = first.querySelector('div');
-            circle.classList.add('border-[#c9c9c9]', 'bg-[#c9c9c9]');
-            circle.classList.remove('border-[#3a3a3a]');
-            circle.innerHTML = '<i class="fa-solid fa-check text-xs text-black"></i>';
-        }
+        // Mostra aviso se nenhuma opção foi escolhida
+        showQuizError("Veuillez choisir au moins une option.");
+        return;
     }
+
+    hideQuizError();
 
     if (currentQuestionIndex < QUESTIONS.length - 1) {
         currentQuestionIndex++;
@@ -130,7 +126,20 @@ function prevQuestion() {
     }
 }
 
+function showQuizError(message) {
+    const errorEl = document.getElementById('quiz-error');
+    if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+    }
+}
 
+function hideQuizError() {
+    const errorEl = document.getElementById('quiz-error');
+    if (errorEl) {
+        errorEl.classList.add('hidden');
+    }
+}
 
 // Expor funções necessárias globalmente
 window.showQuestion = showQuestion;

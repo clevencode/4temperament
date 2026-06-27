@@ -133,8 +133,10 @@ function showResults() {
         `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
     ).join('');
 
-    // Salvar preferências (não mostrar "sobre" na próxima vez)
-    if (typeof savePreferences === 'function') {
+    // Salvar preferências do usuário (melhor prática - persistência)
+    if (typeof saveUserPreferences === 'function') {
+        saveUserPreferences({ hasCompletedTest: true });
+    } else if (typeof savePreferences === 'function') {
         savePreferences();
     }
 
