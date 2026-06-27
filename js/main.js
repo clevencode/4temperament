@@ -679,21 +679,19 @@ function updateResultDetailHeader(entry, resolved) {
     ? getResultPresentation(resolved)
     : null;
 
-  const badgeEl = document.getElementById('result-detail-badge');
-  if (badgeEl && view) {
-    badgeEl.textContent = view.badgeLabel;
-    badgeEl.style.color = view.badgeColor;
-    badgeEl.style.borderColor = `${view.badgeColor}40`;
+  const dateOpts = { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+  let dateText = `Résultat du ${new Date(entry.date).toLocaleDateString('fr-FR', dateOpts)}`;
+  if (entry.lastEdited) {
+    dateText += ` • Modifié le ${new Date(entry.lastEdited).toLocaleDateString('fr-FR', dateOpts)}`;
   }
 
-  const dateEl = document.getElementById('result-detail-date');
-  if (dateEl) {
-    const dateOpts = { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-    let text = `Résultat du ${new Date(entry.date).toLocaleDateString('fr-FR', dateOpts)}`;
-    if (entry.lastEdited) {
-      text += ` • Modifié le ${new Date(entry.lastEdited).toLocaleDateString('fr-FR', dateOpts)}`;
-    }
-    dateEl.textContent = text;
+  if (typeof applyResultViewHeader === 'function') {
+    applyResultViewHeader({
+      badgeEl: document.getElementById('result-detail-badge'),
+      metaEl: document.getElementById('result-detail-date'),
+      view,
+      metaText: dateText
+    });
   }
 }
 

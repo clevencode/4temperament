@@ -183,21 +183,13 @@ function buildResultHeroSectionHtml(view, { tag = 'section', className = 'result
     </${tag}>`;
 }
 
-function applyResultHeroCard(element, view) {
-  if (!element || !view) return;
-  element.className = 'result-hero-card rounded-3xl p-4 sm:p-6 text-white premium-shadow relative overflow-hidden main-result-bg page-card';
-  element.style.background = view.cardBg;
-  element.style.border = view.cardBorder;
-  element.innerHTML = buildResultHeroCardHtml(view);
-}
-
-function renderResultHero(result) {
-  const view = getResultPresentation(result);
-
-  const subheading = document.getElementById('results-hero-subheading');
-  if (subheading) subheading.textContent = getResultsScreenSubheading(result);
-
-  applyResultHeroCard(document.getElementById('main-result-card'), view);
+function applyResultViewHeader({ badgeEl, metaEl, view, metaText }) {
+  if (badgeEl && view) {
+    badgeEl.textContent = view.badgeLabel;
+    badgeEl.style.color = view.badgeColor;
+    badgeEl.style.borderColor = `${view.badgeColor}40`;
+  }
+  if (metaEl && metaText != null) metaEl.textContent = metaText;
 }
 
 function buildLiveShareHtml() {
@@ -278,24 +270,33 @@ function buildResultBodyHtml(result, shareHtml = '') {
       </section>`;
 }
 
-function renderResultScreen(result) {
-  renderResultHero(result);
+/** Vue complète empilhée — même disposition pour résultat final et historique. */
+function buildResultViewHtml(result, shareHtml = '') {
+  const view = getResultPresentation(result);
+  return `
+    ${buildResultHeroSectionHtml(view, { className: 'result-hero-card' })}
+    ${buildResultBodyHtml(result, shareHtml)}`;
+}
 
-  const body = document.getElementById('results-body');
-  if (body) {
-    body.innerHTML = buildResultBodyHtml(result, buildLiveShareHtml());
+function renderResultScreen(result) {
+  const view = getResultPresentation(result);
+
+  applyResultViewHeader({
+    badgeEl: document.getElementById('results-hero-badge'),
+    metaEl: document.getElementById('results-hero-subheading'),
+    view,
+    metaText: getResultsScreenSubheading(result)
+  });
+
+  const container = document.getElementById('results-content');
+  if (container) {
+    container.innerHTML = buildResultViewHtml(result, buildLiveShareHtml());
   }
 }
 
 function buildResultDetailHtml(result, index) {
-  const view = getResultPresentation(result);
   const shareHTML = typeof shareSectionHTML === 'function' ? shareSectionHTML(index) : '';
-
-  return `
-    <div class="result-flow-content">
-      ${buildResultHeroSectionHtml(view, { className: 'result-hero-card result-detail-hero' })}
-      ${buildResultBodyHtml(result, shareHTML)}
-    </div>`;
+  return buildResultViewHtml(result, shareHTML);
 }
 
 function renderBalancedResult(result) {
@@ -431,7 +432,8 @@ window.buildResultBarsHtml = buildResultBarsHtml;
 window.getResultPresentation = getResultPresentation;
 window.buildResultHeroCardHtml = buildResultHeroCardHtml;
 window.buildResultHeroSectionHtml = buildResultHeroSectionHtml;
-window.applyResultHeroCard = applyResultHeroCard;
+window.applyResultViewHeader = applyResultViewHeader;
+window.buildResultViewHtml = buildResultViewHtml;
 window.buildResultBodyHtml = buildResultBodyHtml;
 window.buildLiveShareHtml = buildLiveShareHtml;
 window.renderResultScreen = renderResultScreen;

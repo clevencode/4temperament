@@ -293,7 +293,7 @@
             <h2 class="type-display type-section-title y2k-title mb-2">Vue complète du résultat</h2>
             <p id="result-detail-date" class="type-body text-[#aaa] max-w-lg mx-auto"></p>
         </div>
-        <div id="result-detail-content"></div>
+        <div id="result-detail-content" class="result-flow-content"></div>
         <div class="page-footer result-detail-footer">
             <div class="layout-actions result-detail-actions">
                 <button type="button" id="result-detail-share-btn"
@@ -390,42 +390,36 @@
         </div>
     </div>
 
-    <!-- RESULTS SCREEN — immersive (sans navbar), hero réutilisable -->
+    <!-- RESULTS SCREEN — même disposition que vue complète (sans navbar) -->
     <div id="results-screen" class="hidden page-shell page-shell--wide page-shell--immersive">
-        <header class="result-hero-header text-center mb-8 sm:mb-9">
+        <div class="page-header">
             <div id="results-hero-badge" class="type-caption inline-block px-4 py-1 rounded-full border border-[#2a2a2a] text-[#777] mb-4">RÉSULTAT FINAL</div>
-            <h2 class="type-display type-section-title y2k-title mb-1">TON PROFIL EST</h2>
-            <p id="results-hero-subheading" class="type-body text-[#777]">Voici ton tempérament principal</p>
-        </header>
-
-        <div id="main-result-card" class="result-hero-card page-card" aria-label="Résumé du tempérament"></div>
-
-        <!-- Contenu empilé — scroll continu, sans tabs -->
-        <div id="results-body" class="result-flow-content"></div>
-
-        <!-- Actions -->
-        <div class="layout-actions results-actions">
-            <button type="button" onclick="restartQuiz()"
-                    class="results-actions__btn type-btn min-h-[48px] px-6 sm:px-8 py-3 justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full inline-flex">
-                <i class="icon icon--sm icon--muted fa-solid fa-rotate-right" aria-hidden="true"></i>
-                <span>RECOMMENCER LE TEST</span>
-            </button>
-            <button type="button" onclick="showAllTemperaments()"
-                    class="results-actions__btn type-btn chrome-button min-h-[48px] px-6 sm:px-8 py-3 justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full inline-flex">
-                <i class="icon icon--sm icon--silver fa-solid fa-table-cells" aria-hidden="true"></i>
-                <span>VOIR LES 4 TEMPÉRAMENTS</span>
-            </button>
+            <h2 class="type-display type-section-title y2k-title mb-2">TON PROFIL EST</h2>
+            <p id="results-hero-subheading" class="type-body text-[#aaa] max-w-lg mx-auto">Voici ton tempérament principal</p>
         </div>
 
-        <div class="text-center mt-4">
-            <button onclick="showResultsHistory()" 
-                    class="type-link flex items-center gap-x-1 mx-auto">
+        <div id="results-content" class="result-flow-content"></div>
+
+        <div class="page-footer results-footer">
+            <div class="layout-actions results-actions">
+                <button type="button" onclick="restartQuiz()"
+                        class="results-actions__btn type-btn min-h-[48px] px-6 sm:px-8 py-3 justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full inline-flex">
+                    <i class="icon icon--sm icon--muted fa-solid fa-rotate-right" aria-hidden="true"></i>
+                    <span>RECOMMENCER LE TEST</span>
+                </button>
+                <button type="button" onclick="showAllTemperaments()"
+                        class="results-actions__btn type-btn chrome-button min-h-[48px] px-6 sm:px-8 py-3 justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full inline-flex">
+                    <i class="icon icon--sm icon--silver fa-solid fa-table-cells" aria-hidden="true"></i>
+                    <span>VOIR LES 4 TEMPÉRAMENTS</span>
+                </button>
+            </div>
+            <button type="button" onclick="showResultsHistory()"
+                    class="type-link flex items-center gap-x-1.5 min-h-[44px]">
                 <i class="icon icon--xs icon--muted fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                 <span class="normal-case tracking-normal">Voir l'historique des résultats</span>
             </button>
+            <p class="type-caption text-center normal-case tracking-normal text-[#666]">La plupart des gens ont un mélange de deux tempéraments</p>
         </div>
-
-        <p class="type-caption text-center mt-9">LA PLUPART DES GENS ONT UN MÉLANGE DE DEUX TEMPÉRAMENTS</p>
     </div>
 
     </main>
