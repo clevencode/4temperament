@@ -29,7 +29,7 @@ function showQuestion() {
 
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `option-card text-left w-full rounded-2xl p-5 flex items-start gap-x-4 ${isSelected ? 'selected border-[#c9c9c9]' : 'border-[#292929] hover:border-[#5a5a5a]'}`;
+        btn.className = `option-card text-left w-full rounded-2xl p-4 sm:p-5 flex items-start gap-x-4 ${isSelected ? 'selected border-[#c9c9c9]' : 'border-[#292929] hover:border-[#5a5a5a]'}`;
         btn.setAttribute('role', 'radio');
         btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
         btn.setAttribute('aria-label', option.text);

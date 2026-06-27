@@ -50,9 +50,9 @@
                 <span class="text-[#a0a0a0]">TEST CLASSIQUE • 14 QUESTIONS</span>
             </div>
 
-            <h1 class="text-[72px] md:text-[86px] leading-[0.92] font-bold mb-3 y2k-title tracking-[-4.5px]">
+            <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[0.92] font-bold mb-3 y2k-title tracking-[-4.5px]">
                 DÉCOUVRE<br>SI TU ES
-                <span class="chrome-text text-[80px] md:text-[92px] block -mt-2">
+                <span class="chrome-text text-6xl sm:text-7xl md:text-8xl lg:text-[92px] block -mt-2">
                     <span id="temperament-typing"></span><span class="typing-cursor">|</span>
                 </span>
             </h1>
@@ -63,7 +63,7 @@
 
             <div class="flex items-center justify-center">
                 <button onclick="startQuiz()" 
-                        class="chrome-button group inline-flex items-center justify-center gap-x-3 px-10 py-4 glossy-btn text-[#e5e5e5] font-semibold text-base rounded-2xl tracking-widest uppercase">
+                        class="chrome-button group inline-flex items-center justify-center gap-x-3 px-6 sm:px-10 py-3 sm:py-4 glossy-btn text-[#e5e5e5] font-semibold text-sm sm:text-base rounded-2xl tracking-widest uppercase">
                     <span>COMMENCER LE TEST</span>
                     <i class="fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition"></i>
                 </button>
@@ -89,8 +89,8 @@
     </div>
 
     <!-- NAME INPUT SCREEN -->
-    <div id="name-screen" class="hidden max-w-md mx-auto px-6 py-12 text-center">
-        <div class="y2k-card chrome-border rounded-3xl p-8">
+    <div id="name-screen" class="hidden max-w-md mx-auto px-6 py-8 sm:py-12 text-center">
+        <div class="y2k-card chrome-border rounded-3xl p-6 sm:p-8">
             <h2 class="text-3xl y2k-title tracking-[-1.5px] mb-2">Bonjour !</h2>
             <label for="user-name-input" class="block text-[#aaa] mb-2 text-left">Pour personnaliser ton expérience, entre ton prénom :</label>
             
@@ -118,7 +118,7 @@
             <p class="text-[#aaa]">Voici comment ça fonctionne</p>
         </div>
 
-        <div class="y2k-card chrome-border rounded-3xl p-8 space-y-6 text-[#ccc]">
+        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 space-y-5 sm:space-y-6 text-[#ccc]">
             <div>
                 <h3 class="font-semibold text-lg mb-2 text-[#ddd]">Qu'est-ce que les 4 Tempéraments ?</h3>
                 <p class="text-sm leading-relaxed">La théorie des 4 Tempéraments est une ancienne classification de la personnalité. Elle aide à mieux comprendre nos forces, nos faiblesses et nos comportements naturels.</p>
@@ -205,14 +205,14 @@
             <div class="flex items-center justify-between">
                 <button onclick="prevQuestion()" 
                         id="btn-prev"
-                        class="px-5 py-3 flex items-center gap-x-2 text-xs font-medium uppercase tracking-widest border border-[#292929] hover:bg-[#111] transition-colors rounded-full disabled:opacity-40">
+                        class="min-h-[44px] px-4 sm:px-5 py-3 flex items-center gap-x-2 text-xs font-medium uppercase tracking-widest border border-[#292929] hover:bg-[#111] transition-colors rounded-full disabled:opacity-40">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span>PRÉCÉDENT</span>
                 </button>
 
                 <button onclick="nextQuestion()" 
                         id="btn-next"
-                        class="chrome-button px-9 py-[13px] flex items-center gap-x-2 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase">
+                        class="chrome-button min-h-[44px] px-6 sm:px-9 py-3 flex items-center gap-x-2 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase">
                     <span id="btn-next-text">SUIVANT</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -224,13 +224,13 @@
     <div id="results-screen" class="hidden max-w-4xl mx-auto px-6 py-10">
         <div class="text-center mb-9">
             <div class="inline-block px-4 py-1 rounded-full text-xs tracking-[2px] border border-[#2a2a2a] text-[#777] mb-4">RÉSULTAT FINAL</div>
-            <h2 class="text-5xl y2k-title tracking-[-2.5px] mb-1">TON PROFIL EST</h2>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl y2k-title tracking-[-2.5px] mb-1">TON PROFIL EST</h2>
             <p class="text-[#777]">Voici ton tempérament principal</p>
         </div>
 
         <!-- Main Result -->
         <div id="main-result-card" 
-             class="rounded-3xl p-9 md:p-11 mb-8 text-white premium-shadow relative overflow-hidden main-result-bg">
+             class="rounded-3xl p-6 sm:p-9 md:p-11 mb-8 text-white premium-shadow relative overflow-hidden main-result-bg">
             
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
             <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
@@ -238,18 +238,18 @@
             <div class="flex flex-col md:flex-row md:items-center gap-y-8 relative z-10">
                 <div class="flex-1">
                     <div class="uppercase tracking-[3.5px] text-xs font-semibold opacity-60 mb-1">TEMPÉRAMENT PRINCIPAL</div>
-                    <div id="result-name" class="text-[66px] leading-none font-bold tracking-[-3.5px] mb-2 y2k-title"></div>
+                    <div id="result-name" class="text-5xl sm:text-6xl md:text-[66px] leading-none font-bold tracking-[-3.5px] mb-2 y2k-title"></div>
                     <div id="result-subtitle" class="text-2xl tracking-tight opacity-80"></div>
                 </div>
                 <div class="flex-shrink-0 text-center">
-                    <div id="result-icon" class="w-28 h-28 mx-auto rounded-2xl flex items-center justify-center text-[65px] mb-1 ring-1 ring-white/10" 
+                    <div id="result-icon" class="w-20 h-20 sm:w-28 sm:h-28 mx-auto rounded-2xl flex items-center justify-center text-[50px] sm:text-[65px] mb-1 ring-1 ring-white/10" 
                          style="background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));"></div>
                 </div>
             </div>
         </div>
 
         <!-- Percentages -->
-        <div class="y2k-card chrome-border rounded-3xl p-8 mb-8">
+        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 mb-8">
             <div class="flex items-center justify-between mb-5 px-1">
                 <div class="uppercase text-xs tracking-[2px] font-semibold text-[#888]">RÉPARTITION DES TEMPÉRAMENTS</div>
             </div>
@@ -275,7 +275,7 @@
         </div>
 
         <!-- Description -->
-        <div class="y2k-card chrome-border rounded-3xl p-8 mb-8">
+        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 mb-8">
             <div class="uppercase tracking-[1.5px] text-xs text-[#777] mb-2">À PROPOS DE TOI</div>
             <div id="result-description" class="text-[#ccc] leading-relaxed text-[15px]">
             </div>
@@ -283,14 +283,14 @@
 
         <!-- Strengths & Weaknesses -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div class="y2k-card chrome-border rounded-3xl p-7">
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
                 <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
                     <i class="fa-solid fa-check"></i>
                     <h3 class="uppercase tracking-widest text-xs font-semibold">TES POINTS FORTS</h3>
                 </div>
                 <ul id="strengths-list" class="space-y-[7px] text-sm"></ul>
             </div>
-            <div class="y2k-card chrome-border rounded-3xl p-7">
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
                 <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
                     <i class="fa-solid fa-exclamation"></i>
                     <h3 class="uppercase tracking-widest text-xs font-semibold">À AMÉLIORER</h3>
@@ -301,14 +301,14 @@
 
         <!-- Recommended Careers & Activities -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div class="y2k-card chrome-border rounded-3xl p-7">
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
                 <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
                     <i class="fa-solid fa-briefcase"></i>
                     <h3 class="uppercase tracking-widest text-xs font-semibold">CARRIÈRES RECOMMANDÉES</h3>
                 </div>
                 <ul id="careers-list" class="space-y-[7px] text-sm"></ul>
             </div>
-            <div class="y2k-card chrome-border rounded-3xl p-7">
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
                 <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
                     <i class="fa-solid fa-heart"></i>
                     <h3 class="uppercase tracking-widest text-xs font-semibold">ACTIVITÉS PRÉFÉRÉES</h3>
@@ -323,22 +323,22 @@
                 <i class="fa-solid fa-share-alt"></i>
                 <h3 class="uppercase tracking-widest text-xs font-semibold">PARTAGER MON RÉSULTAT</h3>
             </div>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-2">
                 <button onclick="shareOnWhatsApp()" 
-                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                        class="min-h-[40px] px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                     <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
                 </button>
                 <button onclick="shareOnTelegram()" 
-                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                        class="min-h-[40px] px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                     <i class="fa-brands fa-telegram mr-1"></i>Telegram
                 </button>
                 <button onclick="shareOnInstagram()" 
-                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                        class="min-h-[40px] px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                     <i class="fa-brands fa-instagram mr-1"></i>Instagram
                 </button>
             </div>
             <button onclick="copyResultToClipboard()" 
-                    class="mt-3 px-5 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
+                    class="mt-3 min-h-[40px] px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
                 <i class="fa-solid fa-copy mr-2"></i>Copier le texte
             </button>
             <p class="text-[10px] text-[#666] mt-3">Partage ton résultat avec tes amis !</p>

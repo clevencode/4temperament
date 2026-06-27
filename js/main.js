@@ -295,12 +295,12 @@ function showResultsHistory() {
 
     // Container principal
     const container = document.createElement('div');
-    container.className = 'y2k-card chrome-border rounded-3xl max-w-lg w-full max-h-[85vh] overflow-auto relative';
+    container.className = 'y2k-card chrome-border rounded-2xl sm:rounded-3xl max-w-lg w-full max-h-[95dvh] sm:max-h-[85vh] overflow-auto relative';
     container.onclick = (e) => e.stopImmediatePropagation();
 
     // Header
     const header = document.createElement('div');
-    header.className = 'flex items-center justify-between px-7 py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]';
+    header.className = 'flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]';
     header.innerHTML = `
         <h3 id="history-title" class="font-bold text-xl y2k-heading">Historique des résultats</h3>
         <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
@@ -309,7 +309,7 @@ function showResultsHistory() {
 
     // Content
     const content = document.createElement('div');
-    content.className = 'p-7';
+    content.className = 'p-4 sm:p-7';
 
     if (history.length === 0) {
         content.innerHTML = `<p class="text-[#888] text-center py-8">Aucun résultat enregistré pour le moment.</p>`;
@@ -382,7 +382,7 @@ function showResultsHistory() {
 
     // Footer
     const footer = document.createElement('div');
-    footer.className = 'px-7 py-5 border-t border-[#222] flex justify-end gap-3';
+    footer.className = 'px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex justify-end gap-3';
 
     if (history.length > 0) {
         const clearBtn = document.createElement('button');
@@ -446,13 +446,13 @@ function showFullResult(index) {
 
     let html = `
         <div onclick="event.target.remove()" class="absolute inset-0"></div>
-        <div onclick="event.stopImmediatePropagation()" class="y2k-card chrome-border rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-auto relative">
-            <div class="flex items-center justify-between px-7 py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
+        <div onclick="event.stopImmediatePropagation()" class="y2k-card chrome-border rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-auto relative">
+            <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
                 <h3 class="font-bold text-xl y2k-heading">Vue complète du résultat</h3>
-                <button onclick="this.closest('.fixed').remove()" class="text-3xl text-[#555] hover:text-white">×</button>
+                <button onclick="this.closest('.fixed').remove()" class="text-3xl text-[#555] hover:text-white" aria-label="Fermer">×</button>
             </div>
 
-            <div class="p-7 space-y-6">
+            <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
 
                 <!-- Dominant -->
                 <div>
@@ -460,7 +460,7 @@ function showFullResult(index) {
                         <span class="text-5xl">${dominant.emoji}</span>
                         <div>
                             <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
-                            <div class="text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
+                            <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
                             <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(entry.percentages[entry.dominant])}%</div>
                         </div>
                     </div>
@@ -472,7 +472,7 @@ function showFullResult(index) {
                     <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
                     <div class="flex items-center gap-x-2">
                         <span class="text-3xl">${secondary.emoji}</span>
-                        <span class="font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</span>
+                        <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
                         <span class="text-sm text-[#888]">(${Math.round(entry.percentages[entry.secondary])}%)</span>
                     </div>
                 </div>
@@ -480,7 +480,7 @@ function showFullResult(index) {
                 <!-- Percentages -->
                 <div>
                     <div class="text-xs tracking-widest text-[#666] mb-2">RÉPARTITION</div>
-                    <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+                    <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">
                         ${Object.keys(entry.percentages).map(key => {
                             const t = TEMPERAMENTS[key];
                             const pct = entry.percentages[key];
@@ -536,14 +536,14 @@ function showFullResult(index) {
             </div>
 
             <!-- Share section (reutilizável) -->
-            <div class="px-7 py-5 border-t border-[#222]">
+            <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222]">
                 <div class="text-xs uppercase tracking-widest text-[#666] mb-2">Partager le résultat</div>
                 ${shareSectionHTML ? shareSectionHTML(index) : ''}
             </div>
 
-            <div class="px-7 py-5 border-t border-[#222] flex items-center justify-between text-xs text-[#666]">
+            <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex items-center justify-between text-xs text-[#666]">
                 <div>${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
-                <button onclick="this.closest('.fixed').remove()" class="px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
+                <button onclick="this.closest('.fixed').remove()" class="px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
             </div>
         </div>
     `;
@@ -566,19 +566,19 @@ function shareSectionHTML(index) {
     return `
         <div class="flex flex-wrap gap-2">
             <button onclick="shareFullResultOnWhatsApp(${index}); event.stopImmediatePropagation();" 
-                    class="px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                 <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
             </button>
             <button onclick="shareFullResultOnTelegram(${index}); event.stopImmediatePropagation();" 
-                    class="px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                 <i class="fa-brands fa-telegram mr-1"></i>Telegram
             </button>
             <button onclick="shareFullResultOnInstagram(${index}); event.stopImmediatePropagation();" 
-                    class="px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                 <i class="fa-brands fa-instagram mr-1"></i>Instagram
             </button>
             <button onclick="copyFullResult(${index}); event.stopImmediatePropagation();" 
-                    class="px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
+                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
                 <i class="fa-solid fa-copy mr-1"></i>Copier
             </button>
         </div>

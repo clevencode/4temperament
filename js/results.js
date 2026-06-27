@@ -76,7 +76,7 @@ function showResults() {
         div.innerHTML = `
             <div class="flex justify-between items-center mb-1.5 px-1">
                 <div class="flex items-center gap-x-2">
-                    <span class="text-xl">${t.emoji}</span>
+                    <span class="text-lg sm:text-xl">${t.emoji}</span>
                     <span class="font-semibold ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
                     ${isDominant ? `<span class="text-[10px] px-2 py-px rounded tracking-widest" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">PRINCIPAL</span>` : ''}
                 </div>
