@@ -160,6 +160,22 @@ let currentDetailIndex = null;
 // + helpers pour flux alignés à la logique métier (self-discovery guidé)
 // Évite les toggles dispersés, focus management, règles UI (notice edition)
 // =====================================================
+const NAV_TAB_BY_SCREEN = {
+  'temperaments-about-screen': 'theory',
+  'about-screen': 'screen',
+  'history-screen': 'history',
+  'result-detail-screen': 'history'
+};
+
+function syncNavToolbar(screenId) {
+  const activeTab = NAV_TAB_BY_SCREEN[screenId] || null;
+  document.querySelectorAll('[data-nav-tab]').forEach(btn => {
+    const isActive = btn.dataset.navTab === activeTab;
+    btn.classList.toggle('is-active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+}
+
 function showScreen(screenId) {
   // Cacher tous les écrans principaux
   document.querySelectorAll('[id$="-screen"]').forEach(s => {
@@ -172,6 +188,8 @@ function showScreen(screenId) {
 
   screen.classList.remove('hidden');
   screen.removeAttribute('aria-hidden');
+
+  syncNavToolbar(screenId);
 
   // Règle métier : notice d'édition uniquement visible dans quiz quand en édition
   const notice = document.getElementById('quiz-edit-notice');

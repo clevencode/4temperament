@@ -16,44 +16,41 @@
 </head>
 <body class="bg-[#050505] text-[#e5e5e5]">
     <!-- Navbar -->
-    <nav class="border-b border-[#1f1f1f] bg-[#050505]">
-        <div class="max-w-5xl mx-auto px-4 py-4 space-y-3">
+    <nav class="nav-bar" aria-label="Navigation principale">
+        <div class="nav-bar__inner">
             <button type="button" id="nav-brand-home"
                     onclick="navigateToIntro()"
-                    class="flex items-center gap-x-3 text-left rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
+                    class="nav-bar__brand"
                     aria-label="Retour à l'accueil">
                 <span class="icon-badge icon-badge--md icon-badge--chrome pointer-events-none" aria-hidden="true">
                     <i class="icon icon--md icon--silver fa-solid fa-brain"></i>
                 </span>
                 <span class="type-display y2k-heading text-xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
             </button>
-            <div class="nav-toolbar" role="navigation" aria-label="Navigation principale">
-                <button type="button" class="nav-toolbar__item" onclick="openAboutFromNav('theory')">
-                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
-                        <i class="icon icon--sm icon--muted fa-solid fa-circle-info"></i>
+            <div class="nav-toolbar" role="tablist" aria-label="Sections">
+                <button type="button" class="nav-tab" role="tab" data-nav-tab="theory"
+                        aria-selected="false" onclick="openAboutFromNav('theory')">
+                    <span class="nav-tab__head">
+                        <span class="nav-tab__title">Les 4 tempéraments</span>
+                        <i class="icon icon--xs fa-solid fa-circle-info nav-tab__icon" aria-hidden="true"></i>
                     </span>
-                    <span class="nav-toolbar__text">
-                        <span class="nav-toolbar__title">Les 4 tempéraments</span>
-                        <span class="nav-toolbar__desc">Théorie classique</span>
-                    </span>
+                    <span class="nav-tab__desc">Théorie classique</span>
                 </button>
-                <button type="button" class="nav-toolbar__item" onclick="openAboutFromNav('screen')">
-                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
-                        <i class="icon icon--sm icon--muted fa-solid fa-table-cells"></i>
+                <button type="button" class="nav-tab" role="tab" data-nav-tab="screen"
+                        aria-selected="false" onclick="openAboutFromNav('screen')">
+                    <span class="nav-tab__head">
+                        <span class="nav-tab__title">À propos du test</span>
+                        <i class="icon icon--xs fa-solid fa-table-cells nav-tab__icon" aria-hidden="true"></i>
                     </span>
-                    <span class="nav-toolbar__text">
-                        <span class="nav-toolbar__title">À propos du test</span>
-                        <span class="nav-toolbar__desc">Comment ça fonctionne</span>
-                    </span>
+                    <span class="nav-tab__desc">Comment ça fonctionne</span>
                 </button>
-                <button type="button" class="nav-toolbar__item" onclick="openAboutFromNav('history')">
-                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
-                        <i class="icon icon--sm icon--muted fa-solid fa-clock-rotate-left"></i>
+                <button type="button" class="nav-tab" role="tab" data-nav-tab="history"
+                        aria-selected="false" onclick="openAboutFromNav('history')">
+                    <span class="nav-tab__head">
+                        <span class="nav-tab__title">Historique</span>
+                        <i class="icon icon--xs fa-solid fa-clock-rotate-left nav-tab__icon" aria-hidden="true"></i>
                     </span>
-                    <span class="nav-toolbar__text">
-                        <span class="nav-toolbar__title">Historique</span>
-                        <span class="nav-toolbar__desc">Résultats enregistrés</span>
-                    </span>
+                    <span class="nav-tab__desc">Résultats enregistrés</span>
                 </button>
             </div>
         </div>
