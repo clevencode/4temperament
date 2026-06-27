@@ -43,7 +43,7 @@
         <div class="nav-mobile-menu__backdrop" onclick="closeNavMenu()" aria-hidden="true"></div>
         <nav class="nav-mobile-menu__panel y2k-card chrome-border" aria-label="Menu principal">
             <div class="type-caption px-4 pt-4 pb-2 text-[#666]">INFORMATIONS</div>
-            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('modal')">
+            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('theory')">
                 <span class="icon-badge icon-badge--sm" aria-hidden="true">
                     <i class="icon icon--sm icon--muted fa-solid fa-circle-info"></i>
                 </span>
@@ -114,6 +114,48 @@
                 <p id="intro-continue-hint" class="type-caption hidden text-[#777] normal-case tracking-normal"></p>
             </div>
 
+        </div>
+    </div>
+
+    <!-- ABOUT TEMPERAMENTS THEORY SCREEN -->
+    <div id="temperaments-about-screen" class="hidden max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <div class="text-center mb-6 sm:mb-8">
+            <h2 class="type-display type-section-title y2k-title mb-3">À propos des 4 tempéraments</h2>
+            <p class="type-body text-[#aaa]">Théorie classique</p>
+        </div>
+
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-8 space-y-4 sm:space-y-6">
+            <div>
+                <h3 class="type-ui font-semibold text-lg mb-2 text-[#ddd]">Origines</h3>
+                <p class="type-body text-[#ccc]">La théorie des 4 Tempéraments vient de la Grèce ancienne (Hippocrate et Galien). Elle classe les personnalités en 4 types selon le comportement.</p>
+            </div>
+
+            <div>
+                <h3 class="type-ui font-semibold text-lg mb-2 text-[#ddd]">Les 4 types</h3>
+                <ul class="type-body text-[#ccc] space-y-2">
+                    <li class="flex items-start gap-x-2"><span class="font-semibold text-[#ff8a3d] shrink-0">Sanguin :</span><span>Joyeux, sociable, plein d'énergie.</span></li>
+                    <li class="flex items-start gap-x-2"><span class="font-semibold text-[#ff5252] shrink-0">Colérique :</span><span>Leader, rapide et décidé.</span></li>
+                    <li class="flex items-start gap-x-2"><span class="font-semibold text-[#7b7eff] shrink-0">Mélancolique :</span><span>Profond, réfléchi et sensible.</span></li>
+                    <li class="flex items-start gap-x-2"><span class="font-semibold text-[#3ed9c4] shrink-0">Flegmatique :</span><span>Calme, patient et bon écouteur.</span></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="type-ui font-semibold text-lg mb-2 text-[#ddd]">À retenir</h3>
+                <p class="type-body text-[#ccc]">C'est un outil pour mieux te connaître. Personne n'est 100 % d'un seul tempérament — la plupart des gens ont un mélange de deux types.</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-3 mt-6 sm:mt-8">
+            <button onclick="startQuizAfterAbout()"
+                    class="type-btn chrome-button px-6 sm:px-10 py-3 glossy-btn text-[#ddd] rounded-full">
+                COMMENCER LE QUESTIONNAIRE
+            </button>
+            <button onclick="navigateToIntro()"
+                    class="type-link flex items-center gap-x-1.5">
+                <i class="icon icon--xs icon--muted fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>RETOUR À L'ACCUEIL</span>
+            </button>
         </div>
     </div>
 
@@ -394,34 +436,7 @@
         </div>
     </div>
 
-    <!-- About Modal -->
-    <div id="about-modal" onclick="hideAboutModal()" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-        <div onclick="event.stopImmediatePropagation()" class="y2k-card chrome-border rounded-3xl max-w-lg w-full p-4 sm:p-7">
-            <div class="flex justify-between items-start mb-5">
-                <div>
-                    <h3 class="type-display y2k-heading text-2xl">À PROPOS DES 4 TEMPÉRAMENTS</h3>
-                    <div class="type-caption mt-px">THÉORIE CLASSIQUE</div>
-                </div>
-                <button onclick="hideAboutModal()" class="text-3xl text-[#555] hover:text-white leading-none">&times;</button>
-            </div>
-            <div class="type-body text-[#aaa] space-y-4">
-                <p>La théorie des 4 Tempéraments vient de la Grèce ancienne (Hippocrate et Galien). Elle classe les personnalités en 4 types selon le comportement.</p>
-                
-                <div class="grid grid-cols-1 gap-y-1.5 pt-1">
-                    <div><span class="font-semibold text-[#ff8a3d]">SANGUIN :</span> Joyeux, sociable, plein d'énergie.</div>
-                    <div><span class="font-semibold text-[#ff5252]">COLÉRIQUE :</span> Leader, rapide et décidé.</div>
-                    <div><span class="font-semibold text-[#7b7eff]">MÉLANCOLIQUE :</span> Profond, réfléchi et sensible.</div>
-                    <div><span class="font-semibold text-[#3ed9c4]">FLEGMATIQUE :</span> Calme, patient et bon écouteur.</div>
-                </div>
-                
-                <p class="type-caption normal-case tracking-normal text-[#666] pt-2 border-t border-[#222]">C'est un outil pour mieux te connaître. Personne n'est 100 % d'un seul tempérament.</p>
-            </div>
-            <div class="mt-6 text-right">
-                <button onclick="hideAboutModal()" 
-                        class="type-btn px-6 py-2 glossy-btn rounded-full">COMPRIS</button>
-            </div>
-        </div>
-    </div>
+
 
 
 

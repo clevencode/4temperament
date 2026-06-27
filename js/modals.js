@@ -57,20 +57,13 @@ function hideAllTemperaments() {
 }
 
 function showAboutModal() {
-    if (typeof closeNavMenu === 'function') closeNavMenu();
-
-    const modal = document.getElementById('about-modal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-
-    const esc = (e) => { if (e.key === 'Escape') { hideAboutModal(); document.removeEventListener('keydown', esc); } };
-    document.addEventListener('keydown', esc, { once: true });
+    if (typeof navigateToTemperamentsAbout === 'function') {
+        navigateToTemperamentsAbout();
+    }
 }
 
 function hideAboutModal() {
-    const modal = document.getElementById('about-modal');
-    modal.classList.remove('flex');
-    modal.classList.add('hidden');
+    if (typeof navigateToIntro === 'function') navigateToIntro();
 }
 
 // Expor funções

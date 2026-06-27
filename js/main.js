@@ -206,6 +206,12 @@ function navigateToAbout() {
   showScreen('about-screen');
 }
 
+function navigateToTemperamentsAbout() {
+  closeNavMenu();
+  persistQuizProgressIfNeeded();
+  showScreen('temperaments-about-screen');
+}
+
 function openNavMenu() {
   const menu = document.getElementById('nav-mobile-menu');
   const toggle = document.getElementById('nav-menu-toggle');
@@ -248,8 +254,8 @@ function toggleNavMenu() {
 
 function openAboutFromNav(target) {
   closeNavMenu();
-  if (target === 'modal') {
-    showAboutModal();
+  if (target === 'theory') {
+    navigateToTemperamentsAbout();
   } else if (target === 'screen') {
     navigateToAbout();
   } else if (target === 'history') {
@@ -319,6 +325,7 @@ function navigateToResults() {
 window.showScreen = showScreen;
 window.navigateToIntro = navigateToIntro;
 window.navigateToAbout = navigateToAbout;
+window.navigateToTemperamentsAbout = navigateToTemperamentsAbout;
 window.navigateToQuiz = navigateToQuiz;
 window.navigateToResults = navigateToResults;
 window.toggleNavMenu = toggleNavMenu;
