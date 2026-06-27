@@ -215,6 +215,11 @@ function showResults() {
     renderDominantResult(result);
   }
 
+  const resultsTabs = document.getElementById('results-info-tabs');
+  if (resultsTabs && typeof activateInfoTab === 'function') {
+    activateInfoTab(resultsTabs, 'profile');
+  }
+
   if (typeof saveUserPreferences === 'function') {
     saveUserPreferences({ hasCompletedTest: true });
   } else if (typeof savePreferences === 'function') {

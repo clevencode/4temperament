@@ -345,89 +345,105 @@
             </div>
         </div>
 
-        <!-- Secondary + Profile -->
-        <div class="layout-grid-2 mb-8 page-card">
-            <div class="y2k-card chrome-border rounded-3xl p-6">
-                <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
-                <div id="secondary-result" class="flex items-center gap-x-3">
-                    <!-- Rempli par JS -->
-                </div>
-            </div>
-            
-            <div class="y2k-card chrome-border rounded-3xl p-6">
-                <div class="type-label mb-2.5">TON PROFIL</div>
-                <div id="profile-summary" class="type-body text-lg leading-snug font-medium text-[#ccc]"></div>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="y2k-card chrome-border rounded-3xl p-6 mb-8 page-card">
-            <div class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
-            <div id="result-description" class="type-result-body text-[#ccc]">
-            </div>
-        </div>
-
-        <!-- Strengths & Weaknesses -->
-        <div class="layout-grid-2 mb-8 page-card">
-            <div class="y2k-card chrome-border rounded-3xl p-6">
-                <div class="section-heading">
-                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--success fa-solid fa-circle-check" aria-hidden="true"></i></span>
-                    <h3 class="type-label">TES POINTS FORTS</h3>
-                </div>
-                <ul id="strengths-list" class="space-y-[7px]"></ul>
-            </div>
-            <div class="y2k-card chrome-border rounded-3xl p-6">
-                <div class="section-heading">
-                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--warning fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
-                    <h3 class="type-label">À AMÉLIORER</h3>
-                </div>
-                <ul id="weaknesses-list" class="space-y-[7px]"></ul>
-            </div>
-        </div>
-
-        <!-- Recommended Careers & Activities -->
-        <div class="layout-grid-2 mb-8 page-card">
-            <div class="y2k-card chrome-border rounded-3xl p-6">
-                <div class="section-heading">
-                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-briefcase" aria-hidden="true"></i></span>
-                    <h3 class="type-label">CARRIÈRES RECOMMANDÉES</h3>
-                </div>
-                <ul id="careers-list" class="space-y-[7px]"></ul>
-            </div>
-            <div class="y2k-card chrome-border rounded-3xl p-6">
-                <div class="section-heading">
-                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-heart" aria-hidden="true"></i></span>
-                    <h3 class="type-label">ACTIVITÉS PRÉFÉRÉES</h3>
-                </div>
-                <ul id="activities-list" class="space-y-[7px]"></ul>
-            </div>
-        </div>
-
-        <!-- Share Result -->
-        <div class="y2k-card chrome-border rounded-3xl p-7 mb-8">
-            <div class="section-heading">
-                <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-share-nodes" aria-hidden="true"></i></span>
-                <h3 class="type-label">PARTAGER MON RÉSULTAT</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <button onclick="shareOnWhatsApp()" 
-                        class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
-                    <i class="icon icon--sm icon--whatsapp fa-brands fa-whatsapp mr-1" aria-hidden="true"></i>WhatsApp
+        <!-- Info tabs -->
+        <div id="results-info-tabs" class="info-tabs y2k-card chrome-border rounded-3xl page-card" data-info-tabs>
+            <div class="info-tabs__bar" role="tablist" aria-label="Détails du résultat">
+                <button type="button" class="info-tab-chip is-active" role="tab" data-info-tab="profile" aria-selected="true">
+                    <i class="icon icon--xs icon--silver fa-solid fa-user info-tab-chip__icon" aria-hidden="true"></i>
+                    <span>Profil</span>
                 </button>
-                <button onclick="shareOnTelegram()" 
-                        class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
-                    <i class="icon icon--sm icon--telegram fa-brands fa-telegram mr-1" aria-hidden="true"></i>Telegram
+                <button type="button" class="info-tab-chip" role="tab" data-info-tab="strengths" aria-selected="false">
+                    <i class="icon icon--xs icon--muted fa-solid fa-circle-check info-tab-chip__icon" aria-hidden="true"></i>
+                    <span>Points forts</span>
                 </button>
-                <button onclick="shareOnInstagram()" 
-                        class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
-                    <i class="icon icon--sm icon--instagram fa-brands fa-instagram mr-1" aria-hidden="true"></i>Instagram
+                <button type="button" class="info-tab-chip" role="tab" data-info-tab="weaknesses" aria-selected="false">
+                    <i class="icon icon--xs icon--muted fa-solid fa-triangle-exclamation info-tab-chip__icon" aria-hidden="true"></i>
+                    <span>À améliorer</span>
+                </button>
+                <button type="button" class="info-tab-chip" role="tab" data-info-tab="careers" aria-selected="false">
+                    <i class="icon icon--xs icon--muted fa-solid fa-briefcase info-tab-chip__icon" aria-hidden="true"></i>
+                    <span>Carrières</span>
+                </button>
+                <button type="button" class="info-tab-chip" role="tab" data-info-tab="activities" aria-selected="false">
+                    <i class="icon icon--xs icon--muted fa-solid fa-heart info-tab-chip__icon" aria-hidden="true"></i>
+                    <span>Activités</span>
+                </button>
+                <button type="button" class="info-tab-chip" role="tab" data-info-tab="share" aria-selected="false">
+                    <i class="icon icon--xs icon--muted fa-solid fa-share-nodes info-tab-chip__icon" aria-hidden="true"></i>
+                    <span>Partager</span>
                 </button>
             </div>
-            <button onclick="copyResultToClipboard()" 
-                    class="type-btn mt-3 min-h-[40px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
-                <i class="icon icon--sm icon--muted fa-solid fa-copy mr-2" aria-hidden="true"></i>Copier le texte
-            </button>
-            <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
+            <div class="info-tabs__body">
+                <div class="info-tab-panel is-active" role="tabpanel" data-info-panel="profile">
+                    <div class="layout-grid-2 info-tab-grid">
+                        <div>
+                            <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
+                            <div id="secondary-result" class="flex items-center gap-x-3"></div>
+                        </div>
+                        <div>
+                            <div class="type-label mb-2.5">TON PROFIL</div>
+                            <div id="profile-summary" class="type-body text-lg leading-snug font-medium text-[#ccc]"></div>
+                        </div>
+                    </div>
+                    <div class="info-tab-section">
+                        <div class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
+                        <div id="result-description" class="type-result-body text-[#ccc]"></div>
+                    </div>
+                </div>
+                <div class="info-tab-panel" role="tabpanel" data-info-panel="strengths">
+                    <div class="section-heading">
+                        <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--success fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                        <h3 class="type-label">TES POINTS FORTS</h3>
+                    </div>
+                    <ul id="strengths-list" class="space-y-[7px]"></ul>
+                </div>
+                <div class="info-tab-panel" role="tabpanel" data-info-panel="weaknesses">
+                    <div class="section-heading">
+                        <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--warning fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
+                        <h3 class="type-label">À AMÉLIORER</h3>
+                    </div>
+                    <ul id="weaknesses-list" class="space-y-[7px]"></ul>
+                </div>
+                <div class="info-tab-panel" role="tabpanel" data-info-panel="careers">
+                    <div class="section-heading">
+                        <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-briefcase" aria-hidden="true"></i></span>
+                        <h3 class="type-label">CARRIÈRES RECOMMANDÉES</h3>
+                    </div>
+                    <ul id="careers-list" class="space-y-[7px]"></ul>
+                </div>
+                <div class="info-tab-panel" role="tabpanel" data-info-panel="activities">
+                    <div class="section-heading">
+                        <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-heart" aria-hidden="true"></i></span>
+                        <h3 class="type-label">ACTIVITÉS PRÉFÉRÉES</h3>
+                    </div>
+                    <ul id="activities-list" class="space-y-[7px]"></ul>
+                </div>
+                <div class="info-tab-panel" role="tabpanel" data-info-panel="share">
+                    <div class="section-heading">
+                        <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-share-nodes" aria-hidden="true"></i></span>
+                        <h3 class="type-label">PARTAGER MON RÉSULTAT</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="shareOnWhatsApp()" 
+                                class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+                            <i class="icon icon--sm icon--whatsapp fa-brands fa-whatsapp mr-1" aria-hidden="true"></i>WhatsApp
+                        </button>
+                        <button onclick="shareOnTelegram()" 
+                                class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+                            <i class="icon icon--sm icon--telegram fa-brands fa-telegram mr-1" aria-hidden="true"></i>Telegram
+                        </button>
+                        <button onclick="shareOnInstagram()" 
+                                class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+                            <i class="icon icon--sm icon--instagram fa-brands fa-instagram mr-1" aria-hidden="true"></i>Instagram
+                        </button>
+                    </div>
+                    <button onclick="copyResultToClipboard()" 
+                            class="type-btn mt-3 min-h-[40px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
+                        <i class="icon icon--sm icon--muted fa-solid fa-copy mr-2" aria-hidden="true"></i>Copier le texte
+                    </button>
+                    <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
+                </div>
+            </div>
         </div>
 
         <!-- Actions -->
@@ -480,6 +496,7 @@
     <script src="js/data.js"></script>
     <script src="js/scoring.js"></script>
     <script src="js/icons.js"></script>
+    <script src="js/tabs.js"></script>
     <script src="js/quiz.js"></script>
     <script src="js/results.js"></script>
     <script src="js/modals.js"></script>

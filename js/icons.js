@@ -15,6 +15,7 @@ const AppIcons = {
   clock: 'fa-solid fa-clock',
   history: 'fa-solid fa-clock-rotate-left',
   info: 'fa-solid fa-circle-info',
+  user: 'fa-solid fa-user',
 
   strengths: 'fa-solid fa-circle-check',
   weaknesses: 'fa-solid fa-triangle-exclamation',
