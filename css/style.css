@@ -101,11 +101,7 @@ body.splash-active {
         radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.025) 0%, transparent 48%);
 }
 
-.intro-screen__brand {
-    width: 4rem;
-    height: 4rem;
-    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.45));
-}
+
 
 /* Splash screen */
 .splash-screen {
