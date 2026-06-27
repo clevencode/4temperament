@@ -38,13 +38,13 @@ function renderResultBars(result) {
       <div class="flex justify-between items-center mb-1.5 px-1">
         <div class="flex items-center gap-x-2">
           ${temperamentEmoji(t.emoji, 'sm', isDominant ? t.color : null)}
-          <span class="type-ui font-semibold text-base sm:text-lg ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
+          <span class="type-ui font-semibold text-lg ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
           ${isDominant ? `<span class="type-caption px-2 py-px rounded" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
         </div>
         <span class="type-ui font-semibold tabular-nums w-10 text-right text-sm" style="color:#c9c9c9">${percent}%</span>
       </div>
-      <div class="h-1 sm:h-[5px] bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
-        <div class="h-1 sm:h-[5px] rounded-full result-bar"
+      <div class="result-bar-track">
+        <div class="result-bar-fill result-bar"
              style="width: ${percent}%; background: linear-gradient(to right, ${t.color}, #fff, ${t.color});">
         </div>
       </div>

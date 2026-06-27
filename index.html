@@ -17,7 +17,7 @@
 <body class="bg-[#050505] text-[#e5e5e5]">
     <!-- Navbar -->
     <nav class="border-b border-[#1f1f1f] bg-[#050505]">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between">
+        <div class="max-w-5xl mx-auto px-4 py-4 space-y-3">
             <button type="button" id="nav-brand-home"
                     onclick="navigateToIntro()"
                     class="flex items-center gap-x-3 text-left rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
@@ -25,56 +25,42 @@
                 <span class="icon-badge icon-badge--md icon-badge--chrome pointer-events-none" aria-hidden="true">
                     <i class="icon icon--md icon--silver fa-solid fa-brain"></i>
                 </span>
-                <span class="type-display y2k-heading text-xl sm:text-2xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
+                <span class="type-display y2k-heading text-xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
             </button>
-            <button type="button" id="nav-menu-toggle"
-                    class="nav-hamburger flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl border border-[#292929] hover:border-[#444] hover:bg-[#111] transition-colors"
-                    onclick="toggleNavMenu()"
-                    aria-expanded="false"
-                    aria-controls="nav-mobile-menu"
-                    aria-label="Ouvrir le menu">
-                <i id="nav-menu-icon" class="icon icon--md icon--silver fa-solid fa-bars" aria-hidden="true"></i>
-            </button>
+            <div class="nav-toolbar" role="navigation" aria-label="Navigation principale">
+                <button type="button" class="nav-toolbar__item" onclick="openAboutFromNav('theory')">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--muted fa-solid fa-circle-info"></i>
+                    </span>
+                    <span class="nav-toolbar__text">
+                        <span class="nav-toolbar__title">Les 4 tempéraments</span>
+                        <span class="nav-toolbar__desc">Théorie classique</span>
+                    </span>
+                </button>
+                <button type="button" class="nav-toolbar__item" onclick="openAboutFromNav('screen')">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--muted fa-solid fa-table-cells"></i>
+                    </span>
+                    <span class="nav-toolbar__text">
+                        <span class="nav-toolbar__title">À propos du test</span>
+                        <span class="nav-toolbar__desc">Comment ça fonctionne</span>
+                    </span>
+                </button>
+                <button type="button" class="nav-toolbar__item" onclick="openAboutFromNav('history')">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--muted fa-solid fa-clock-rotate-left"></i>
+                    </span>
+                    <span class="nav-toolbar__text">
+                        <span class="nav-toolbar__title">Historique</span>
+                        <span class="nav-toolbar__desc">Résultats enregistrés</span>
+                    </span>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- Menu navigation (hamburger) -->
-    <div id="nav-mobile-menu" class="nav-mobile-menu" aria-hidden="true">
-        <div class="nav-mobile-menu__backdrop" onclick="closeNavMenu()" aria-hidden="true"></div>
-        <nav class="nav-mobile-menu__panel y2k-card chrome-border" aria-label="Menu principal">
-            <div class="type-caption px-4 pt-4 pb-2 text-[#666]">INFORMATIONS</div>
-            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('theory')">
-                <span class="icon-badge icon-badge--sm" aria-hidden="true">
-                    <i class="icon icon--sm icon--muted fa-solid fa-circle-info"></i>
-                </span>
-                <span>
-                    <span class="nav-mobile-menu__title">Les 4 tempéraments</span>
-                    <span class="nav-mobile-menu__desc">Théorie classique</span>
-                </span>
-            </button>
-            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('screen')">
-                <span class="icon-badge icon-badge--sm" aria-hidden="true">
-                    <i class="icon icon--sm icon--muted fa-solid fa-table-cells"></i>
-                </span>
-                <span>
-                    <span class="nav-mobile-menu__title">À propos du test</span>
-                    <span class="nav-mobile-menu__desc">Comment ça fonctionne</span>
-                </span>
-            </button>
-            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('history')">
-                <span class="icon-badge icon-badge--sm" aria-hidden="true">
-                    <i class="icon icon--sm icon--muted fa-solid fa-clock-rotate-left"></i>
-                </span>
-                <span>
-                    <span class="nav-mobile-menu__title">Historique</span>
-                    <span class="nav-mobile-menu__desc">Résultats enregistrés</span>
-                </span>
-            </button>
-        </nav>
-    </div>
-
     <!-- HERO / INTRO SCREEN -->
-    <div id="intro-screen" class="max-w-4xl mx-auto px-6 pt-14 pb-16 relative">
+    <div id="intro-screen" class="page-shell page-shell--wide relative pt-8">
         <!-- étoiles décoratives -->
         <div class="icon-deco-star icon-deco-star--lg absolute top-12 left-8" aria-hidden="true">✧</div>
         <div class="icon-deco-star icon-deco-star--sm absolute top-28 right-14" aria-hidden="true">✦</div>
@@ -118,8 +104,8 @@
     </div>
 
     <!-- ABOUT TEMPERAMENTS THEORY SCREEN -->
-    <div id="temperaments-about-screen" class="hidden max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        <div class="text-center mb-6 sm:mb-8">
+    <div id="temperaments-about-screen" class="hidden page-shell">
+        <div class="page-header">
             <h2 class="type-display type-section-title y2k-title mb-3">À propos des 4 tempéraments</h2>
             <p class="type-body text-[#aaa]">Théorie classique</p>
         </div>
@@ -146,9 +132,9 @@
             </div>
         </div>
 
-        <div class="flex flex-col items-center gap-3 mt-6 sm:mt-8">
+        <div class="page-footer">
             <button onclick="startQuizAfterAbout()"
-                    class="type-btn chrome-button px-6 sm:px-10 py-3 glossy-btn text-[#ddd] rounded-full">
+                    class="type-btn chrome-button px-6 py-3 glossy-btn text-[#ddd] rounded-full">
                 COMMENCER LE QUESTIONNAIRE
             </button>
             <button onclick="navigateToIntro()"
@@ -160,8 +146,8 @@
     </div>
 
     <!-- ABOUT THE APP SCREEN -->
-    <div id="about-screen" class="hidden max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        <div class="text-center mb-6 sm:mb-8">
+    <div id="about-screen" class="hidden page-shell">
+        <div class="page-header">
             <h2 class="type-display type-section-title y2k-title mb-3">À propos du test</h2>
             <p class="type-body text-[#aaa]">Voici comment ça fonctionne</p>
         </div>
@@ -187,9 +173,9 @@
             </div>
         </div>
 
-        <div class="flex flex-col items-center gap-3 mt-6 sm:mt-8">
+        <div class="page-footer">
             <button onclick="startQuizAfterAbout()" 
-                    class="type-btn chrome-button px-6 sm:px-10 py-3 glossy-btn text-[#ddd] rounded-full">
+                    class="type-btn chrome-button px-6 py-3 glossy-btn text-[#ddd] rounded-full">
                 COMMENCER LE QUESTIONNAIRE
             </button>
             <button onclick="navigateToIntro()" 
@@ -201,8 +187,8 @@
     </div>
 
     <!-- HISTORY SCREEN -->
-    <div id="history-screen" class="hidden max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        <div class="text-center mb-6 sm:mb-8">
+    <div id="history-screen" class="hidden page-shell">
+        <div class="page-header">
             <h2 class="type-display type-section-title y2k-title mb-3">Historique des résultats</h2>
             <p class="type-body text-[#aaa]">Résultats enregistrés sur cet appareil</p>
         </div>
@@ -211,9 +197,9 @@
             <div id="history-screen-content"></div>
         </div>
 
-        <div class="flex flex-col items-center gap-3 mt-6 sm:mt-8">
+        <div class="page-footer">
             <button type="button" onclick="startNewTestFromHistory()"
-                    class="type-btn chrome-button px-6 sm:px-10 py-3 glossy-btn text-[#ddd] rounded-full inline-flex items-center gap-x-2">
+                    class="type-btn chrome-button px-6 py-3 glossy-btn text-[#ddd] rounded-full inline-flex items-center gap-x-2">
                 <i class="icon icon--sm icon--silver fa-solid fa-plus" aria-hidden="true"></i>
                 <span>NOUVEAU TEST</span>
             </button>
@@ -229,11 +215,32 @@
         </div>
     </div>
 
+    <!-- RESULT DETAIL SCREEN -->
+    <div id="result-detail-screen" class="hidden page-shell">
+        <div class="page-header">
+            <h2 class="type-display type-section-title y2k-title mb-3">Vue complète du résultat</h2>
+            <p id="result-detail-date" class="type-body text-[#aaa]"></p>
+        </div>
+        <div id="result-detail-content" class="space-y-5"></div>
+        <div class="page-footer">
+            <button type="button" id="result-detail-edit-btn"
+                    class="type-btn px-6 py-2 border border-[#444] hover:bg-[#222] rounded-full inline-flex items-center gap-x-2">
+                <i class="icon icon--sm icon--muted fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                <span>MODIFIER</span>
+            </button>
+            <button type="button" onclick="navigateToHistory()"
+                    class="type-link flex items-center gap-x-1.5">
+                <i class="icon icon--xs icon--muted fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>RETOUR À L'HISTORIQUE</span>
+            </button>
+        </div>
+    </div>
+
     <!-- QUIZ SCREEN -->
-    <div id="quiz-screen" class="hidden max-w-[700px] mx-auto px-6 py-8">
+    <div id="quiz-screen" class="hidden page-shell page-shell--quiz">
         <div class="quiz-container">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-4 sm:mb-6">
+            <div class="flex items-center justify-between mb-4">
                 <div class="type-quiz-meta">QUESTION <span id="current-question" class="type-quiz-counter chrome-text-sm">1</span> <span class="type-quiz-total">/ <span id="total-questions">30</span></span></div>
                 <button onclick="restartQuiz()" 
                         class="type-caption flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full"
@@ -249,20 +256,18 @@
             </div>
 
             <!-- Progress -->
-            <div class="mb-4 sm:mb-7">
+            <div class="mb-6">
                 <div class="type-caption flex justify-between mb-1 px-0.5">
                     <div>PROGRÈS</div>
                     <div><span id="progress-text">0/30</span></div>
                 </div>
-                <div class="h-1 sm:h-1.5 bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
-                    <div id="progress-bar" 
-                         class="h-1 sm:h-1.5 rounded-full progress-bar"
-                         style="width: 0%"></div>
+                <div class="progress-track">
+                    <div id="progress-bar" class="progress-fill progress-bar" style="width: 0%"></div>
                 </div>
             </div>
 
             <!-- Question -->
-            <div class="y2k-card chrome-border rounded-3xl p-6 sm:p-8 mb-4">
+            <div class="y2k-card chrome-border rounded-3xl p-6 mb-4">
                 <p class="type-label mb-3">Dans quelle mesure es-tu d'accord ?</p>
                 <div id="question-text" 
                      class="question-text type-question min-h-[60px]">
@@ -303,7 +308,7 @@
     </div>
 
     <!-- RESULTS SCREEN -->
-    <div id="results-screen" class="hidden max-w-4xl mx-auto px-6 py-10">
+    <div id="results-screen" class="hidden page-shell page-shell--wide">
         <div class="text-center mb-9">
             <div class="type-caption inline-block px-4 py-1 rounded-full border border-[#2a2a2a] text-[#777] mb-4">RÉSULTAT FINAL</div>
             <h2 class="type-display type-section-title y2k-title mb-1">TON PROFIL EST</h2>
@@ -312,25 +317,25 @@
 
         <!-- Main Result -->
         <div id="main-result-card" 
-             class="rounded-3xl p-6 sm:p-9 md:p-11 mb-8 text-white premium-shadow relative overflow-hidden main-result-bg">
+             class="rounded-3xl p-6 mb-8 text-white premium-shadow relative overflow-hidden main-result-bg page-card">
             
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
             <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-            <div class="flex flex-col md:flex-row md:items-center gap-y-8 relative z-10">
-                <div class="flex-1">
+            <div class="layout-row relative z-10">
+                <div class="layout-row__main">
                     <div id="result-type-label" class="type-label opacity-60 mb-1">TEMPÉRAMENT PRINCIPAL</div>
                     <div id="result-name" class="type-display type-result-name y2k-title mb-2"></div>
-                    <div id="result-subtitle" class="type-ui text-xl sm:text-2xl tracking-tight opacity-80"></div>
+                    <div id="result-subtitle" class="type-ui text-xl tracking-tight opacity-80"></div>
                 </div>
-                <div class="flex-shrink-0 text-center">
+                <div class="layout-row__aside">
                     <div id="result-icon" class="temperament-icon-shell temperament-icon-shell--result mx-auto mb-1"></div>
                 </div>
             </div>
         </div>
 
         <!-- Percentages -->
-        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 mb-8">
+        <div class="y2k-card chrome-border rounded-3xl p-6 mb-8 page-card">
             <div class="flex items-center justify-between mb-5 px-1">
                 <div class="type-label text-[#888]">RÉPARTITION DES TEMPÉRAMENTS</div>
             </div>
@@ -341,7 +346,7 @@
         </div>
 
         <!-- Secondary + Profile -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        <div class="layout-grid-2 mb-8 page-card">
             <div class="y2k-card chrome-border rounded-3xl p-6">
                 <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
                 <div id="secondary-result" class="flex items-center gap-x-3">
@@ -356,22 +361,22 @@
         </div>
 
         <!-- Description -->
-        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 mb-8">
+        <div class="y2k-card chrome-border rounded-3xl p-6 mb-8 page-card">
             <div class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
             <div id="result-description" class="type-result-body text-[#ccc]">
             </div>
         </div>
 
         <!-- Strengths & Weaknesses -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+        <div class="layout-grid-2 mb-8 page-card">
+            <div class="y2k-card chrome-border rounded-3xl p-6">
                 <div class="section-heading">
                     <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--success fa-solid fa-circle-check" aria-hidden="true"></i></span>
                     <h3 class="type-label">TES POINTS FORTS</h3>
                 </div>
                 <ul id="strengths-list" class="space-y-[7px]"></ul>
             </div>
-            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+            <div class="y2k-card chrome-border rounded-3xl p-6">
                 <div class="section-heading">
                     <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--warning fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
                     <h3 class="type-label">À AMÉLIORER</h3>
@@ -381,15 +386,15 @@
         </div>
 
         <!-- Recommended Careers & Activities -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+        <div class="layout-grid-2 mb-8 page-card">
+            <div class="y2k-card chrome-border rounded-3xl p-6">
                 <div class="section-heading">
                     <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-briefcase" aria-hidden="true"></i></span>
                     <h3 class="type-label">CARRIÈRES RECOMMANDÉES</h3>
                 </div>
                 <ul id="careers-list" class="space-y-[7px]"></ul>
             </div>
-            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+            <div class="y2k-card chrome-border rounded-3xl p-6">
                 <div class="section-heading">
                     <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-heart" aria-hidden="true"></i></span>
                     <h3 class="type-label">ACTIVITÉS PRÉFÉRÉES</h3>
@@ -426,15 +431,15 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <div class="layout-actions">
             <button onclick="restartQuiz()" 
-                    class="type-btn px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full flex">
+                    class="type-btn px-8 py-3 justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full flex">
                 <i class="icon icon--sm icon--muted fa-solid fa-rotate-right" aria-hidden="true"></i>
                 <span class="ml-2">RECOMMENCER LE TEST</span>
             </button>
             
             <button onclick="showAllTemperaments()" 
-                    class="type-btn chrome-button px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full flex">
+                    class="type-btn chrome-button px-8 py-3 justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full flex">
                 <i class="icon icon--sm icon--silver fa-solid fa-table-cells" aria-hidden="true"></i>
                 <span class="ml-2">VOIR LES 4 TEMPÉRAMENTS</span>
             </button>
@@ -459,7 +464,7 @@
                 <button onclick="hideAllTemperaments()" class="text-4xl leading-none text-[#555] hover:text-white transition-colors">&times;</button>
             </div>
             
-            <div class="p-4 sm:p-7 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5" id="all-temperaments-content">
+            <div class="p-4 layout-grid-2 gap-4" id="all-temperaments-content">
                 <!-- Rempli par JS -->
             </div>
         </div>

@@ -160,8 +160,6 @@ let currentEditingId = null;
 // Évite les toggles dispersés, focus management, règles UI (notice edition)
 // =====================================================
 function showScreen(screenId) {
-  closeNavMenu();
-
   // Cacher tous les écrans principaux
   document.querySelectorAll('[id$="-screen"]').forEach(s => {
     s.classList.add('hidden');
@@ -193,7 +191,6 @@ function showScreen(screenId) {
 
 // Helpers de flux explicites (clarté + maintenabilité)
 function navigateToIntro() {
-  closeNavMenu();
   persistQuizProgressIfNeeded();
   currentEditingId = null;
   showScreen('intro-screen');
@@ -201,59 +198,16 @@ function navigateToIntro() {
 }
 
 function navigateToAbout() {
-  closeNavMenu();
   persistQuizProgressIfNeeded();
   showScreen('about-screen');
 }
 
 function navigateToTemperamentsAbout() {
-  closeNavMenu();
   persistQuizProgressIfNeeded();
   showScreen('temperaments-about-screen');
 }
 
-function openNavMenu() {
-  const menu = document.getElementById('nav-mobile-menu');
-  const toggle = document.getElementById('nav-menu-toggle');
-  const icon = document.getElementById('nav-menu-icon');
-  if (!menu || !toggle) return;
-
-  menu.classList.add('is-open');
-  menu.setAttribute('aria-hidden', 'false');
-  toggle.setAttribute('aria-expanded', 'true');
-  toggle.setAttribute('aria-label', 'Fermer le menu');
-  if (icon) icon.className = 'icon icon--md icon--silver fa-solid fa-xmark';
-  document.body.classList.add('nav-menu-open');
-
-  const firstItem = menu.querySelector('.nav-mobile-menu__item');
-  if (firstItem) setTimeout(() => firstItem.focus(), 80);
-}
-
-function closeNavMenu() {
-  const menu = document.getElementById('nav-mobile-menu');
-  const toggle = document.getElementById('nav-menu-toggle');
-  const icon = document.getElementById('nav-menu-icon');
-  if (!menu || !menu.classList.contains('is-open')) return;
-
-  menu.classList.remove('is-open');
-  menu.setAttribute('aria-hidden', 'true');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Ouvrir le menu');
-  }
-  if (icon) icon.className = 'icon icon--md icon--silver fa-solid fa-bars';
-  document.body.classList.remove('nav-menu-open');
-}
-
-function toggleNavMenu() {
-  const menu = document.getElementById('nav-mobile-menu');
-  if (!menu) return;
-  if (menu.classList.contains('is-open')) closeNavMenu();
-  else openNavMenu();
-}
-
 function openAboutFromNav(target) {
-  closeNavMenu();
   if (target === 'theory') {
     navigateToTemperamentsAbout();
   } else if (target === 'screen') {
@@ -328,9 +282,6 @@ window.navigateToAbout = navigateToAbout;
 window.navigateToTemperamentsAbout = navigateToTemperamentsAbout;
 window.navigateToQuiz = navigateToQuiz;
 window.navigateToResults = navigateToResults;
-window.toggleNavMenu = toggleNavMenu;
-window.openNavMenu = openNavMenu;
-window.closeNavMenu = closeNavMenu;
 window.openAboutFromNav = openAboutFromNav;
 window.navigateToHistory = navigateToHistory;
 window.showResultsHistory = showResultsHistory;
@@ -470,7 +421,6 @@ function loadResultsHistory() {
 }
 
 function navigateToHistory() {
-  closeNavMenu();
   persistQuizProgressIfNeeded();
   showScreen('history-screen');
   renderHistoryScreen();
@@ -512,7 +462,7 @@ function buildHistoryCard(entry, index) {
       <div>
         <div class="flex items-center gap-x-2">
           ${temperamentEmoji(dominant.emoji, 'sm', dominant.color)}
-          <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
+          <span class="type-ui font-semibold text-lg" style="color: ${dominant.color}">${dominant.name}</span>
         </div>
         <div class="type-caption normal-case tracking-normal text-[#888]">${dateStr}</div>
       </div>
@@ -763,19 +713,19 @@ function shareSectionHTML(index) {
     return `
         <div class="flex flex-wrap gap-2">
             <button onclick="if(window.shareFullResultOnWhatsApp)window.shareFullResultOnWhatsApp(${index});" 
-                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
                 ${icon('whatsapp', { size: 'sm', tone: 'whatsapp', className: 'mr-1' })}WhatsApp
             </button>
             <button onclick="if(window.shareFullResultOnTelegram)window.shareFullResultOnTelegram(${index});" 
-                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
                 ${icon('telegram', { size: 'sm', tone: 'telegram', className: 'mr-1' })}Telegram
             </button>
             <button onclick="if(window.shareFullResultOnInstagram)window.shareFullResultOnInstagram(${index});" 
-                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
                 ${icon('instagram', { size: 'sm', tone: 'instagram', className: 'mr-1' })}Instagram
             </button>
             <button onclick="if(window.copyFullResult)window.copyFullResult(${index});" 
-                    class="min-h-[40px] px-3 sm:px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
+                    class="type-btn min-h-[40px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
                 ${icon('copy', { size: 'sm', tone: 'muted', className: 'mr-1' })}Copier
             </button>
         </div>
@@ -949,16 +899,6 @@ function initializeApp() {
 
     // Support clavier
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const menu = document.getElementById('nav-mobile-menu');
-            if (menu?.classList.contains('is-open')) {
-                e.preventDefault();
-                closeNavMenu();
-                document.getElementById('nav-menu-toggle')?.focus();
-                return;
-            }
-        }
-
         const quizVisible = !document.getElementById('quiz-screen').classList.contains('hidden');
         if (!quizVisible) return;
 
