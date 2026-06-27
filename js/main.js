@@ -308,11 +308,20 @@ function startQuiz() {
 
     const saved = QuizProgress.load();
     if (saved && saved.answers && Object.keys(saved.answers).length > 0) {
-        answers = JSON.parse(JSON.stringify(saved.answers));
-        currentQuestionIndex = Math.min(
-            saved.currentQuestionIndex ?? 0,
-            QUESTIONS.length - 1
-        );
+        answers = typeof QuizFlow !== 'undefined'
+            ? QuizFlow.normalizeAnswers(saved.answers)
+            : JSON.parse(JSON.stringify(saved.answers));
+
+        const savedIndex = Math.min(saved.currentQuestionIndex ?? 0, QUESTIONS.length - 1);
+        const firstUnanswered = typeof QuizFlow !== 'undefined'
+            ? QuizFlow.getFirstUnansweredIndex(answers)
+            : null;
+
+        if (firstUnanswered != null && !QuizFlow.isQuestionAnswered(QUESTIONS[savedIndex]?.id, answers)) {
+            currentQuestionIndex = firstUnanswered;
+        } else {
+            currentQuestionIndex = savedIndex;
+        }
     } else {
         answers = {};
         currentQuestionIndex = 0;
@@ -874,7 +883,11 @@ function refazerTeste(index) {
 
     clearQuizProgress();
     currentEditingId = entry.id;
-    answers = entry.answers ? JSON.parse(JSON.stringify(entry.answers)) : {};
+    answers = entry.answers
+        ? (typeof QuizFlow !== 'undefined'
+            ? QuizFlow.normalizeAnswers(entry.answers)
+            : JSON.parse(JSON.stringify(entry.answers)))
+        : {};
     userName = '';
 
     currentQuestionIndex = 0;
@@ -916,7 +929,7 @@ function initializeApp() {
         const quizVisible = !document.getElementById('quiz-screen').classList.contains('hidden');
         if (!quizVisible) return;
 
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.target.closest('.likert-option')) {
             e.preventDefault();
             nextQuestion();
         }

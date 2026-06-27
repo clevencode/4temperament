@@ -186,6 +186,20 @@ function renderDominantResult(result) {
 }
 
 function showResults() {
+  if (typeof QuizFlow !== 'undefined' && !QuizFlow.canComplete(answers)) {
+    if (typeof redirectToFirstUnanswered === 'function') {
+      redirectToFirstUnanswered();
+    } else if (typeof showQuizError === 'function') {
+      const missing = QuizFlow.getMissingQuestions(answers).length;
+      showQuizError(
+        missing === 1
+          ? 'Répondez à toutes les affirmations avant de voir le résultat.'
+          : `Il reste ${missing} affirmations sans réponse.`
+      );
+    }
+    return;
+  }
+
   if (typeof navigateToResults === 'function') {
     navigateToResults();
   } else {
