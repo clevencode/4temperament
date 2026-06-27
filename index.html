@@ -47,7 +47,7 @@
             <!-- Badge -->
             <div class="inline-flex items-center gap-x-2 px-5 py-1.5 rounded-full metallic mb-9 text-xs tracking-[2px] uppercase font-semibold border border-[#2a2a2a]">
                 <div class="w-1.5 h-1.5 bg-[#c9c9c9] rounded-full"></div>
-                <span class="text-[#a0a0a0]">TEST CLASSIQUE • 14 QUESTIONS</span>
+                <span class="text-[#a0a0a0]">TEST CLASSIQUE • 30 QUESTIONS</span>
             </div>
 
             <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[0.92] font-bold mb-3 y2k-title tracking-[-4.5px]">
@@ -57,8 +57,8 @@
                 </span>
             </h1>
             
-            <p class="max-w-[380px] mx-auto text-lg text-[#999] mb-9 tracking-[-0.2px]">
-                Un questionnaire simple basé sur les 4 Tempéraments.
+            <p class="max-w-[420px] mx-auto text-lg text-[#999] mb-9 tracking-[-0.2px]">
+                30 affirmations avec échelle d'accord — de « pas du tout d'accord » à « tout à fait d'accord ».
             </p>
 
             <div class="flex items-center justify-center">
@@ -72,7 +72,7 @@
             <div class="mt-8 flex items-center justify-center gap-x-7 text-[12px] text-[#666] tracking-[1px] uppercase">
                 <div class="flex items-center gap-x-2">
                     <i class="fa-regular fa-clock"></i>
-                    <span>~4 MIN</span>
+                    <span>~8 MIN</span>
                 </div>
                 <div class="h-px w-3 bg-[#333]"></div>
                 <div>SIMPLE • ANONYME</div>
@@ -135,7 +135,7 @@
             <div>
                 <h3 class="font-semibold text-lg mb-2 text-[#ddd]">Comment ça marche ?</h3>
                 <ul class="list-disc list-inside text-sm space-y-1">
-                    <li>Réponds honnêtement aux 14 questions</li>
+                    <li>Réponds honnêtement aux 30 affirmations (échelle d'accord)</li>
                     <li>Nous calculons ton tempérament dominant + secondaire</li>
                     <li>Tu reçois des conseils adaptés (carrières, activités...)</li>
                 </ul>
@@ -167,7 +167,7 @@
             <div class="flex items-center justify-between mb-4 sm:mb-6">
                 <div class="flex items-baseline gap-x-2 sm:gap-x-3">
                     <span class="text-[10px] sm:text-xs font-semibold tracking-[3px] text-[#777]">QUESTIONNAIRE</span>
-                    <div class="text-lg sm:text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-2xl sm:text-3xl">1</span> <span class="text-[#555]">/ 14</span></div>
+                    <div class="text-lg sm:text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-2xl sm:text-3xl">1</span> <span class="text-[#555]">/ <span id="total-questions">30</span></span></div>
                 </div>
                 <div class="flex items-center gap-x-2">
                     <button onclick="restartQuiz()" 
@@ -203,18 +203,17 @@
             </div>
 
             <!-- Question -->
-            <div class="y2k-card chrome-border rounded-3xl p-8 mb-6">
+            <div class="y2k-card chrome-border rounded-3xl p-6 sm:p-8 mb-4">
+                <p class="text-[10px] uppercase tracking-[2px] text-[#666] mb-3">Dans quelle mesure es-tu d'accord ?</p>
                 <div id="question-text" 
-                     class="question-text text-[#ddd] min-h-[82px]">
+                     class="question-text text-[#ddd] min-h-[60px] text-lg sm:text-xl leading-snug">
                 </div>
             </div>
 
-            <!-- Options -->
+            <!-- Likert scale options -->
             <div id="options-container" 
-                 class="grid grid-cols-1 gap-3 mb-4" 
-                 role="radiogroup" 
-                 aria-labelledby="question-text">
-                <!-- Dynamically populated by JS as accessible buttons -->
+                 class="mb-4">
+                <!-- Dynamically populated by JS -->
             </div>
 
             <!-- Error message for no selection -->
@@ -222,7 +221,7 @@
                  role="alert" 
                  aria-live="polite"
                  class="hidden text-[var(--error)] text-sm mb-4 text-center font-medium">
-                Veuillez choisir au moins une option.
+                Veuillez choisir un niveau d'accord.
             </div>
 
             <!-- Navigation -->

@@ -2,7 +2,7 @@
 
 // État global du questionnaire
 let currentQuestionIndex = 0;
-let answers = {}; // questionId: optionType
+let answers = {}; // questionId: likertValue (1-5)
 let userName = ""; // Nom complet de l'utilisateur
 
 // Constantes des 4 Tempéraments
@@ -141,146 +141,46 @@ const TEMPERAMENTS = {
     }
 };
 
-// Questions du questionnaire (14 questions)
+// Échelle Likert (identique pour toutes les questions)
+const LIKERT_OPTIONS = [
+    { value: 5, text: "Je suis tout à fait d'accord", short: "Tout à fait d'accord" },
+    { value: 4, text: "Je suis d'accord", short: "D'accord" },
+    { value: 3, text: "Neutre", short: "Neutre" },
+    { value: 2, text: "Je ne suis pas d'accord", short: "Pas d'accord" },
+    { value: 1, text: "Je ne suis pas du tout d'accord", short: "Pas du tout d'accord" }
+];
+
+// Questions du questionnaire (30 affirmations, échelle Likert)
+// type = tempérament mesuré ; reverse = true si « pas d'accord » augmente le score
 const QUESTIONS = [
-    {
-        id: 1,
-        text: "Quand j'arrive dans un nouvel endroit avec beaucoup de gens que je ne connais pas, je :",
-        options: [
-            { text: "Commence à parler avec plein de gens et je me sens bien", type: "sanguineo" },
-            { text: "Cherche vite une personne importante et je vais droit au but", type: "colerico" },
-            { text: "Observe d'abord, puis je parle avec une ou deux personnes calmes", type: "melancolico" },
-            { text: "Reste dans un coin et j'attends que quelqu'un vienne me parler", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 2,
-        text: "Face à un problème difficile, je réagis plutôt comme ça :",
-        options: [
-            { text: "Je parle avec plusieurs personnes pour trouver une idée", type: "sanguineo" },
-            { text: "Je décide vite et je commence à agir tout de suite", type: "colerico" },
-            { text: "J'analyse tout en détail avant de faire quoi que ce soit", type: "melancolico" },
-            { text: "Je reste calme et j'attends que ça se règle tout seul", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 3,
-        text: "Mes amis disent souvent que je suis :",
-        options: [
-            { text: "La personne la plus drôle et sociable du groupe", type: "sanguineo" },
-            { text: "Quelqu'un qui prend la tête et qui agit", type: "colerico" },
-            { text: "Une personne profonde qui réfléchit beaucoup", type: "melancolico" },
-            { text: "La personne la plus calme qui unit tout le monde", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 4,
-        text: "Quand je prépare un voyage ou une fête, je :",
-        options: [
-            { text: "J'organise au dernier moment, l'important c'est de s'amuser", type: "sanguineo" },
-            { text: "Je fais un plan précis et je veux que tout le monde le suive", type: "colerico" },
-            { text: "Je prépare tout à l'avance, même les problèmes possibles", type: "melancolico" },
-            { text: "Je fais un plan simple qui plaît à tout le monde", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 5,
-        text: "Quand il y a une dispute ou un conflit, je :",
-        options: [
-            { text: "Essaie de détendre l'ambiance avec de l'humour", type: "sanguineo" },
-            { text: "Défends mon avis avec force", type: "colerico" },
-            { text: "Suis très touché et j'ai besoin de temps pour réfléchir", type: "melancolico" },
-            { text: "Cherche un compromis pour que tout le monde soit content", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 6,
-        text: "Quelle phrase te ressemble le plus ?",
-        options: [
-            { text: "J'aime être au centre de l'attention et faire rire les gens", type: "sanguineo" },
-            { text: "J'aime avoir le contrôle et voir les choses se faire", type: "colerico" },
-            { text: "Je préfère les activités calmes et qui ont du sens", type: "melancolico" },
-            { text: "Je préfère une vie tranquille sans trop de stress", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 7,
-        text: "Quand quelqu'un me critique, je :",
-        options: [
-            { text: "Fais une blague et je n'y pense plus trop", type: "sanguineo" },
-            { text: "Défends ma position ou j'essaie de m'améliorer vite", type: "colerico" },
-            { text: "Suis très touché et j'y pense longtemps", type: "melancolico" },
-            { text: "Essaie de comprendre le point de vue de l'autre personne", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 8,
-        text: "Au travail ou à l'école, ce qui me motive le plus c'est :",
-        options: [
-            { text: "Parler avec les gens et avoir de la liberté pour créer", type: "sanguineo" },
-            { text: "Obtenir des bons résultats et être reconnu", type: "colerico" },
-            { text: "Faire un travail de qualité et bien pensé", type: "melancolico" },
-            { text: "Avoir une bonne ambiance et des tâches claires", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 9,
-        text: "Mon énergie pendant la journée est plutôt :",
-        options: [
-            { text: "Forte le matin et encore plus forte le soir", type: "sanguineo" },
-            { text: "Forte et constante, je reste productif", type: "colerico" },
-            { text: "Variable, j'ai besoin de moments seul pour recharger", type: "melancolico" },
-            { text: "Stable et calme toute la journée", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 10,
-        text: "Quand je vais à une fête ou un événement, je :",
-        options: [
-            { text: "Parle avec beaucoup de nouvelles personnes et je suis content", type: "sanguineo" },
-            { text: "Ai des objectifs précis (parler à certaines personnes)", type: "colerico" },
-            { text: "Parle surtout avec des gens que je connais et je repars assez vite", type: "melancolico" },
-            { text: "Préfère discuter tranquillement avec une ou deux personnes", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 11,
-        text: "Pour prendre une décision importante, je :",
-        options: [
-            { text: "Décide vite et je suis mon cœur", type: "sanguineo" },
-            { text: "Décide vite et j'assume les conséquences", type: "colerico" },
-            { text: "Réfléchis beaucoup et je cherche des informations avant", type: "melancolico" },
-            { text: "Préfère attendre un peu et demander l'avis des autres", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 12,
-        text: "Pour les détails et l'organisation :",
-        options: [
-            { text: "Je ne m'en occupe pas trop, le plus important c'est l'ensemble", type: "sanguineo" },
-            { text: "J'organise seulement ce qui est nécessaire pour être efficace", type: "colerico" },
-            { text: "Je suis très précis et organisé", type: "melancolico" },
-            { text: "Je suis organisé juste assez pour que tout reste calme", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 13,
-        text: "Quand je suis stressé ou fatigué, je :",
-        options: [
-            { text: "Cherche de la compagnie et je parle de ce que je ressens", type: "sanguineo" },
-            { text: "Suis irrité et je veux résoudre le problème seul", type: "colerico" },
-            { text: "M'isole et j'ai besoin de temps pour me reposer", type: "melancolico" },
-            { text: "Essaie de rester calme et je me repose tranquillement", type: "fleumatico" }
-        ]
-    },
-    {
-        id: 14,
-        text: "Ce qui m'énerve le plus chez les autres c'est :",
-        options: [
-            { text: "Les gens trop sérieux qui ne savent pas s'amuser", type: "sanguineo" },
-            { text: "Les gens lents, indécis ou qui se plaignent tout le temps", type: "colerico" },
-            { text: "Les gens superficiels, désorganisés ou qui manquent de sensibilité", type: "melancolico" },
-            { text: "Les gens agressifs, bruyants ou qui créent des conflits", type: "fleumatico" }
-        ]
-    }
+    { id: 1,  text: "Je me fais facilement des amis.", type: "sanguineo", reverse: false },
+    { id: 2,  text: "J'aime rencontrer de nouvelles personnes.", type: "sanguineo", reverse: false },
+    { id: 3,  text: "Je suis à l'aise pour engager la conversation avec des inconnus.", type: "sanguineo", reverse: false },
+    { id: 4,  text: "J'ai de l'énergie dans des environnements avec beaucoup de monde.", type: "sanguineo", reverse: false },
+    { id: 5,  text: "Je préfère être seul plutôt qu'en groupe.", type: "sanguineo", reverse: true },
+    { id: 6,  text: "J'ai besoin de temps seul pour me recharger.", type: "fleumatico", reverse: false },
+    { id: 7,  text: "Parler en public me met mal à l'aise.", type: "sanguineo", reverse: true },
+    { id: 8,  text: "J'ai l'habitude de bien réfléchir avant d'agir.", type: "melancolico", reverse: false },
+    { id: 9,  text: "Parfois j'agis par impulsion.", type: "colerico", reverse: false },
+    { id: 10, text: "Je garde mon calme dans les situations de pression.", type: "fleumatico", reverse: false },
+    { id: 11, text: "Je m'inquiète facilement de ce qui pourrait mal tourner.", type: "melancolico", reverse: false },
+    { id: 12, text: "J'ai du mal à me détendre.", type: "melancolico", reverse: false },
+    { id: 13, text: "Les émotions fortes me submergent facilement.", type: "melancolico", reverse: false },
+    { id: 14, text: "Je ressens de l'anxiété même sans raison claire.", type: "melancolico", reverse: false },
+    { id: 15, text: "Il m'est facile de pardonner aux gens.", type: "fleumatico", reverse: false },
+    { id: 16, text: "Je comprends facilement ce que ressentent les autres.", type: "fleumatico", reverse: false },
+    { id: 17, text: "J'ai du mal à dire « non ».", type: "fleumatico", reverse: false },
+    { id: 18, text: "Parfois je ne pense pas à l'impact de mes actions sur les autres.", type: "colerico", reverse: false },
+    { id: 19, text: "Je fais confiance aux gens jusqu'à ce qu'ils me donnent une raison de ne pas le faire.", type: "sanguineo", reverse: false },
+    { id: 20, text: "Je suis organisé dans mes tâches.", type: "melancolico", reverse: false },
+    { id: 21, text: "Je suis persévérant et je termine ce que je commence.", type: "colerico", reverse: false },
+    { id: 22, text: "J'ai tendance à être perfectionniste.", type: "melancolico", reverse: false },
+    { id: 23, text: "Je préfère planifier les choses à l'avance.", type: "melancolico", reverse: false },
+    { id: 24, text: "J'aime suivre les règles et les procédures.", type: "fleumatico", reverse: false },
+    { id: 25, text: "Je préfère décider les choses par moi-même.", type: "colerico", reverse: false },
+    { id: 26, text: "Je remets en question les règles ou les autorités quand cela me semble pertinent.", type: "colerico", reverse: false },
+    { id: 27, text: "J'aime prendre des risques et essayer de nouvelles choses.", type: "sanguineo", reverse: false },
+    { id: 28, text: "J'ai tendance à croire que les choses vont bien se passer.", type: "sanguineo", reverse: false },
+    { id: 29, text: "Je réfléchis beaucoup au sens de la vie.", type: "melancolico", reverse: false },
+    { id: 30, text: "Je peux être têtu quand je pense avoir raison.", type: "colerico", reverse: false }
 ];

@@ -1,5 +1,11 @@
 // results.js - Lógica de cálculo e exibição de resultados
 
+function getLikertPoints(question, value) {
+    const num = Number(value);
+    if (!num || num < 1 || num > 5) return 0;
+    return question.reverse ? (6 - num) : num;
+}
+
 function calculateResults() {
     const scores = {
         sanguineo: 0,
@@ -8,12 +14,22 @@ function calculateResults() {
         fleumatico: 0
     };
 
-    // Contar respostas
-    Object.values(answers).forEach(type => {
-        if (scores[type] !== undefined) scores[type]++;
+    const questionById = Object.fromEntries(QUESTIONS.map(q => [q.id, q]));
+
+    Object.entries(answers).forEach(([questionId, value]) => {
+        const question = questionById[Number(questionId)];
+        if (!question) return;
+
+        // Compatibilité : ancien format (type de tempérament direct)
+        if (typeof value === 'string' && scores[value] !== undefined) {
+            scores[value] += 3;
+            return;
+        }
+
+        scores[question.type] += getLikertPoints(question, value);
     });
 
-    const total = Object.values(scores).reduce((a, b) => a + b, 0) || 14;
+    const total = Object.values(scores).reduce((a, b) => a + b, 0) || 1;
 
     const percentages = {
         sanguineo: Math.round((scores.sanguineo / total) * 100),
