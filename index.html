@@ -352,19 +352,23 @@
                 <h3 class="uppercase tracking-widest text-xs font-semibold">PARTAGER MON RÉSULTAT</h3>
             </div>
             <div class="flex flex-wrap gap-3">
-                <button onclick="copyResultToClipboard()" 
-                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase border border-[#292929]">
-                    <i class="fa-solid fa-copy mr-2"></i>Copier le texte
+                <button onclick="shareOnWhatsApp()" 
+                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
                 </button>
-                <button onclick="shareOnTwitter()" 
-                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase border border-[#292929]">
-                    <i class="fa-brands fa-x-twitter mr-2"></i>Partager sur X
+                <button onclick="shareOnTelegram()" 
+                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    <i class="fa-brands fa-telegram mr-1"></i>Telegram
                 </button>
-                <button onclick="shareResult()" 
-                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase border border-[#292929]">
-                    <i class="fa-solid fa-share mr-2"></i>Partager
+                <button onclick="shareOnInstagram()" 
+                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    <i class="fa-brands fa-instagram mr-1"></i>Instagram
                 </button>
             </div>
+            <button onclick="copyResultToClipboard()" 
+                    class="mt-3 px-5 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
+                <i class="fa-solid fa-copy mr-2"></i>Copier le texte
+            </button>
             <p class="text-[10px] text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
         </div>
 

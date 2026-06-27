@@ -140,7 +140,10 @@ function showResults() {
 
     // Salvar no histórico de resultados finais
     if (typeof saveResultToHistory === 'function') {
-        saveResultToHistory(result);
+        saveResultToHistory({
+            ...result,
+            answers: answers
+        });
     }
 }
 
@@ -176,29 +179,43 @@ function copyResultToClipboard() {
     });
 }
 
-function shareOnTwitter() {
+function shareOnWhatsApp() {
     const text = getResultText();
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
 
-function shareResult() {
+function shareOnTelegram() {
+    const text = getResultText();
+    const url = `https://t.me/share/url?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://clevencode.github.io/4temperament')}`;
+    window.open(url, '_blank');
+}
+
+function shareOnInstagram() {
     const text = getResultText();
     
-    if (navigator.share) {
-        navigator.share({
-            title: 'Mon résultat des 4 Tempéraments',
-            text: text
-        }).catch(() => {});
-    } else {
-        // Fallback: copier
-        copyResultToClipboard();
-    }
+    // Instagram não tem um link direto de compartilhamento web para texto arbitrário.
+    // Melhor prática: copiar o texto e abrir o Instagram para o usuário colar manualmente.
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Texte copié ! Ouvre Instagram et colle-le dans la légende d'un post ou d'une story.");
+        window.open('https://www.instagram.com/', '_blank');
+    }).catch(() => {
+        // Fallback sem clipboard API
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert("Texte copié ! Ouvre Instagram et colle-le dans la légende.");
+        window.open('https://www.instagram.com/', '_blank');
+    });
 }
 
 // Expor funções
 window.showResults = showResults;
 window.calculateResults = calculateResults;
 window.copyResultToClipboard = copyResultToClipboard;
-window.shareOnTwitter = shareOnTwitter;
-window.shareResult = shareResult;
+window.shareOnWhatsApp = shareOnWhatsApp;
+window.shareOnTelegram = shareOnTelegram;
+window.shareOnInstagram = shareOnInstagram;
