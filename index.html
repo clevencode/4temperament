@@ -390,32 +390,15 @@
         </div>
     </div>
 
-    <!-- RESULTS SCREEN -->
-    <div id="results-screen" class="hidden page-shell page-shell--wide">
-        <div class="text-center mb-9">
-            <div class="type-caption inline-block px-4 py-1 rounded-full border border-[#2a2a2a] text-[#777] mb-4">RÉSULTAT FINAL</div>
+    <!-- RESULTS SCREEN — immersive (sans navbar), hero réutilisable -->
+    <div id="results-screen" class="hidden page-shell page-shell--wide page-shell--immersive">
+        <header class="result-hero-header text-center mb-8 sm:mb-9">
+            <div id="results-hero-badge" class="type-caption inline-block px-4 py-1 rounded-full border border-[#2a2a2a] text-[#777] mb-4">RÉSULTAT FINAL</div>
             <h2 class="type-display type-section-title y2k-title mb-1">TON PROFIL EST</h2>
-            <p class="type-body text-[#777]">Voici ton tempérament principal</p>
-        </div>
+            <p id="results-hero-subheading" class="type-body text-[#777]">Voici ton tempérament principal</p>
+        </header>
 
-        <!-- Main Result -->
-        <div id="main-result-card" 
-             class="rounded-3xl p-6 mb-8 text-white premium-shadow relative overflow-hidden main-result-bg page-card">
-            
-            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-
-            <div class="layout-row layout-row--responsive relative z-10">
-                <div class="layout-row__main">
-                    <div id="result-type-label" class="type-label opacity-60 mb-1">TEMPÉRAMENT PRINCIPAL</div>
-                    <div id="result-name" class="type-display type-result-name y2k-title mb-2"></div>
-                    <div id="result-subtitle" class="type-ui text-xl tracking-tight opacity-80"></div>
-                </div>
-                <div class="layout-row__aside">
-                    <div id="result-icon" class="temperament-icon-shell temperament-icon-shell--result mx-auto mb-1"></div>
-                </div>
-            </div>
-        </div>
+        <div id="main-result-card" class="result-hero-card page-card" aria-label="Résumé du tempérament"></div>
 
         <!-- Percentages -->
         <div class="y2k-card chrome-border rounded-3xl p-6 mb-8 page-card">

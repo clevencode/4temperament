@@ -635,6 +635,26 @@ body {
     max-width: 56rem;
 }
 
+.page-shell--immersive {
+    padding-top: 2rem;
+}
+
+@media (min-width: 640px) {
+    .page-shell--immersive {
+        padding-top: 2.5rem;
+    }
+}
+
+.result-hero-header {
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.result-hero-card {
+    margin-bottom: 2rem;
+}
+
 .page-shell--quiz {
     max-width: 43.75rem;
 }
@@ -875,6 +895,10 @@ body {
 .nav-bar {
     background: #000;
     border-bottom: 1px solid #1a1a1a;
+}
+
+.nav-bar--hidden {
+    display: none;
 }
 
 .nav-bar__inner {

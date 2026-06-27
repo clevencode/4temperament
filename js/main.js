@@ -221,8 +221,23 @@ function initNavMenu() {
   });
 }
 
+const NAV_HIDDEN_SCREENS = ['results-screen'];
+
+function updateNavVisibility(screenId) {
+  const nav = document.querySelector('.nav-bar');
+  const hide = NAV_HIDDEN_SCREENS.includes(screenId);
+
+  if (nav) {
+    nav.classList.toggle('nav-bar--hidden', hide);
+    nav.setAttribute('aria-hidden', hide ? 'true' : 'false');
+  }
+
+  document.body.classList.toggle('nav-hidden', hide);
+}
+
 function showScreen(screenId) {
   closeNavMenu();
+  updateNavVisibility(screenId);
 
   // Cacher tous les écrans principaux
   document.querySelectorAll('[id$="-screen"]').forEach(s => {

@@ -159,26 +159,92 @@ function getResultPresentation(result) {
   };
 }
 
+function getResultsScreenSubheading(result) {
+  if (result.isBalanced) return 'Répartition équilibrée — aucun tempérament dominant';
+  if (result.profileMode === 'rejection') return 'Tempérament le moins affirmé dans tes réponses';
+  return 'Voici ton tempérament principal';
+}
+
+/** Carte hero réutilisable — résultat final, vue complète historique, etc. */
+function buildResultHeroCardHtml(view) {
+  return `
+    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+    <div class="layout-row layout-row--responsive relative z-10">
+      <div class="layout-row__main">
+        <div class="type-label opacity-60 mb-1">${view.typeLabel}</div>
+        <div class="type-display type-result-name y2k-title mb-2" style="color:${view.resultNameColor}">${view.resultName}</div>
+        <div class="type-ui text-lg sm:text-xl tracking-tight opacity-80" style="color:#aaa">${view.resultSubtitle}</div>
+      </div>
+      <div class="layout-row__aside">
+        <div class="temperament-icon-shell temperament-icon-shell--result mx-auto" style="background:${view.iconShellBg}; border:${view.iconShellBorder}">${temperamentEmoji(view.iconEmoji, 'xl', view.iconColor)}</div>
+      </div>
+    </div>`;
+}
+
+function buildResultHeroSectionHtml(view, { tag = 'section', className = 'result-hero-card', ariaLabel = 'Résumé du tempérament' } = {}) {
+  return `
+    <${tag} class="${className} rounded-3xl p-4 sm:p-6 text-white premium-shadow relative overflow-hidden main-result-bg" style="background:${view.cardBg}; border:${view.cardBorder}" aria-label="${ariaLabel}">
+      ${buildResultHeroCardHtml(view)}
+    </${tag}>`;
+}
+
+function applyResultHeroCard(element, view) {
+  if (!element || !view) return;
+  element.className = 'result-hero-card rounded-3xl p-4 sm:p-6 text-white premium-shadow relative overflow-hidden main-result-bg page-card';
+  element.style.background = view.cardBg;
+  element.style.border = view.cardBorder;
+  element.innerHTML = buildResultHeroCardHtml(view);
+}
+
+function renderResultHero(result) {
+  const view = getResultPresentation(result);
+
+  const subheading = document.getElementById('results-hero-subheading');
+  if (subheading) subheading.textContent = getResultsScreenSubheading(result);
+
+  applyResultHeroCard(document.getElementById('main-result-card'), view);
+}
+
+function renderResultTabsContent(result) {
+  const view = getResultPresentation(result);
+
+  renderResultBars(result);
+
+  const secondaryEl = document.getElementById('secondary-result');
+  if (secondaryEl) secondaryEl.innerHTML = view.secondaryHtml;
+
+  const profileEl = document.getElementById('profile-summary');
+  if (profileEl) profileEl.innerHTML = view.profileSummary;
+
+  const descEl = document.getElementById('result-description');
+  if (descEl) descEl.textContent = view.description;
+
+  const strengthsEl = document.getElementById('strengths-list');
+  if (strengthsEl) strengthsEl.innerHTML = view.strengthsHtml;
+
+  const weaknessesEl = document.getElementById('weaknesses-list');
+  if (weaknessesEl) weaknessesEl.innerHTML = view.weaknessesHtml;
+
+  const careersEl = document.getElementById('careers-list');
+  if (careersEl) careersEl.innerHTML = view.careersHtml;
+
+  const activitiesEl = document.getElementById('activities-list');
+  if (activitiesEl) activitiesEl.innerHTML = view.activitiesHtml;
+}
+
+function renderResultScreen(result) {
+  renderResultHero(result);
+  renderResultTabsContent(result);
+}
+
 function buildResultDetailHtml(result, index) {
   const view = getResultPresentation(result);
   const shareHTML = typeof shareSectionHTML === 'function' ? shareSectionHTML(index) : '';
 
   return `
     <div class="result-detail-content">
-      <section class="result-detail-hero rounded-3xl p-4 sm:p-6 text-white premium-shadow relative overflow-hidden main-result-bg" style="background:${view.cardBg}; border:${view.cardBorder}" aria-label="Résumé du tempérament">
-        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-        <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-        <div class="layout-row layout-row--responsive relative z-10">
-          <div class="layout-row__main">
-            <div class="type-label opacity-60 mb-1">${view.typeLabel}</div>
-            <div class="type-display type-result-name y2k-title mb-2" style="color:${view.resultNameColor}">${view.resultName}</div>
-            <div class="type-ui text-lg sm:text-xl tracking-tight opacity-80" style="color:#aaa">${view.resultSubtitle}</div>
-          </div>
-          <div class="layout-row__aside">
-            <div class="temperament-icon-shell temperament-icon-shell--result mx-auto" style="background:${view.iconShellBg}; border:${view.iconShellBorder}">${temperamentEmoji(view.iconEmoji, 'xl', view.iconColor)}</div>
-          </div>
-        </div>
-      </section>
+      ${buildResultHeroSectionHtml(view, { className: 'result-hero-card result-detail-hero' })}
 
       <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-detail-section" aria-labelledby="result-detail-bars-label">
         <div id="result-detail-bars-label" class="type-label text-[#888] mb-5 px-1">RÉPARTITION DES TEMPÉRAMENTS</div>
@@ -233,123 +299,11 @@ function buildResultDetailHtml(result, index) {
 }
 
 function renderBalancedResult(result) {
-  const heading = document.querySelector('#results-screen .text-center.mb-9 h2');
-  const subheading = document.querySelector('#results-screen .text-center.mb-9 p');
-  if (heading) heading.textContent = 'TON PROFIL EST';
-  if (subheading) subheading.textContent = 'Répartition équilibrée — aucun tempérament dominant';
-
-  const mainCard = document.getElementById('main-result-card');
-  mainCard.style.background = 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)';
-  mainCard.style.border = '1px solid #2f2f2f';
-
-  const typeLabel = document.getElementById('result-type-label');
-  if (typeLabel) typeLabel.textContent = 'RÉSULTAT';
-
-  document.getElementById('result-name').textContent = BALANCED_COPY.title;
-  document.getElementById('result-name').style.color = '#c9c9c9';
-  document.getElementById('result-subtitle').textContent = BALANCED_COPY.subtitle;
-  document.getElementById('result-subtitle').style.color = '#aaa';
-
-  const iconContainer = document.getElementById('result-icon');
-  iconContainer.innerHTML = temperamentEmoji('⚖️', 'xl', '#c9c9c9');
-  iconContainer.style.background = 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))';
-  iconContainer.style.border = '1px solid #44444440';
-
-  renderResultBars(result);
-
-  document.getElementById('secondary-result').innerHTML = buildSecondaryResultHtml(result);
-
-  document.getElementById('profile-summary').textContent = BALANCED_COPY.summary;
-  document.getElementById('result-description').textContent = BALANCED_COPY.description;
-
-  document.getElementById('strengths-list').innerHTML = BALANCED_COPY.strengths.map(s =>
-    listItem(s, 'checkCircle', 'silver')
-  ).join('');
-
-  document.getElementById('weaknesses-list').innerHTML = BALANCED_COPY.weaknesses.map(w =>
-    listItem(w, 'minus', 'subtle')
-  ).join('');
-
-  document.getElementById('careers-list').innerHTML = BALANCED_COPY.careers.map(c =>
-    listItem(c, 'arrowRight', 'muted')
-  ).join('');
-
-  document.getElementById('activities-list').innerHTML = BALANCED_COPY.activities.map(a =>
-    listItem(a, 'arrowRight', 'muted')
-  ).join('');
+  renderResultScreen(result);
 }
 
 function renderDominantResult(result) {
-  const dominant = TEMPERAMENTS[result.dominant];
-  const secondary = TEMPERAMENTS[result.secondary];
-  const isRejection = result.profileMode === 'rejection';
-
-  const heading = document.querySelector('#results-screen .text-center.mb-9 h2');
-  const subheading = document.querySelector('#results-screen .text-center.mb-9 p');
-  if (heading) heading.textContent = 'TON PROFIL EST';
-  if (subheading) {
-    subheading.textContent = isRejection
-      ? 'Tempérament le moins affirmé dans tes réponses'
-      : 'Voici ton tempérament principal';
-  }
-
-  const mainCard = document.getElementById('main-result-card');
-  mainCard.style.background = 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)';
-  mainCard.style.border = '1px solid #2f2f2f';
-
-  const typeLabel = document.getElementById('result-type-label');
-  if (typeLabel) typeLabel.textContent = isRejection ? 'TRAIT MOINS AFFIRMÉ' : 'TEMPÉRAMENT PRINCIPAL';
-
-  document.getElementById('result-name').textContent = dominant.name;
-  document.getElementById('result-name').style.color = dominant.color;
-  document.getElementById('result-subtitle').textContent = isRejection ? REJECTION_COPY.subtitle : dominant.subtitle;
-  document.getElementById('result-subtitle').style.color = '#aaa';
-
-  const iconContainer = document.getElementById('result-icon');
-  iconContainer.innerHTML = temperamentEmoji(dominant.emoji, 'xl', dominant.color);
-  iconContainer.style.background = 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))';
-  iconContainer.style.border = `1px solid ${dominant.color}40`;
-
-  renderResultBars(result);
-
-  document.getElementById('secondary-result').innerHTML = buildSecondaryResultHtml(result);
-
-  if (isRejection) {
-    document.getElementById('profile-summary').innerHTML =
-      REJECTION_COPY.summary(dominant.name);
-    document.getElementById('result-description').textContent = REJECTION_COPY.description;
-  } else {
-    document.getElementById('profile-summary').innerHTML =
-      `Tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span> (${result.dominantPercent}% / ${result.secondaryPercent}%).`;
-    document.getElementById('result-description').textContent = dominant.description;
-  }
-
-  if (isRejection) {
-    document.getElementById('strengths-list').innerHTML =
-      listItem(`Tu as clarifié ce qui te ressemble moins (${dominant.name})`, 'checkCircle', 'silver');
-    document.getElementById('weaknesses-list').innerHTML =
-      listItem('Relance le test en répondant ce qui t\'identifie positivement', 'minus', 'subtle');
-    document.getElementById('careers-list').innerHTML =
-      listItem('Non applicable — profil basé sur le désaccord', 'arrowRight', 'muted');
-    document.getElementById('activities-list').innerHTML =
-      listItem('Explore librement sans te limiter à un seul type', 'arrowRight', 'muted');
-  } else {
-    document.getElementById('strengths-list').innerHTML = dominant.strengths.map(s =>
-      listItem(s, 'checkCircle', 'silver')
-    ).join('');
-
-    document.getElementById('weaknesses-list').innerHTML = dominant.weaknesses.map(w =>
-      listItem(w, 'minus', 'subtle')
-    ).join('');
-
-    document.getElementById('careers-list').innerHTML = (dominant.recommendedCareers || []).map(c =>
-      listItem(c, 'arrowRight', 'muted')
-    ).join('');
-
-    document.getElementById('activities-list').innerHTML = (dominant.preferredActivities || []).map(a =>
-      listItem(a, 'arrowRight', 'muted')
-    ).join('');
-  }
+  renderResultScreen(result);
 }
 
 function showResults() {
@@ -480,6 +434,10 @@ function shareOnInstagram() {
 
 window.buildResultBarsHtml = buildResultBarsHtml;
 window.getResultPresentation = getResultPresentation;
+window.buildResultHeroCardHtml = buildResultHeroCardHtml;
+window.buildResultHeroSectionHtml = buildResultHeroSectionHtml;
+window.applyResultHeroCard = applyResultHeroCard;
+window.renderResultScreen = renderResultScreen;
 window.buildResultDetailHtml = buildResultDetailHtml;
 window.showResults = showResults;
 window.calculateResults = calculateResults;
