@@ -794,7 +794,7 @@ function shareResultFromHistory(index) {
         text += `Secondaire : ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)\n\n`;
     }
 
-    text += `Fais le test toi aussi : https://clevencode.github.io/4temperament`;
+    text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -814,7 +814,7 @@ function getFullResultText(index) {
         let text = 'Mon profil des 4 Tempéraments est équilibré (25 % chacun).\n\n';
         text += `Sanguin ${resolved.percentages.sanguineo}% • Colérique ${resolved.percentages.colerico}% • `;
         text += `Mélancolique ${resolved.percentages.melancolico}% • Flegmatique ${resolved.percentages.fleumatico}%\n\n`;
-        text += 'Fais le test toi aussi : https://clevencode.github.io/4temperament';
+        text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
         return text;
     }
 
@@ -828,7 +828,7 @@ function getFullResultText(index) {
     text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;
     text += `Carrières recommandées : ${(dominant.recommendedCareers || []).join(', ')}\n`;
     text += `Activités préférées : ${(dominant.preferredActivities || []).join(', ')}\n\n`;
-    text += 'Fais le test toi aussi : https://clevencode.github.io/4temperament';
+    text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
     return text;
 }
 
@@ -842,7 +842,7 @@ function shareFullResultOnWhatsApp(index) {
 function shareFullResultOnTelegram(index) {
     const text = getFullResultText(index);
     if (!text) return;
-    const url = `https://t.me/share/url?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://clevencode.github.io/4temperament')}`;
+    const url = `https://t.me/share/url?text=${encodeURIComponent(text)}&url=${encodeURIComponent(SITE_CONFIG.url)}`;
     window.open(url, '_blank');
 }
 
