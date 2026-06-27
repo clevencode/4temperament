@@ -51,10 +51,16 @@ function updateProgress() {
   const answered = QuizFlow.getAnsweredCount();
   const progress = Math.round((answered / total) * 100);
   const progressBar = document.getElementById('progress-bar');
+  const progressTrack = document.getElementById('progress-track');
   const progressText = document.getElementById('progress-text');
 
   const displayPercent = answered === 0 ? 0 : Math.max(progress, 3);
   if (progressBar) progressBar.style.width = `${displayPercent}%`;
+  if (progressTrack) {
+    progressTrack.setAttribute('aria-valuenow', String(answered));
+    progressTrack.setAttribute('aria-valuemax', String(total));
+    progressTrack.setAttribute('aria-valuemin', '0');
+  }
   if (progressText) progressText.textContent = `${answered}/${total}`;
 }
 
@@ -95,6 +101,11 @@ function showQuestion() {
 
   hideQuizError();
   updateProgress();
+
+  const announcer = document.getElementById('quiz-announcer');
+  if (announcer) {
+    announcer.textContent = `Question ${currentQuestionIndex + 1} sur ${QUESTIONS.length}`;
+  }
 
   const container = document.getElementById('options-container');
   container.innerHTML = '';
@@ -149,7 +160,13 @@ function showQuestion() {
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
 
-  if (btnPrev) btnPrev.disabled = currentQuestionIndex === 0;
+  if (btnPrev) {
+    const atStart = currentQuestionIndex === 0;
+    btnPrev.disabled = atStart;
+    btnPrev.setAttribute('aria-disabled', atStart ? 'true' : 'false');
+    btnPrev.classList.toggle('opacity-40', atStart);
+    btnPrev.classList.toggle('cursor-not-allowed', atStart);
+  }
 
   if (currentQuestionIndex === QUESTIONS.length - 1) {
     btnNext.innerHTML = `

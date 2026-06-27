@@ -129,7 +129,7 @@ const HistoryManager = {
     return {
       id: Date.now(),
       date: new Date().toISOString(),
-      userName: userName || 'Anônimo',
+      userName: userName || 'Anonyme',
       dominant,
       secondary,
       percentages,
@@ -250,11 +250,39 @@ function showScreen(screenId) {
     }
   }
 
-  // Focus management (accessibilité + navegabilidade)
+  // Focus management — prioriser titres pour lecteurs d'écran
   setTimeout(() => {
-    const focusTarget = screen.querySelector('button:not([disabled]), input, [tabindex]:not([tabindex="-1"]), h1, h2, h3');
-    if (focusTarget) focusTarget.focus();
+    const focusTarget = screen.querySelector('h1, h2')
+      || screen.querySelector('button:not([disabled]), input, [tabindex]:not([tabindex="-1"])');
+    if (focusTarget) {
+      if (!focusTarget.hasAttribute('tabindex') && /^H[12]$/.test(focusTarget.tagName)) {
+        focusTarget.setAttribute('tabindex', '-1');
+      }
+      focusTarget.focus({ preventScroll: false });
+    }
   }, 60);
+}
+
+function getFocusableElements(container) {
+  if (!container) return [];
+  return [...container.querySelectorAll(
+    'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter(el => !el.closest('[hidden], .hidden') && el.offsetParent !== null);
+}
+
+function trapFocusInContainer(container, e) {
+  if (e.key !== 'Tab' || !container) return;
+  const focusable = getFocusableElements(container);
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
 }
 
 // Helpers de flux explicites (clarté + maintenabilité)
@@ -333,6 +361,12 @@ function updateIntroCta() {
       setIntroStartIcon(icon, 'start');
     }
     if (hint) hint.classList.add('hidden');
+  }
+
+  const historyLink = document.getElementById('intro-history-link');
+  if (historyLink) {
+    const hasHistory = HistoryManager.load().length > 0;
+    historyLink.classList.toggle('hidden', !hasHistory);
   }
 }
 
@@ -486,6 +520,7 @@ function saveResultToHistory(resultData) {
         HistoryManager.add(entry);
     }
 
+    updateIntroCta();
 }
 
 function loadResultsHistory() {
@@ -522,12 +557,11 @@ function buildHistoryCard(entry, index) {
     : `<div>Principal: <span class="font-semibold">${Math.round(resolved.percentages[resolved.dominant])}%</span></div>
        <div class="text-[#888]">Secondaire: ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)</div>`;
 
-  const card = document.createElement('div');
+  const card = document.createElement('article');
   card.className = 'border border-[#292929] rounded-2xl p-4 mb-3 last:mb-0 cursor-pointer hover:border-[#555] transition-colors';
   card.style.borderLeft = `4px solid ${dominant.color}`;
   card.dataset.historyIndex = index;
-  card.setAttribute('role', 'button');
-  card.setAttribute('aria-label', `Voir détails du résultat ${dominant.name}`);
+  card.setAttribute('aria-label', `Résultat ${dominant.name}, ${dateStr}`);
 
   card.innerHTML = `
     <div class="flex justify-between items-start mb-2">
@@ -541,13 +575,13 @@ function buildHistoryCard(entry, index) {
       <div class="text-right type-caption normal-case tracking-normal">${statsHtml}</div>
     </div>
     <div class="flex flex-wrap gap-2 mt-3">
-      <button type="button" data-action="share" class="type-btn px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
+      <button type="button" data-action="share" class="type-btn min-h-[44px] px-3 py-2 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
         ${icon('whatsapp', { size: 'sm', tone: 'whatsapp' })}<span>Partager</span>
       </button>
-      <button type="button" data-action="edit" class="type-btn px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
+      <button type="button" data-action="edit" class="type-btn min-h-[44px] px-3 py-2 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
         ${icon('edit', { size: 'sm', tone: 'muted' })}<span>Modifier</span>
       </button>
-      <button type="button" data-action="view" class="type-btn px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
+      <button type="button" data-action="view" class="type-btn min-h-[44px] px-3 py-2 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
         ${icon('eye', { size: 'sm', tone: 'muted' })}<span>Détails</span>
       </button>
     </div>
@@ -568,6 +602,7 @@ function renderHistoryScreen() {
   if (history.length === 0) {
     container.innerHTML = '<p class="type-body text-[#888] text-center py-6">Aucun résultat enregistré pour le moment.</p>';
     if (clearBtn) clearBtn.classList.add('hidden');
+    updateIntroCta();
     return;
   }
 
@@ -576,6 +611,7 @@ function renderHistoryScreen() {
   });
 
   if (clearBtn) clearBtn.classList.remove('hidden');
+  updateIntroCta();
 }
 
 function handleHistoryScreenClick(e) {
@@ -608,6 +644,9 @@ function initHistoryScreen() {
 
 function startNewTestFromHistory() {
   currentEditingId = null;
+  clearQuizProgress();
+  answers = {};
+  currentQuestionIndex = 0;
   startQuiz();
 }
 
@@ -616,6 +655,7 @@ function clearResultsHistory() {
 
   HistoryManager.clear();
   renderHistoryScreen();
+  updateIntroCta();
   alert('Historique effacé.');
 }
 
@@ -989,6 +1029,16 @@ function startQuizAfterAbout() {
 }
 
 function restartQuiz() {
+    const hasAnswers = answers && Object.keys(answers).length > 0;
+    const isEditing = currentEditingId != null;
+
+    if (hasAnswers || isEditing) {
+        const msg = isEditing
+            ? 'Abandonner la modification en cours ? Les changements non enregistrés seront perdus.'
+            : 'Abandonner le test en cours ? Votre progression sera effacée.';
+        if (!confirm(msg)) return;
+    }
+
     clearQuizProgress();
     answers = {};
     currentQuestionIndex = 0;
@@ -1017,21 +1067,36 @@ function initializeApp() {
     // Support clavier
     document.addEventListener('keydown', function(e) {
         const menu = document.getElementById('nav-mobile-menu');
-        if (e.key === 'Escape' && menu?.classList.contains('is-open')) {
-            closeNavMenu();
-            document.getElementById('nav-menu-toggle')?.focus();
+        if (menu?.classList.contains('is-open')) {
+            if (e.key === 'Escape') {
+                closeNavMenu();
+                document.getElementById('nav-menu-toggle')?.focus();
+                return;
+            }
+            const panel = menu.querySelector('.nav-mobile-menu__panel');
+            trapFocusInContainer(panel, e);
             return;
         }
 
-        const quizVisible = !document.getElementById('quiz-screen').classList.contains('hidden');
+        const modal = document.getElementById('all-modal');
+        if (modal && !modal.classList.contains('hidden')) return;
+
+        const quizScreen = document.getElementById('quiz-screen');
+        const quizVisible = quizScreen && !quizScreen.classList.contains('hidden');
         if (!quizVisible) return;
 
-        if (e.key === 'Enter' && !e.target.closest('.likert-option')) {
-            e.preventDefault();
-            nextQuestion();
+        if (e.key === 'Enter') {
+            const interactive = e.target.closest('button, a, input, textarea, [role="radio"]');
+            if (!interactive) {
+                e.preventDefault();
+                nextQuestion();
+            }
+            return;
         }
-        
+
         if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+            if (e.target.closest('[role="radio"], input, textarea')) return;
+            if (e.key === 'Backspace') e.preventDefault();
             prevQuestion();
         }
     });
@@ -1048,6 +1113,20 @@ function initTemperamentTyping() {
     if (!typingEl) return;
 
     const words = ['SANGUIN', 'COLÉRIQUE', 'MÉLANCOLIQUE', 'FLEGMATIQUE'];
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion) {
+        typingEl.textContent = words[0];
+        const chromeEl = typingEl.parentElement;
+        if (chromeEl) {
+            chromeEl.style.background = 'linear-gradient(145deg, #ff8a3d 0%, #f5f5f5 22%, #ff8a3d 48%, #a0a0a0 62%, #ff8a3d 82%, #f5f5f5 100%)';
+            chromeEl.style.webkitBackgroundClip = 'text';
+            chromeEl.style.webkitTextFillColor = 'transparent';
+        }
+        const cursor = document.querySelector('.typing-cursor');
+        if (cursor) cursor.style.display = 'none';
+        return;
+    }
     const temperamentColors = {
         'SANGUIN': '#ff8a3d',      // Quente, energético (laranja)
         'COLÉRIQUE': '#ff5252',    // Fogo, líder (vermelho intenso)

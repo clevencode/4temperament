@@ -3,15 +3,18 @@
 function buildInfoTabsHtml(panels) {
   const chips = panels.map((panel, index) => {
     const active = index === 0;
+    const panelId = `info-panel-${panel.id}`;
     const iconHtml = panel.icon
       ? icon(panel.icon, { size: 'xs', tone: active ? 'silver' : 'muted', className: 'info-tab-chip__icon' })
       : '';
-    return `<button type="button" class="info-tab-chip${active ? ' is-active' : ''}" role="tab" data-info-tab="${panel.id}" aria-selected="${active ? 'true' : 'false'}">${iconHtml}<span>${panel.label}</span></button>`;
+    return `<button type="button" class="info-tab-chip${active ? ' is-active' : ''}" role="tab" id="info-tab-${panel.id}" data-info-tab="${panel.id}" aria-controls="${panelId}" aria-selected="${active ? 'true' : 'false'}" tabindex="${active ? '0' : '-1'}">${iconHtml}<span>${panel.label}</span></button>`;
   }).join('');
 
-  const panelHtml = panels.map((panel, index) =>
-    `<div class="info-tab-panel${index === 0 ? ' is-active' : ''}" role="tabpanel" data-info-panel="${panel.id}">${panel.content}</div>`
-  ).join('');
+  const panelHtml = panels.map((panel, index) => {
+    const panelId = `info-panel-${panel.id}`;
+    const tabId = `info-tab-${panel.id}`;
+    return `<div class="info-tab-panel${index === 0 ? ' is-active' : ''}" role="tabpanel" id="${panelId}" data-info-panel="${panel.id}" aria-labelledby="${tabId}"${index === 0 ? '' : ' hidden'}>${panel.content}</div>`;
+  }).join('');
 
   return `
     <div class="info-tabs y2k-card chrome-border rounded-3xl page-card" data-info-tabs>
@@ -26,6 +29,7 @@ function activateInfoTab(root, tabId) {
     const active = chip.dataset.infoTab === tabId;
     chip.classList.toggle('is-active', active);
     chip.setAttribute('aria-selected', active ? 'true' : 'false');
+    chip.setAttribute('tabindex', active ? '0' : '-1');
     const iconEl = chip.querySelector('.icon');
     if (iconEl) {
       iconEl.classList.toggle('icon--silver', active);
@@ -33,8 +37,32 @@ function activateInfoTab(root, tabId) {
     }
   });
   root.querySelectorAll('[data-info-panel]').forEach(panel => {
-    panel.classList.toggle('is-active', panel.dataset.infoPanel === tabId);
+    const active = panel.dataset.infoPanel === tabId;
+    panel.classList.toggle('is-active', active);
+    if (active) panel.removeAttribute('hidden');
+    else panel.setAttribute('hidden', '');
   });
+}
+
+function handleInfoTabKeydown(e) {
+  const chip = e.target.closest('[data-info-tab]');
+  if (!chip) return;
+  const root = chip.closest('[data-info-tabs]');
+  if (!root) return;
+
+  const tabs = [...root.querySelectorAll('[data-info-tab]')];
+  const idx = tabs.indexOf(chip);
+  let next = null;
+
+  if (e.key === 'ArrowRight') next = tabs[(idx + 1) % tabs.length];
+  else if (e.key === 'ArrowLeft') next = tabs[(idx - 1 + tabs.length) % tabs.length];
+  else if (e.key === 'Home') next = tabs[0];
+  else if (e.key === 'End') next = tabs[tabs.length - 1];
+  else return;
+
+  e.preventDefault();
+  activateInfoTab(root, next.dataset.infoTab);
+  next.focus();
 }
 
 function initInfoTabs() {
@@ -47,7 +75,10 @@ function initInfoTabs() {
     const root = chip.closest('[data-info-tabs]');
     if (!root) return;
     activateInfoTab(root, chip.dataset.infoTab);
+    chip.focus();
   });
+
+  document.addEventListener('keydown', handleInfoTabKeydown);
 }
 
 window.buildInfoTabsHtml = buildInfoTabsHtml;
