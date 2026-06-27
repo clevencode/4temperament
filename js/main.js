@@ -899,6 +899,17 @@ function startQuizAfterAbout() {
     showQuestion();
 }
 
+/** Depuis l'écran résultat final — nouveau test direct, sans alerte. */
+function restartQuizFromResults() {
+    clearQuizProgress();
+    answers = {};
+    currentQuestionIndex = 0;
+    userName = '';
+    currentEditingId = null;
+    navigateToQuiz();
+    showQuestion();
+}
+
 function restartQuiz() {
     const hasAnswers = answers && Object.keys(answers).length > 0;
     const isEditing = currentEditingId != null;
@@ -1069,6 +1080,7 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 // Expor funções globais úteis
 window.startQuiz = startQuiz;
 window.restartQuiz = restartQuiz;
+window.restartQuizFromResults = restartQuizFromResults;
 window.persistQuizProgress = persistQuizProgress;
 window.clearQuizProgress = clearQuizProgress;
 window.updateIntroCta = updateIntroCta;
