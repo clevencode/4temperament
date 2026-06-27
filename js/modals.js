@@ -57,6 +57,8 @@ function hideAllTemperaments() {
 }
 
 function showAboutModal() {
+    if (typeof closeNavMenu === 'function') closeNavMenu();
+
     const modal = document.getElementById('about-modal');
     modal.classList.remove('hidden');
     modal.classList.add('flex');

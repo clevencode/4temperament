@@ -160,6 +160,8 @@ let currentEditingId = null;
 // Évite les toggles dispersés, focus management, règles UI (notice edition)
 // =====================================================
 function showScreen(screenId) {
+  closeNavMenu();
+
   // Cacher tous les écrans principaux
   document.querySelectorAll('[id$="-screen"]').forEach(s => {
     s.classList.add('hidden');
@@ -191,10 +193,68 @@ function showScreen(screenId) {
 
 // Helpers de flux explicites (clarté + maintenabilité)
 function navigateToIntro() {
+  closeNavMenu();
   persistQuizProgressIfNeeded();
   currentEditingId = null;
   showScreen('intro-screen');
   updateIntroCta();
+}
+
+function navigateToAbout() {
+  closeNavMenu();
+  persistQuizProgressIfNeeded();
+  showScreen('about-screen');
+}
+
+function openNavMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  const toggle = document.getElementById('nav-menu-toggle');
+  const icon = document.getElementById('nav-menu-icon');
+  if (!menu || !toggle) return;
+
+  menu.classList.add('is-open');
+  menu.setAttribute('aria-hidden', 'false');
+  toggle.setAttribute('aria-expanded', 'true');
+  toggle.setAttribute('aria-label', 'Fermer le menu');
+  if (icon) icon.className = 'icon icon--md icon--silver fa-solid fa-xmark';
+  document.body.classList.add('nav-menu-open');
+
+  const firstItem = menu.querySelector('.nav-mobile-menu__item');
+  if (firstItem) setTimeout(() => firstItem.focus(), 80);
+}
+
+function closeNavMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  const toggle = document.getElementById('nav-menu-toggle');
+  const icon = document.getElementById('nav-menu-icon');
+  if (!menu || !menu.classList.contains('is-open')) return;
+
+  menu.classList.remove('is-open');
+  menu.setAttribute('aria-hidden', 'true');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Ouvrir le menu');
+  }
+  if (icon) icon.className = 'icon icon--md icon--silver fa-solid fa-bars';
+  document.body.classList.remove('nav-menu-open');
+}
+
+function toggleNavMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  if (!menu) return;
+  if (menu.classList.contains('is-open')) closeNavMenu();
+  else openNavMenu();
+}
+
+function openAboutFromNav(target) {
+  closeNavMenu();
+  if (target === 'modal') {
+    showAboutModal();
+  } else if (target === 'screen') {
+    navigateToAbout();
+  } else if (target === 'history') {
+    showResultsHistory();
+  }
 }
 
 function isQuizScreenVisible() {
@@ -258,8 +318,13 @@ function navigateToResults() {
 // Exposer pour modules (vanilla JS, scripts chargés dans l'ordre)
 window.showScreen = showScreen;
 window.navigateToIntro = navigateToIntro;
+window.navigateToAbout = navigateToAbout;
 window.navigateToQuiz = navigateToQuiz;
 window.navigateToResults = navigateToResults;
+window.toggleNavMenu = toggleNavMenu;
+window.openNavMenu = openNavMenu;
+window.closeNavMenu = closeNavMenu;
+window.openAboutFromNav = openAboutFromNav;
 
 /**
  * MELHOR PRÁTICA: Carrega todo o estado do usuário de uma vez no início.
@@ -926,6 +991,16 @@ function initializeApp() {
 
     // Support clavier
     document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const menu = document.getElementById('nav-mobile-menu');
+            if (menu?.classList.contains('is-open')) {
+                e.preventDefault();
+                closeNavMenu();
+                document.getElementById('nav-menu-toggle')?.focus();
+                return;
+            }
+        }
+
         const quizVisible = !document.getElementById('quiz-screen').classList.contains('hidden');
         if (!quizVisible) return;
 
