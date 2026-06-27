@@ -4,27 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les 4 Tempéraments • Découvre ton type de personnalité</title>
-    <meta name="description" content="Test anonyme de 30 questions pour découvrir ton tempérament dominant. Environ 8 minutes.">
+    <meta name="description" content="Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit de 30 questions (~8 min), 100 % anonyme — tempérament dominant et secondaire.">
+    <meta name="keywords" content="4 tempéraments, test personnalité, quiz tempérament, sanguin, colérique, mélancolique, flegmatique, test gratuit, anonyme">
+    <meta name="author" content="Les 4 Tempéraments">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#050505">
+    <meta name="application-name" content="Les 4 Tempéraments">
     <link rel="canonical" href="https://4temperament.vercel.app/">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://4temperament.vercel.app/">
     <meta property="og:title" content="Les 4 Tempéraments • Découvre ton type de personnalité">
-    <meta property="og:description" content="Test anonyme de 30 questions pour découvrir ton tempérament dominant. Environ 8 minutes.">
+    <meta property="og:description" content="Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit de 30 questions (~8 min), 100 % anonyme — tempérament dominant et secondaire.">
     <meta property="og:image" content="https://4temperament.vercel.app/imagem/snipet.jpg">
+    <meta property="og:image:secure_url" content="https://4temperament.vercel.app/imagem/snipet.jpg">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="900">
     <meta property="og:image:height" content="473">
-    <meta property="og:image:alt" content="Les 4 Tempéraments — quiz de personnalité">
+    <meta property="og:image:alt" content="Les 4 Tempéraments — test de personnalité Sanguin, Colérique, Mélancolique, Flegmatique">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:site_name" content="Les 4 Tempéraments">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://4temperament.vercel.app/">
     <meta name="twitter:title" content="Les 4 Tempéraments • Découvre ton type de personnalité">
-    <meta name="twitter:description" content="Test anonyme de 30 questions pour découvrir ton tempérament dominant. Environ 8 minutes.">
+    <meta name="twitter:description" content="Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit de 30 questions (~8 min), 100 % anonyme — tempérament dominant et secondaire.">
     <meta name="twitter:image" content="https://4temperament.vercel.app/imagem/snipet.jpg">
-    <meta name="twitter:image:alt" content="Les 4 Tempéraments — quiz de personnalité">
+    <meta name="twitter:image:alt" content="Les 4 Tempéraments — test de personnalité Sanguin, Colérique, Mélancolique, Flegmatique">
     
     <!-- Tailwind via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -76,6 +84,8 @@
             </div>
         </div>
     </nav>
+
+    <main id="app-main">
 
     <!-- HERO / INTRO SCREEN -->
     <div id="intro-screen" class="page-shell page-shell--wide relative pt-8">
@@ -490,6 +500,8 @@
         <p class="type-caption text-center mt-9">LA PLUPART DES GENS ONT UN MÉLANGE DE DEUX TEMPÉRAMENTS</p>
     </div>
 
+    </main>
+
     <!-- All Temperaments Modal -->
     <div id="all-modal" onclick="hideAllTemperaments()" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
         <div onclick="event.stopImmediatePropagation()" class="y2k-card chrome-border rounded-3xl max-w-5xl w-full max-h-[90vh] sm:max-h-[85vh] overflow-auto">
@@ -512,6 +524,7 @@
 
     <!-- Scripts modulaires (ordre important) -->
     <script src="js/data.js"></script>
+    <script src="js/seo.js"></script>
     <script src="js/scoring.js"></script>
     <script src="js/icons.js"></script>
     <script src="js/tabs.js"></script>

@@ -191,6 +191,10 @@ function showScreen(screenId) {
 
   syncNavToolbar(screenId);
 
+  if (typeof applyPageSeo === 'function') {
+    applyPageSeo(screenId);
+  }
+
   // Règle métier : notice d'édition uniquement visible dans quiz quand en édition
   const notice = document.getElementById('quiz-edit-notice');
   if (notice) {
@@ -794,7 +798,7 @@ function shareResultFromHistory(index) {
         text += `Secondaire : ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)\n\n`;
     }
 
-    text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
+    text += `${SITE_CONFIG.shareCta} ${SITE_CONFIG.url}`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
@@ -814,7 +818,7 @@ function getFullResultText(index) {
         let text = 'Mon profil des 4 Tempéraments est équilibré (25 % chacun).\n\n';
         text += `Sanguin ${resolved.percentages.sanguineo}% • Colérique ${resolved.percentages.colerico}% • `;
         text += `Mélancolique ${resolved.percentages.melancolico}% • Flegmatique ${resolved.percentages.fleumatico}%\n\n`;
-        text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
+        text += `${SITE_CONFIG.shareCta} ${SITE_CONFIG.url}`;
         return text;
     }
 
@@ -828,7 +832,7 @@ function getFullResultText(index) {
     text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;
     text += `Carrières recommandées : ${(dominant.recommendedCareers || []).join(', ')}\n`;
     text += `Activités préférées : ${(dominant.preferredActivities || []).join(', ')}\n\n`;
-    text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
+    text += `${SITE_CONFIG.shareCta} ${SITE_CONFIG.url}`;
     return text;
 }
 
@@ -940,6 +944,7 @@ function initializeApp() {
     initHistoryScreen();
     initResultDetailScreen();
     if (typeof initInfoTabs === 'function') initInfoTabs();
+    if (typeof initSeo === 'function') initSeo();
 
     // Centralized navigation already exposed earlier. Delegate for external use.
     window.showScreen = showScreen;

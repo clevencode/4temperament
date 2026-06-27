@@ -2,11 +2,34 @@
 
 const SITE_CONFIG = {
   url: 'https://4temperament.vercel.app',
-  ogImage: 'https://4temperament.vercel.app/imagem/snipet.jpg',
+  name: 'Les 4 Tempéraments',
+  tagline: 'Découvre ton type de personnalité',
   title: 'Les 4 Tempéraments • Découvre ton type de personnalité',
-  description: 'Test anonyme de 30 questions pour découvrir ton tempérament dominant. Environ 8 minutes.',
+  description:
+    'Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit de 30 questions (~8 min), 100 % anonyme — tempérament dominant et secondaire.',
+  keywords: [
+    '4 tempéraments',
+    'test personnalité',
+    'quiz tempérament',
+    'sanguin',
+    'colérique',
+    'mélancolique',
+    'flegmatique',
+    'test gratuit',
+    'anonyme'
+  ],
+  locale: 'fr_FR',
+  language: 'fr',
+  ogImage: 'https://4temperament.vercel.app/imagem/snipet.jpg',
   ogImageWidth: 900,
-  ogImageHeight: 473
+  ogImageHeight: 473,
+  ogImageAlt: 'Les 4 Tempéraments — test de personnalité Sanguin, Colérique, Mélancolique, Flegmatique',
+  ogImageType: 'image/jpeg',
+  themeColor: '#050505',
+  shareCta: 'Fais le test toi aussi :',
+  questionCount: 30,
+  durationMinutes: 8,
+  temperamentTypes: ['Sanguin', 'Colérique', 'Mélancolique', 'Flegmatique']
 };
 
 // État global du questionnaire

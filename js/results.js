@@ -245,7 +245,7 @@ function getResultText() {
     let text = 'Mon profil des 4 Tempéraments est équilibré (25 % chacun).\n\n';
     text += `${BALANCED_COPY.summary}\n\n`;
     text += `Sanguin ${result.percentages.sanguineo}% • Colérique ${result.percentages.colerico}% • Mélancolique ${result.percentages.melancolico}% • Flegmatique ${result.percentages.fleumatico}%\n\n`;
-    text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
+    text += `${SITE_CONFIG.shareCta} ${SITE_CONFIG.url}`;
     return text;
   }
 
@@ -255,7 +255,7 @@ function getResultText() {
     let text = `Mon profil (mode désaccord) : trait le moins affirmé — ${dominant.name} (${result.dominantPercent}%).\n\n`;
     text += `${REJECTION_COPY.description}\n\n`;
     text += `Sanguin ${result.percentages.sanguineo}% • Colérique ${result.percentages.colerico}% • Mélancolique ${result.percentages.melancolico}% • Flegmatique ${result.percentages.fleumatico}%\n\n`;
-    text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
+    text += `${SITE_CONFIG.shareCta} ${SITE_CONFIG.url}`;
     return text;
   }
 
@@ -264,7 +264,7 @@ function getResultText() {
   text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;
   text += `Carrières recommandées : ${(dominant.recommendedCareers || []).join(', ')}\n`;
   text += `Activités préférées : ${(dominant.preferredActivities || []).join(', ')}\n\n`;
-  text += `Fais le test toi aussi : ${SITE_CONFIG.url}`;
+  text += `${SITE_CONFIG.shareCta} ${SITE_CONFIG.url}`;
   return text;
 }
 
