@@ -43,14 +43,17 @@ function showResults() {
     const dominant = TEMPERAMENTS[result.dominant];
     const secondary = TEMPERAMENTS[result.secondary];
 
-    // Cartão principal (estilo Y2K preto)
+    // Carte principale (style Y2K noir)
     const mainCard = document.getElementById('main-result-card');
     mainCard.style.background = `linear-gradient(145deg, #161616 0%, #0a0a0a 100%)`;
     mainCard.style.border = `1px solid #2f2f2f`;
     
+    const displayName = userName ? userName.split(' ')[0] : '';
+    const greeting = displayName ? `Bonjour ${displayName}, ` : '';
+    
     document.getElementById('result-name').textContent = dominant.name;
     document.getElementById('result-name').style.color = dominant.color;
-    document.getElementById('result-subtitle').textContent = dominant.subtitle;
+    document.getElementById('result-subtitle').innerHTML = `${greeting}${dominant.subtitle}`;
     document.getElementById('result-subtitle').style.color = '#aaa';
     
     const iconContainer = document.getElementById('result-icon');
@@ -88,7 +91,7 @@ function showResults() {
         barsContainer.appendChild(div);
     });
 
-    // Temperamento secundário
+    // Tempérament secondaire
     const secondaryEl = document.getElementById('secondary-result');
     secondaryEl.innerHTML = `
         <div class="text-4xl" style="color: ${secondary.color}">${secondary.emoji}</div>
@@ -98,26 +101,104 @@ function showResults() {
         </div>
     `;
 
-    // Resumo do perfil
+    // Résumé du profil
+    const namePart = userName ? `${userName.split(' ')[0]}, ` : '';
     document.getElementById('profile-summary').innerHTML = 
-        `Tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span>.`;
+        `${namePart}tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span>.`;
 
-    // Descrição
+    // Description
     document.getElementById('result-description').textContent = dominant.description;
 
-    // Pontos fortes
+    // Points forts
     const strengthsList = document.getElementById('strengths-list');
     strengthsList.innerHTML = dominant.strengths.map(s => 
         `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">${s}</span></li>`
     ).join('');
 
-    // Pontos a melhorar
+    // Points à améliorer
     const weaknessesList = document.getElementById('weaknesses-list');
     weaknessesList.innerHTML = dominant.weaknesses.map(w => 
         `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">${w}</span></li>`
     ).join('');
+
+    // Carrières recommandées
+    const careersList = document.getElementById('careers-list');
+    careersList.innerHTML = (dominant.recommendedCareers || []).map(c => 
+        `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${c}</span></li>`
+    ).join('');
+
+    // Activités préférées
+    const activitiesList = document.getElementById('activities-list');
+    activitiesList.innerHTML = (dominant.preferredActivities || []).map(a => 
+        `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
+    ).join('');
+
+    // Salvar preferências (não mostrar "sobre" na próxima vez)
+    if (typeof savePreferences === 'function') {
+        savePreferences();
+    }
+
+    // Salvar no histórico de resultados finais
+    if (typeof saveResultToHistory === 'function') {
+        saveResultToHistory(result);
+    }
+}
+
+// Funções de partage
+function getResultText() {
+    const result = calculateResults();
+    const dominant = TEMPERAMENTS[result.dominant];
+    const name = userName ? `${userName} - ` : '';
+    
+    let text = `${name}Mon tempérament dominant est ${dominant.name} (${dominant.subtitle}).\n\n`;
+    text += `Description : ${dominant.description}\n\n`;
+    text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;
+    text += `Carrières recommandées : ${(dominant.recommendedCareers || []).join(', ')}\n`;
+    text += `Activités préférées : ${(dominant.preferredActivities || []).join(', ')}\n\n`;
+    text += `Fais le test toi aussi : https://clevencode.github.io/4temperament`;
+    
+    return text;
+}
+
+function copyResultToClipboard() {
+    const text = getResultText();
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Résultat copié dans le presse-papiers !");
+    }).catch(() => {
+        // Fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert("Résultat copié !");
+    });
+}
+
+function shareOnTwitter() {
+    const text = getResultText();
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+function shareResult() {
+    const text = getResultText();
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Mon résultat des 4 Tempéraments',
+            text: text
+        }).catch(() => {});
+    } else {
+        // Fallback: copier
+        copyResultToClipboard();
+    }
 }
 
 // Expor funções
 window.showResults = showResults;
 window.calculateResults = calculateResults;
+window.copyResultToClipboard = copyResultToClipboard;
+window.shareOnTwitter = shareOnTwitter;
+window.shareResult = shareResult;

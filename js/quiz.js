@@ -1,4 +1,4 @@
-// quiz.js - Lógica do questionário
+// quiz.js - Logique du questionnaire
 
 function updateProgress() {
     const progress = Math.round(((currentQuestionIndex) / QUESTIONS.length) * 100);
@@ -41,7 +41,7 @@ function showQuestion() {
         container.appendChild(div);
     });
 
-    // Estado dos botões
+    // État des boutons
     const btnPrev = document.getElementById('btn-prev');
     const btnNext = document.getElementById('btn-next');
     const nextText = document.getElementById('btn-next-text');
@@ -130,7 +130,10 @@ function prevQuestion() {
     }
 }
 
+
+
 // Expor funções necessárias globalmente
 window.showQuestion = showQuestion;
 window.nextQuestion = nextQuestion;
 window.prevQuestion = prevQuestion;
+

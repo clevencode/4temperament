@@ -1,10 +1,11 @@
-// data.js - Dados do questionário (em francês simplificado)
+// data.js - Données du questionnaire (version française simplifiée)
 
-// Estado global do questionário
+// État global du questionnaire
 let currentQuestionIndex = 0;
 let answers = {}; // questionId: optionType
+let userName = ""; // Nom complet de l'utilisateur
 
-// Constantes dos 4 Temperamentos
+// Constantes des 4 Tempéraments
 const TEMPERAMENTS = {
     sanguineo: {
         name: "Sanguin",
@@ -24,6 +25,18 @@ const TEMPERAMENTS = {
             "Tu as du mal à rester concentré",
             "Tu parles parfois trop",
             "Tu promets des choses que tu oublies"
+        ],
+        recommendedCareers: [
+            "Marketing et communication",
+            "Ventes et relations clients",
+            "Animation et événementiel",
+            "Journalisme et médias"
+        ],
+        preferredActivities: [
+            "Participer à des fêtes et événements sociaux",
+            "Faire du sport en équipe",
+            "Voyager et découvrir de nouveaux endroits",
+            "Organiser des sorties avec des amis"
         ],
         famous: "Walt Disney, Ronald Reagan"
     },
@@ -46,6 +59,18 @@ const TEMPERAMENTS = {
             "Tu peux blesser les autres sans le vouloir",
             "Tu n'aimes pas déléguer"
         ],
+        recommendedCareers: [
+            "Management et direction d'entreprise",
+            "Entrepreneuriat",
+            "Droit et politique",
+            "Gestion de projets"
+        ],
+        preferredActivities: [
+            "Sports compétitifs",
+            "Jeux de stratégie et d'échecs",
+            "Prendre la tête de projets",
+            "Randonnée et défis physiques"
+        ],
         famous: "Napoléon, Margaret Thatcher"
     },
     melancolico: {
@@ -67,6 +92,18 @@ const TEMPERAMENTS = {
             "Tu n'aimes pas les critiques",
             "Tu restes parfois seul"
         ],
+        recommendedCareers: [
+            "Recherche et analyse",
+            "Écriture et journalisme",
+            "Design et création artistique",
+            "Psychologie et conseil"
+        ],
+        preferredActivities: [
+            "Lire des livres",
+            "Dessiner, peindre ou faire de la musique",
+            "Résoudre des puzzles et énigmes",
+            "Marcher seul dans la nature"
+        ],
         famous: "Albert Einstein, Vincent van Gogh"
     },
     fleumatico: {
@@ -87,6 +124,18 @@ const TEMPERAMENTS = {
             "Tu prends du temps pour décider",
             "Tu peux être trop passif",
             "Tu manques parfois d'énergie pour commencer"
+        ],
+        recommendedCareers: [
+            "Ressources humaines et médiation",
+            "Conseil et accompagnement",
+            "Administration et gestion",
+            "Santé et soins (infirmier, etc.)"
+        ],
+        preferredActivities: [
+            "Lire tranquillement",
+            "Jardinage",
+            "Marcher dans la nature",
+            "Jouer à des jeux de société avec des amis"
         ],
         famous: "Abraham Lincoln, Gandhi"
     }

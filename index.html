@@ -75,6 +75,14 @@
                 <div class="h-px w-3 bg-[#333]"></div>
                 <div>SIMPLE • ANONYME</div>
             </div>
+
+            <div class="mt-6">
+                <button onclick="showResultsHistory()" 
+                        class="text-xs text-[#888] hover:text-[#c9c9c9] transition-colors flex items-center gap-x-1 mx-auto">
+                    <i class="fa-solid fa-history text-xs"></i>
+                    <span>Voir l'historique des résultats</span>
+                </button>
+            </div>
         </div>
 
         <!-- Aperçu des 4 tempéraments -->
@@ -118,6 +126,65 @@
         </div>
     </div>
 
+    <!-- NAME INPUT SCREEN -->
+    <div id="name-screen" class="hidden max-w-md mx-auto px-6 py-12 text-center">
+        <div class="y2k-card chrome-border rounded-3xl p-8">
+            <h2 class="text-3xl y2k-title tracking-[-1.5px] mb-2">Bonjour !</h2>
+            <p class="text-[#aaa] mb-6">Pour personnaliser ton expérience, entre ton prénom :</p>
+            
+            <input id="user-name-input" 
+                   type="text" 
+                   placeholder="Ton prénom"
+                   class="w-full px-4 py-3 bg-[#111] border border-[#292929] rounded-2xl text-[#ddd] focus:outline-none focus:border-[#c9c9c9] mb-4 text-center">
+            
+            <button onclick="saveNameAndContinue()" 
+                    class="chrome-button w-full px-8 py-3 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase mb-3">
+                CONTINUER
+            </button>
+
+            <button onclick="continueAnonymously()" 
+                    class="w-full px-8 py-2.5 text-xs tracking-[1.5px] text-[#888] hover:text-[#c9c9c9] border border-[#333] hover:border-[#555] rounded-full uppercase transition-colors">
+                CONTINUER ANONYMEMENT
+            </button>
+        </div>
+    </div>
+
+    <!-- ABOUT THE APP SCREEN -->
+    <div id="about-screen" class="hidden max-w-2xl mx-auto px-6 py-10">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl y2k-title tracking-[-1.5px] mb-3">À propos du test</h2>
+            <p class="text-[#aaa]">Voici comment ça fonctionne</p>
+        </div>
+
+        <div class="y2k-card chrome-border rounded-3xl p-8 space-y-6 text-[#ccc]">
+            <div>
+                <h3 class="font-semibold text-lg mb-2 text-[#ddd]">Qu'est-ce que les 4 Tempéraments ?</h3>
+                <p class="text-sm leading-relaxed">La théorie des 4 Tempéraments est une ancienne classification de la personnalité. Elle aide à mieux comprendre nos forces, nos faiblesses et nos comportements naturels.</p>
+            </div>
+            
+            <div>
+                <h3 class="font-semibold text-lg mb-2 text-[#ddd]">Comment ça marche ?</h3>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                    <li>Réponds honnêtement aux 14 questions</li>
+                    <li>Nous calculons ton tempérament dominant + secondaire</li>
+                    <li>Tu reçois des conseils adaptés (carrières, activités...)</li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-semibold text-lg mb-2 text-[#ddd]">Important</h3>
+                <p class="text-sm leading-relaxed">Ce test est un outil de découverte de soi. La plupart des gens ont un mélange de deux tempéraments. Il n'y a pas de « meilleur » tempérament.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <button onclick="startQuizAfterAbout()" 
+                    class="chrome-button px-10 py-3 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase">
+                COMMENCER LE QUESTIONNAIRE
+            </button>
+        </div>
+    </div>
+
     <!-- QUIZ SCREEN -->
     <div id="quiz-screen" class="hidden max-w-[700px] mx-auto px-6 py-8">
         <div class="quiz-container">
@@ -127,11 +194,13 @@
                     <span class="text-xs font-semibold tracking-[3px] text-[#777]">QUESTIONNAIRE</span>
                     <div class="text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-3xl">1</span> <span class="text-[#555]">/ 14</span></div>
                 </div>
-                <button onclick="restartQuiz()" 
-                        class="text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-3 py-1 rounded-full">
-                    <i class="fa-solid fa-redo text-xs"></i>
-                    <span>RECOMMENCER</span>
-                </button>
+                <div>
+                    <button onclick="restartQuiz()" 
+                            class="text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-3 py-1 rounded-full">
+                        <i class="fa-solid fa-redo text-xs"></i>
+                        <span>RECOMMENCER</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Progress -->
@@ -241,7 +310,7 @@
         </div>
 
         <!-- Strengths & Weaknesses -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
             <div class="y2k-card chrome-border rounded-3xl p-7">
                 <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
                     <i class="fa-solid fa-check"></i>
@@ -258,6 +327,47 @@
             </div>
         </div>
 
+        <!-- Recommended Careers & Activities -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            <div class="y2k-card chrome-border rounded-3xl p-7">
+                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <h3 class="uppercase tracking-widest text-xs font-semibold">CARRIÈRES RECOMMANDÉES</h3>
+                </div>
+                <ul id="careers-list" class="space-y-[7px] text-sm"></ul>
+            </div>
+            <div class="y2k-card chrome-border rounded-3xl p-7">
+                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                    <i class="fa-solid fa-heart"></i>
+                    <h3 class="uppercase tracking-widest text-xs font-semibold">ACTIVITÉS PRÉFÉRÉES</h3>
+                </div>
+                <ul id="activities-list" class="space-y-[7px] text-sm"></ul>
+            </div>
+        </div>
+
+        <!-- Share Result -->
+        <div class="y2k-card chrome-border rounded-3xl p-7 mb-8">
+            <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                <i class="fa-solid fa-share-alt"></i>
+                <h3 class="uppercase tracking-widest text-xs font-semibold">PARTAGER MON RÉSULTAT</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="copyResultToClipboard()" 
+                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase border border-[#292929]">
+                    <i class="fa-solid fa-copy mr-2"></i>Copier le texte
+                </button>
+                <button onclick="shareOnTwitter()" 
+                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase border border-[#292929]">
+                    <i class="fa-brands fa-x-twitter mr-2"></i>Partager sur X
+                </button>
+                <button onclick="shareResult()" 
+                        class="px-5 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase border border-[#292929]">
+                    <i class="fa-solid fa-share mr-2"></i>Partager
+                </button>
+            </div>
+            <p class="text-[10px] text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
+        </div>
+
         <!-- Actions -->
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
             <button onclick="restartQuiz()" 
@@ -270,6 +380,14 @@
                     class="chrome-button px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 glossy-btn text-[#ddd] text-xs tracking-[2px] font-semibold rounded-full flex">
                 <i class="fa-solid fa-list"></i>
                 <span class="ml-2">VOIR LES 4 TEMPÉRAMENTS</span>
+            </button>
+        </div>
+
+        <div class="text-center mt-4">
+            <button onclick="showResultsHistory()" 
+                    class="text-xs text-[#888] hover:text-[#c9c9c9] flex items-center gap-x-1 mx-auto">
+                <i class="fa-solid fa-history text-xs"></i>
+                <span>Voir l'historique des résultats</span>
             </button>
         </div>
 
@@ -318,6 +436,10 @@
             </div>
         </div>
     </div>
+
+
+
+
 
     <!-- Scripts modulaires (ordre important) -->
     <script src="js/data.js"></script>

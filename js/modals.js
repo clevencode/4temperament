@@ -1,4 +1,4 @@
-// modals.js - Lógica dos modais
+// modals.js - Logique des modaux
 
 function showAllTemperaments() {
     const modal = document.getElementById('all-modal');
