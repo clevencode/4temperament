@@ -35,9 +35,14 @@ function calculateResults() {
 }
 
 function showResults() {
-    document.getElementById('quiz-screen').classList.add('hidden');
-    const resultsScreen = document.getElementById('results-screen');
-    resultsScreen.classList.remove('hidden');
+    // Utiliser navigation centralisée (meilleure navegabilidade)
+    if (typeof navigateToResults === 'function') {
+        navigateToResults();
+    } else {
+        // Fallback (ne devrait pas arriver après chargement complet)
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('results-screen').classList.remove('hidden');
+    }
 
     const result = calculateResults();
     const dominant = TEMPERAMENTS[result.dominant];

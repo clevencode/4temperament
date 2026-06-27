@@ -44,6 +44,10 @@ function showAllTemperaments() {
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    // ESC support standardisé
+    const esc = (e) => { if (e.key === 'Escape') { hideAllTemperaments(); document.removeEventListener('keydown', esc); } };
+    document.addEventListener('keydown', esc, { once: true });
 }
 
 function hideAllTemperaments() {
@@ -56,6 +60,9 @@ function showAboutModal() {
     const modal = document.getElementById('about-modal');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    const esc = (e) => { if (e.key === 'Escape') { hideAboutModal(); document.removeEventListener('keydown', esc); } };
+    document.addEventListener('keydown', esc, { once: true });
 }
 
 function hideAboutModal() {

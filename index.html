@@ -91,6 +91,13 @@
     <!-- NAME INPUT SCREEN -->
     <div id="name-screen" class="hidden max-w-md mx-auto px-6 py-8 sm:py-12 text-center">
         <div class="y2k-card chrome-border rounded-3xl p-6 sm:p-8">
+            <div class="mb-4 text-left">
+                <button onclick="navigateToIntro()" 
+                        class="text-xs text-[#888] hover:text-[#c9c9c9] flex items-center gap-x-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>RETOUR</span>
+                </button>
+            </div>
             <h2 class="text-3xl y2k-title tracking-[-1.5px] mb-2">Bonjour !</h2>
             <label for="user-name-input" class="block text-[#aaa] mb-1 text-left">Pour personnaliser ton expérience, entre ton prénom (optionnel) :</label>
             <p class="text-[10px] text-[#777] mb-2 text-left">Enregistré localement pour ton historique.</p>
@@ -140,10 +147,15 @@
             </div>
         </div>
 
-        <div class="text-center mt-6 sm:mt-8">
+        <div class="flex flex-col items-center gap-3 mt-6 sm:mt-8">
             <button onclick="startQuizAfterAbout()" 
                     class="chrome-button px-6 sm:px-10 py-3 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase">
                 COMMENCER LE QUESTIONNAIRE
+            </button>
+            <button onclick="navigateToIntro()" 
+                    class="text-xs text-[#888] hover:text-[#c9c9c9] flex items-center gap-x-1.5">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>RETOUR À L'ACCUEIL</span>
             </button>
         </div>
     </div>
@@ -157,11 +169,17 @@
                     <span class="text-[10px] sm:text-xs font-semibold tracking-[3px] text-[#777]">QUESTIONNAIRE</span>
                     <div class="text-lg sm:text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-2xl sm:text-3xl">1</span> <span class="text-[#555]">/ 14</span></div>
                 </div>
-                <div>
+                <div class="flex items-center gap-x-2">
                     <button onclick="restartQuiz()" 
-                            class="text-[10px] sm:text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full">
+                            class="text-[10px] sm:text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full"
+                            aria-label="Recommencer le test">
                         <i class="fa-solid fa-redo text-xs"></i>
                         <span>RECOMMENCER</span>
+                    </button>
+                    <button onclick="navigateToIntro()" 
+                            class="text-[10px] sm:text-xs flex items-center gap-x-1 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 py-1 rounded-full"
+                            aria-label="Retour à l'accueil">
+                        <i class="fa-solid fa-home text-xs"></i>
                     </button>
                 </div>
             </div>

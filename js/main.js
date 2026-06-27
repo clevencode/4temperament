@@ -97,6 +97,63 @@ const HistoryManager = {
 let currentHistoryCache = [];
 let currentEditingId = null;
 
+// =====================================================
+// NAVIGATION CENTRALISÉE (Navegabilidade)
+// Best practice: une seule fonction canonique pour transitions d'écrans
+// + helpers pour flux alignés à la logique métier (self-discovery guidé)
+// Évite les toggles dispersés, focus management, règles UI (notice edition)
+// =====================================================
+function showScreen(screenId) {
+  // Cacher tous les écrans principaux
+  document.querySelectorAll('[id$="-screen"]').forEach(s => {
+    s.classList.add('hidden');
+    s.setAttribute('aria-hidden', 'true');
+  });
+
+  const screen = document.getElementById(screenId);
+  if (!screen) return;
+
+  screen.classList.remove('hidden');
+  screen.removeAttribute('aria-hidden');
+
+  // Règle métier : notice d'édition uniquement visible dans quiz quand en édition
+  const notice = document.getElementById('quiz-edit-notice');
+  if (notice) {
+    if (screenId === 'quiz-screen' && currentEditingId != null) {
+      notice.classList.remove('hidden');
+    } else {
+      notice.classList.add('hidden');
+    }
+  }
+
+  // Focus management (accessibilité + navegabilidade)
+  setTimeout(() => {
+    const focusTarget = screen.querySelector('button:not([disabled]), input, [tabindex]:not([tabindex="-1"]), h1, h2, h3');
+    if (focusTarget) focusTarget.focus();
+  }, 60);
+}
+
+// Helpers de flux explicites (clarté + maintenabilité)
+function navigateToIntro() {
+  currentEditingId = null;
+  // Pas de reset de userName ici (logo simple = retour accueil)
+  showScreen('intro-screen');
+}
+
+function navigateToQuiz() {
+  showScreen('quiz-screen');
+}
+
+function navigateToResults() {
+  showScreen('results-screen');
+}
+
+// Exposer pour modules (vanilla JS, scripts chargés dans l'ordre)
+window.showScreen = showScreen;
+window.navigateToIntro = navigateToIntro;
+window.navigateToQuiz = navigateToQuiz;
+window.navigateToResults = navigateToResults;
+
 /**
  * MELHOR PRÁTICA: Carrega todo o estado do usuário de uma vez no início.
  * Isso garante que nome + histórico sobrevivam a reinícios do app.
@@ -150,69 +207,51 @@ function initializeTailwind() {
 
 // Fonctions de navigation principales
 function startQuiz() {
-    // Cacher l'écran d'accueil
-    document.getElementById('intro-screen').classList.add('hidden');
-
-    // Como loadUserState() já rodou no init, userName já está carregado se existir.
-
+    // Usar navegação centralizada
     const prefs = loadPreferences();
 
     if (prefs && prefs.hasCompletedTest) {
-        // Usuário já fez o teste antes → vai direto para o questionário
+        // Usuário já fez o teste antes → vai direto para o questionário (novo ou après historique)
         currentEditingId = null;
-        const notice = document.getElementById('quiz-edit-notice');
-        if (notice) notice.classList.add('hidden');
-
-        document.getElementById('quiz-screen').classList.remove('hidden');
+        navigateToQuiz();
         currentQuestionIndex = 0;
         answers = {};
         showQuestion();
         return;
     }
 
-    // Primeira vez → pede nome
-    document.getElementById('name-screen').classList.remove('hidden');
-    
-    // Pré-preencher nome (já deve estar em userName graças ao loadUserState)
+    // Primeira vez → demande nom (flux guidé)
+    showScreen('name-screen');
+
+    // Pré-preencher nome (persistência)
     if (userName) {
         const nameInput = document.getElementById('user-name-input');
         if (nameInput) nameInput.value = userName;
     }
 
-    // Focus sur le champ nom
     setTimeout(() => {
         const nameInput = document.getElementById('user-name-input');
         if (nameInput) nameInput.focus();
-    }, 100);
+    }, 80);
 }
 
 function saveNameAndContinue() {
     const nameInput = document.getElementById('user-name-input');
-    const name = nameInput.value.trim();
+    const name = nameInput ? nameInput.value.trim() : '';
     
-    // Le nom est optionnel - on accepte même s'il est vide
     userName = name;
     currentEditingId = null;
-    
-    // Salvar nome nas preferências
     saveNameOnly();
     
-    // Cacher l'écran nom
-    document.getElementById('name-screen').classList.add('hidden');
-    
-    // Afficher l'explication de l'application
-    document.getElementById('about-screen').classList.remove('hidden');
+    // Navigation centralisée vers about (explication)
+    showScreen('about-screen');
 }
 
 function continueAnonymously() {
     userName = '';
     currentEditingId = null;
     
-    // Cacher l'écran nom
-    document.getElementById('name-screen').classList.add('hidden');
-    
-    // Aller directement à l'écran d'explication
-    document.getElementById('about-screen').classList.remove('hidden');
+    showScreen('about-screen');
 }
 
 // Melhor prática: função única para salvar preferências do usuário
@@ -307,7 +346,9 @@ function showResultsHistory() {
         <h3 id="history-title" class="font-bold text-xl y2k-heading">Historique des résultats</h3>
         <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
     `;
-    header.querySelector('button').onclick = () => modal.remove();
+    const headerCloseBtn = header.querySelector('button');
+    headerCloseBtn.onclick = () => closeModal(modal);
+    headerCloseBtn.setAttribute('aria-label', 'Fermer l\'historique');
 
     // Content
     const content = document.createElement('div');
@@ -318,8 +359,7 @@ function showResultsHistory() {
     newTestBtn.className = 'w-full mb-4 px-4 py-2 glossy-btn rounded-full text-xs tracking-widest uppercase flex items-center justify-center gap-x-2';
     newTestBtn.innerHTML = `<i class="fa-solid fa-plus"></i><span>Nouveau test</span>`;
     newTestBtn.onclick = () => {
-        modal.remove();
-        // Reset editing state and start fresh
+        closeModal(modal);
         currentEditingId = null;
         startQuiz();
     };
@@ -331,6 +371,31 @@ function showResultsHistory() {
         emptyMsg.textContent = 'Aucun résultat enregistré pour le moment.';
         content.appendChild(emptyMsg);
     } else {
+        // Use event delegation on the content container for better navegabilidade & perf
+        content.addEventListener('click', (e) => {
+            const card = e.target.closest('[data-history-index]');
+            if (!card) return;
+            const idx = parseInt(card.dataset.historyIndex, 10);
+            if (isNaN(idx)) return;
+
+            if (e.target.closest('[data-action="share"]')) {
+                e.stopImmediatePropagation();
+                shareResultFromHistory(idx);
+            } else if (e.target.closest('[data-action="edit"]')) {
+                e.stopImmediatePropagation();
+                refazerTeste(idx);
+                closeModal(modal);
+            } else if (e.target.closest('[data-action="view"]')) {
+                e.stopImmediatePropagation();
+                showFullResult(idx);
+                closeModal(modal);
+            } else {
+                // Click on card body → vue complète (discoverability)
+                showFullResult(idx);
+                closeModal(modal);
+            }
+        });
+
         history.forEach((entry, index) => {
             const dominant = TEMPERAMENTS[entry.dominant];
             const secondary = TEMPERAMENTS[entry.secondary];
@@ -339,9 +404,11 @@ function showResultsHistory() {
             });
 
             const card = document.createElement('div');
-            card.className = 'border border-[#292929] rounded-2xl p-4 mb-3';
+            card.className = 'border border-[#292929] rounded-2xl p-4 mb-3 cursor-pointer hover:border-[#555] transition-colors';
             card.style.borderLeft = `4px solid ${dominant.color}`;
             card.dataset.historyIndex = index;
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', `Voir détails du résultat ${dominant.name}`);
 
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
@@ -359,40 +426,21 @@ function showResultsHistory() {
                 </div>
             `;
 
-            // Action buttons container
+            // Actions explicites (icônes + labels) pour découvrabilité
             const actions = document.createElement('div');
             actions.className = 'flex flex-wrap gap-2 mt-3';
+            actions.innerHTML = `
+                <button data-action="share" class="px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i><span>Partager</span>
+                </button>
+                <button data-action="edit" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
+                    <i class="fa-solid fa-edit"></i><span>Modifier</span>
+                </button>
+                <button data-action="view" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
+                    <i class="fa-solid fa-eye"></i><span>Détails</span>
+                </button>
+            `;
 
-            // Share (quick WhatsApp)
-            const shareBtn = document.createElement('button');
-            shareBtn.className = 'px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1';
-            shareBtn.innerHTML = `<i class="fa-brands fa-whatsapp"></i><span>Partager</span>`;
-            shareBtn.onclick = (e) => {
-                e.stopImmediatePropagation();
-                shareResultFromHistory(index);
-            };
-
-            // Modifier (edit previous answers - business logic: update existing)
-            const refazerBtn = document.createElement('button');
-            refazerBtn.className = 'px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1';
-            refazerBtn.innerHTML = `<i class="fa-solid fa-edit"></i><span>Modifier</span>`;
-            refazerBtn.onclick = (e) => {
-                e.stopImmediatePropagation();
-                refazerTeste(index);
-                modal.remove();
-            };
-
-            // Full view
-            const viewBtn = document.createElement('button');
-            viewBtn.className = 'px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1';
-            viewBtn.innerHTML = `<i class="fa-solid fa-eye"></i><span>Détails</span>`;
-            viewBtn.onclick = (e) => {
-                e.stopImmediatePropagation();
-                showFullResult(index);
-                modal.remove();
-            };
-
-            actions.append(shareBtn, refazerBtn, viewBtn);
             card.appendChild(actions);
             content.appendChild(card);
         });
@@ -409,7 +457,8 @@ function showResultsHistory() {
         clearBtn.onclick = () => {
             if (confirm('Voulez-vous vraiment effacer tout l\'historique ?')) {
                 HistoryManager.clear();
-                modal.remove();
+                closeModal(modal);
+                // Optionally refresh if needed
                 alert('Historique effacé.');
             }
         };
@@ -419,28 +468,22 @@ function showResultsHistory() {
     const closeBtn = document.createElement('button');
     closeBtn.className = 'px-6 py-2 glossy-btn text-xs tracking-[2px] uppercase rounded-full';
     closeBtn.textContent = 'FERMER';
-    closeBtn.onclick = () => modal.remove();
+    closeBtn.onclick = () => closeModal(modal);
     footer.appendChild(closeBtn);
 
     container.append(header, content, footer);
     modal.append(container);
     document.body.appendChild(modal);
 
-    // ESC to close (best practice for modals)
-    const escHandler = (e) => {
-        if (e.key === 'Escape') {
-            modal.remove();
-            document.removeEventListener('keydown', escHandler);
-        }
-    };
-    document.addEventListener('keydown', escHandler, { once: true });
+    // ESC standardisé
+    attachModalEscClose(modal);
 }
 
 function clearResultsHistory() {
     if (confirm('Voulez-vous vraiment effacer tout l\'historique des résultats ?')) {
         HistoryManager.clear();
         const modal = document.getElementById('results-history-modal');
-        if (modal) modal.remove();
+        if (modal) closeModal(modal);
         alert('Historique effacé.');
     }
 }
@@ -459,151 +502,186 @@ function showFullResult(index) {
 
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
 
-    const shareHTML = shareSectionHTML ? shareSectionHTML(index) : '';
+    // Backdrop separate for reliable close
+    const backdrop = document.createElement('div');
+    backdrop.className = 'absolute inset-0';
+    backdrop.onclick = () => closeModal(modal);
 
-    let html = `
-        <div onclick="event.target.remove()" class="absolute inset-0"></div>
-        <div onclick="event.stopImmediatePropagation()" class="y2k-card chrome-border rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-auto relative">
-            <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
-                <h3 class="font-bold text-xl y2k-heading">Vue complète du résultat</h3>
-                <button onclick="this.closest('.fixed').remove()" class="text-3xl text-[#555] hover:text-white" aria-label="Fermer">×</button>
+    const content = document.createElement('div');
+    content.className = 'y2k-card chrome-border rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-auto relative';
+    content.onclick = (e) => e.stopImmediatePropagation();
+
+    const shareHTML = (typeof shareSectionHTML === 'function') ? shareSectionHTML(index) : '';
+
+    content.innerHTML = `
+        <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
+            <h3 class="font-bold text-xl y2k-heading">Vue complète du résultat</h3>
+            <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
+        </div>
+
+        <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
+
+            <!-- Contexte -->
+            <div class="text-xs text-[#888] mb-2">
+                Résultat du ${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}
             </div>
 
-            <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
-
-                <!-- Contexte -->
-                <div class="text-xs text-[#888] mb-2">
-                    Résultat du ${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}
-                </div>
-
-                <!-- Dominant -->
-                <div>
-                    <div class="flex items-center gap-x-3 mb-2">
-                        <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
-                        <div>
-                            <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
-                            <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
-                            <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(entry.percentages[entry.dominant])}%</div>
-                        </div>
-                    </div>
-                    <p class="text-sm leading-relaxed text-[#ccc]">${dominant.description}</p>
-                </div>
-
-                <!-- Secondary -->
-                <div>
-                    <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
-                    <div class="flex items-center gap-x-2">
-                        <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
-                        <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
-                        <span class="text-sm text-[#888]">(${Math.round(entry.percentages[entry.secondary])}%)</span>
+            <!-- Dominant -->
+            <div>
+                <div class="flex items-center gap-x-3 mb-2">
+                    <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
+                    <div>
+                        <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
+                        <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
+                        <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(entry.percentages[entry.dominant])}%</div>
                     </div>
                 </div>
-
-                <!-- Percentages -->
-                <div>
-                    <div class="text-xs tracking-widest text-[#666] mb-2">RÉPARTITION</div>
-                    <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">
-                        ${Object.keys(entry.percentages).map(key => {
-                            const t = TEMPERAMENTS[key];
-                            const pct = entry.percentages[key];
-                            return `<div class="flex justify-between"><span>${t.emoji} ${t.name}</span><span class="font-semibold">${pct}%</span></div>`;
-                        }).join('')}
-                    </div>
-                </div>
-
-                <!-- Strengths -->
-                <div>
-                    <div class="flex items-center gap-x-2 mb-2 text-emerald-400">
-                        <i class="fa-solid fa-check"></i>
-                        <span class="uppercase tracking-widest text-xs font-semibold">Points forts</span>
-                    </div>
-                    <ul class="space-y-1 text-sm text-[#ccc]">
-                        ${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}
-                    </ul>
-                </div>
-
-                <!-- Weaknesses -->
-                <div>
-                    <div class="flex items-center gap-x-2 mb-2 text-amber-400">
-                        <i class="fa-solid fa-exclamation"></i>
-                        <span class="uppercase tracking-widest text-xs font-semibold">À améliorer</span>
-                    </div>
-                    <ul class="space-y-1 text-sm text-[#ccc]">
-                        ${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}
-                    </ul>
-                </div>
-
-                <!-- Careers -->
-                <div>
-                    <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                        <i class="fa-solid fa-briefcase"></i>
-                        <span class="uppercase tracking-widest text-xs font-semibold">Carrières recommandées</span>
-                    </div>
-                    <ul class="space-y-1 text-sm text-[#ccc]">
-                        ${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}
-                    </ul>
-                </div>
-
-                <!-- Activities -->
-                <div>
-                    <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                        <i class="fa-solid fa-heart"></i>
-                        <span class="uppercase tracking-widest text-xs font-semibold">Activités préférées</span>
-                    </div>
-                    <ul class="space-y-1 text-sm text-[#ccc]">
-                        ${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}
-                    </ul>
-                </div>
-
+                <p class="text-sm leading-relaxed text-[#ccc]">${dominant.description}</p>
             </div>
 
-            <!-- Share section (reutilizável) -->
-            <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222]">
-                <div class="text-xs uppercase tracking-widest text-[#666] mb-2">Partager le résultat</div>
-                ${shareSectionHTML ? shareSectionHTML(index) : ''}
+            <!-- Secondary -->
+            <div>
+                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
+                <div class="flex items-center gap-x-2">
+                    <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
+                    <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
+                    <span class="text-sm text-[#888]">(${Math.round(entry.percentages[entry.secondary])}%)</span>
+                </div>
             </div>
 
-            <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex flex-wrap gap-2 items-center justify-between text-xs text-[#666]">
-                <button onclick="refazerTeste(${index}); this.closest('.fixed').remove();" class="px-4 py-1.5 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1">
-                    <i class="fa-solid fa-edit"></i>
-                    <span>Modifier</span>
-                </button>
-                <button onclick="this.closest('.fixed').remove()" class="px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
+            <!-- Percentages -->
+            <div>
+                <div class="text-xs tracking-widest text-[#666] mb-2">RÉPARTITION</div>
+                <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">
+                    ${Object.keys(entry.percentages).map(key => {
+                        const t = TEMPERAMENTS[key];
+                        const pct = entry.percentages[key];
+                        return `<div class="flex justify-between"><span>${t.emoji} ${t.name}</span><span class="font-semibold">${pct}%</span></div>`;
+                    }).join('')}
+                </div>
             </div>
+
+            <!-- Strengths -->
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-emerald-400">
+                    <i class="fa-solid fa-check"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">Points forts</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">
+                    ${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}
+                </ul>
+            </div>
+
+            <!-- Weaknesses -->
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-amber-400">
+                    <i class="fa-solid fa-exclamation"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">À améliorer</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">
+                    ${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}
+                </ul>
+            </div>
+
+            <!-- Careers -->
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">Carrières recommandées</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">
+                    ${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}
+                </ul>
+            </div>
+
+            <!-- Activities -->
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">Activités préférées</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">
+                    ${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Share section (réutilisable) -->
+        <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222]">
+            <div class="text-xs uppercase tracking-widest text-[#666] mb-2">Partager le résultat</div>
+            ${shareHTML}
+        </div>
+
+        <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex flex-wrap gap-2 items-center justify-between text-xs text-[#666]">
+            <button class="edit-from-full px-4 py-1.5 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1">
+                <i class="fa-solid fa-edit"></i>
+                <span>Modifier</span>
+            </button>
+            <button class="close-full px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
         </div>
     `;
 
-    modal.innerHTML = html;
+    // Attach handlers after
+    const xBtn = content.querySelector('button[aria-label="Fermer"]');
+    if (xBtn) xBtn.onclick = () => closeModal(modal);
+
+    const editBtn = content.querySelector('.edit-from-full');
+    if (editBtn) editBtn.onclick = () => {
+        closeModal(modal);
+        refazerTeste(index);
+    };
+
+    const closeFooterBtn = content.querySelector('.close-full');
+    if (closeFooterBtn) closeFooterBtn.onclick = () => closeModal(modal);
+
+    modal.append(backdrop, content);
     document.body.appendChild(modal);
 
-    // ESC to close
-    const escHandler = (e) => {
-        if (e.key === 'Escape') {
-            modal.remove();
-            document.removeEventListener('keydown', escHandler);
-        }
-    };
-    document.addEventListener('keydown', escHandler, { once: true });
+    attachModalEscClose(modal);
 }
 
-// Função reutilizável para gerar a seção de compartilhamento
+// =====================================================
+// HELPERS MODAUX (standardisation pour navegabilidade)
+// Fermeture cohérente (ESC, backdrop, X) pour tous les modaux dynamiques
+// =====================================================
+function closeModal(modal) {
+  if (!modal) return;
+  if (modal.parentNode) modal.parentNode.removeChild(modal);
+}
+
+function attachModalEscClose(modal, onClose) {
+  const handler = (e) => {
+    if (e.key === 'Escape') {
+      closeModal(modal);
+      if (onClose) onClose();
+      document.removeEventListener('keydown', handler);
+    }
+  };
+  document.addEventListener('keydown', handler, { once: true });
+  return handler;
+}
+
+// Função reutilizável para gerar a seção de compartilhamento (utilisée dans results + full view)
 function shareSectionHTML(index) {
     return `
         <div class="flex flex-wrap gap-2">
-            <button onclick="shareFullResultOnWhatsApp(${index}); event.stopImmediatePropagation();" 
+            <button onclick="if(window.shareFullResultOnWhatsApp)window.shareFullResultOnWhatsApp(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                 <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
             </button>
-            <button onclick="shareFullResultOnTelegram(${index}); event.stopImmediatePropagation();" 
+            <button onclick="if(window.shareFullResultOnTelegram)window.shareFullResultOnTelegram(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                 <i class="fa-brands fa-telegram mr-1"></i>Telegram
             </button>
-            <button onclick="shareFullResultOnInstagram(${index}); event.stopImmediatePropagation();" 
+            <button onclick="if(window.shareFullResultOnInstagram)window.shareFullResultOnInstagram(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
                 <i class="fa-brands fa-instagram mr-1"></i>Instagram
             </button>
-            <button onclick="copyFullResult(${index}); event.stopImmediatePropagation();" 
+            <button onclick="if(window.copyFullResult)window.copyFullResult(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
                 <i class="fa-solid fa-copy mr-1"></i>Copier
             </button>
@@ -645,6 +723,83 @@ function shareResultFromHistory(index) {
     window.open(url, '_blank');
 }
 
+// =====================================================
+// Partage depuis Vue Complète (historique) - corrigé
+// Alinhado com a lógica de share no results.js
+// =====================================================
+function getFullResultText(index) {
+    const entry = currentHistoryCache[index];
+    if (!entry) return '';
+    const dominant = TEMPERAMENTS[entry.dominant];
+    const secondary = TEMPERAMENTS[entry.secondary];
+    const namePart = (entry.userName && entry.userName.length > 0) ? `${entry.userName} - ` : '';
+
+    let text = `${namePart}Mon tempérament dominant est ${dominant.name} (${dominant.subtitle}).\n\n`;
+    text += `Description : ${dominant.description}\n\n`;
+    text += `Principal : ${dominant.name} (${Math.round(entry.percentages[entry.dominant])}%)\n`;
+    text += `Secondaire : ${secondary.name} (${Math.round(entry.percentages[entry.secondary])}%)\n\n`;
+    text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;
+    text += `Carrières recommandées : ${(dominant.recommendedCareers || []).join(', ')}\n`;
+    text += `Activités préférées : ${(dominant.preferredActivities || []).join(', ')}\n\n`;
+    text += `Fais le test toi aussi : https://clevencode.github.io/4temperament`;
+    return text;
+}
+
+function shareFullResultOnWhatsApp(index) {
+    const text = getFullResultText(index);
+    if (!text) return;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+function shareFullResultOnTelegram(index) {
+    const text = getFullResultText(index);
+    if (!text) return;
+    const url = `https://t.me/share/url?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://clevencode.github.io/4temperament')}`;
+    window.open(url, '_blank');
+}
+
+function shareFullResultOnInstagram(index) {
+    const text = getFullResultText(index);
+    if (!text) return;
+    // Instagram: copier + ouvrir (même pattern que results)
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Texte copié ! Ouvre Instagram et colle-le dans la légende d'un post ou d'une story.");
+        window.open('https://www.instagram.com/', '_blank');
+    }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert("Texte copié ! Ouvre Instagram et colle-le.");
+        window.open('https://www.instagram.com/', '_blank');
+    });
+}
+
+function copyFullResult(index) {
+    const text = getFullResultText(index);
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Résultat copié dans le presse-papiers !");
+    }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert("Résultat copié !");
+    });
+}
+
+// Exposer pour les handlers inline du shareSectionHTML
+window.shareFullResultOnWhatsApp = shareFullResultOnWhatsApp;
+window.shareFullResultOnTelegram = shareFullResultOnTelegram;
+window.shareFullResultOnInstagram = shareFullResultOnInstagram;
+window.copyFullResult = copyFullResult;
+
 /**
  * Refazer / Editar um resultado do histórico.
  * Carrega as respostas antigas e marca para atualização (não cria novo registro).
@@ -652,72 +807,40 @@ function shareResultFromHistory(index) {
 function refazerTeste(index) {
     const entry = currentHistoryCache[index];
     if (!entry) {
-        restartQuiz();
+        navigateToIntro();
         return;
     }
 
     const modal = document.getElementById('results-history-modal');
     if (modal) modal.remove();
 
-    // Marca que estamos editando este registro específico
+    // Business logic: edition met à jour l'entrée existante (pas de duplication)
     currentEditingId = entry.id;
-
-    // Restaura respostas anteriores para edição
     answers = entry.answers ? JSON.parse(JSON.stringify(entry.answers)) : {};
-
     if (entry.userName && entry.userName.length > 0) {
         userName = entry.userName;
     }
 
-    // Vai direto para as perguntas
-    document.getElementById('intro-screen').classList.add('hidden');
-    document.getElementById('name-screen').classList.add('hidden');
-    document.getElementById('about-screen').classList.add('hidden');
-    document.getElementById('results-screen').classList.add('hidden');
-
-    document.getElementById('quiz-screen').classList.remove('hidden');
-
-    // Mostrar aviso de edição para intuitividade
-    const notice = document.getElementById('quiz-edit-notice');
-    if (notice) notice.classList.remove('hidden');
-
     currentQuestionIndex = 0;
+    navigateToQuiz();
     showQuestion();
+    // Notice visibility is now handled inside showScreen based on currentEditingId
 }
 
 function startQuizAfterAbout() {
-    // Cacher l'écran d'explication
-    document.getElementById('about-screen').classList.add('hidden');
-    
-    // Cacher avis d'édition
-    const notice = document.getElementById('quiz-edit-notice');
-    if (notice) notice.classList.add('hidden');
-    
-    // Afficher l'écran du quiz
-    document.getElementById('quiz-screen').classList.remove('hidden');
-    
-    // Réinitialiser l'état du questionnaire
+    // Réinitialiser quiz state pour un nouveau parcours
     currentQuestionIndex = 0;
     answers = {};
-    
+    // Note: currentEditingId doit déjà être null ici (flux normal)
+    navigateToQuiz();
     showQuestion();
 }
 
 function restartQuiz() {
-    // Réinitialiser les données
+    // Retour à l'accueil propre : réinitialise états + navigation centralisée
     userName = '';
     currentEditingId = null;
-    
-    // Cacher avis d'édition
-    const notice = document.getElementById('quiz-edit-notice');
-    if (notice) notice.classList.add('hidden');
-    
-    // Cacher tous les écrans sauf l'accueil
-    document.getElementById('results-screen').classList.add('hidden');
-    document.getElementById('quiz-screen').classList.add('hidden');
-    document.getElementById('name-screen').classList.add('hidden');
-    document.getElementById('about-screen').classList.add('hidden');
-    document.getElementById('intro-screen').classList.remove('hidden');
+    navigateToIntro();
 }
 
 // Initialisation générale
@@ -727,24 +850,8 @@ function initializeApp() {
 
     initializeTailwind();
 
-    // Screen management helper (focus + a11y)
-    window.showScreen = function(screenId) {
-        // Hide all screens
-        document.querySelectorAll('[id$="-screen"]').forEach(s => {
-            s.classList.add('hidden');
-            s.setAttribute('aria-hidden', 'true');
-        });
-        // Hide modals? handled separately
-
-        const screen = document.getElementById(screenId);
-        if (screen) {
-            screen.classList.remove('hidden');
-            screen.removeAttribute('aria-hidden');
-            // Focus first interactive or heading
-            const focusTarget = screen.querySelector('button, input, [tabindex], h1, h2, h3');
-            if (focusTarget) setTimeout(() => focusTarget.focus(), 50);
-        }
-    };
+    // Centralized navigation already exposed earlier. Delegate for external use.
+    window.showScreen = showScreen;
 
     // Support clavier
     document.addEventListener('keydown', function(e) {
@@ -761,17 +868,12 @@ function initializeApp() {
         }
     });
 
-    // Clique sur le logo pour revenir au début
+    // Logo clique → home fiable (navegabilidade)
     const logo = document.querySelector('.fa-brain');
     if (logo) {
         logo.style.cursor = 'pointer';
-        logo.onclick = () => {
-            document.getElementById('results-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('name-screen').classList.add('hidden');
-            document.getElementById('about-screen').classList.add('hidden');
-            document.getElementById('intro-screen').classList.remove('hidden');
-        };
+        logo.setAttribute('aria-label', 'Retour à l\'accueil');
+        logo.onclick = () => navigateToIntro();
     }
 
     // Configurer le champ nom
