@@ -733,7 +733,8 @@ body {
     }
 }
 
-/* Vue complète du résultat — parité mobile/desktop */
+/* Résultat — flux continu (final + vue complète), sans tabs */
+.result-flow-content,
 .result-detail-content {
     display: flex;
     flex-direction: column;
@@ -741,19 +742,18 @@ body {
 }
 
 @media (min-width: 640px) {
+    .result-flow-content,
     .result-detail-content {
         gap: 2rem;
     }
 }
 
+.result-flow-section,
 .result-detail-section {
     margin-bottom: 0;
 }
 
-.result-detail-section:last-child {
-    margin-bottom: 0;
-}
-
+.result-flow-share .flex.flex-wrap,
 .result-detail-share .flex.flex-wrap {
     gap: 0.5rem;
 }

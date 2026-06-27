@@ -48,12 +48,6 @@ function buildResultBarsHtml(result) {
   }).join('');
 }
 
-function renderResultBars(result) {
-  const barsContainer = document.getElementById('results-bars');
-  if (!barsContainer) return;
-  barsContainer.innerHTML = buildResultBarsHtml(result);
-}
-
 function getBalancedSecondaryReason(result) {
   if (result.allNeutral) return 'Toutes les réponses étaient neutres';
   if (result.mostlyNeutral) return 'Majorité de réponses neutres (≥ 80 %)';
@@ -206,52 +200,39 @@ function renderResultHero(result) {
   applyResultHeroCard(document.getElementById('main-result-card'), view);
 }
 
-function renderResultTabsContent(result) {
-  const view = getResultPresentation(result);
-
-  renderResultBars(result);
-
-  const secondaryEl = document.getElementById('secondary-result');
-  if (secondaryEl) secondaryEl.innerHTML = view.secondaryHtml;
-
-  const profileEl = document.getElementById('profile-summary');
-  if (profileEl) profileEl.innerHTML = view.profileSummary;
-
-  const descEl = document.getElementById('result-description');
-  if (descEl) descEl.textContent = view.description;
-
-  const strengthsEl = document.getElementById('strengths-list');
-  if (strengthsEl) strengthsEl.innerHTML = view.strengthsHtml;
-
-  const weaknessesEl = document.getElementById('weaknesses-list');
-  if (weaknessesEl) weaknessesEl.innerHTML = view.weaknessesHtml;
-
-  const careersEl = document.getElementById('careers-list');
-  if (careersEl) careersEl.innerHTML = view.careersHtml;
-
-  const activitiesEl = document.getElementById('activities-list');
-  if (activitiesEl) activitiesEl.innerHTML = view.activitiesHtml;
+function buildLiveShareHtml() {
+  return `
+    <div class="flex flex-wrap gap-2">
+      <button type="button" onclick="shareOnWhatsApp()"
+              class="type-btn min-h-[44px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+        ${icon('whatsapp', { size: 'sm', tone: 'whatsapp', className: 'mr-1' })}WhatsApp
+      </button>
+      <button type="button" onclick="shareOnTelegram()"
+              class="type-btn min-h-[44px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+        ${icon('telegram', { size: 'sm', tone: 'telegram', className: 'mr-1' })}Telegram
+      </button>
+      <button type="button" onclick="shareOnInstagram()"
+              class="type-btn min-h-[44px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+        ${icon('instagram', { size: 'sm', tone: 'instagram', className: 'mr-1' })}Instagram
+      </button>
+    </div>
+    <button type="button" onclick="copyResultToClipboard()"
+            class="type-btn mt-3 min-h-[44px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
+      ${icon('copy', { size: 'sm', tone: 'muted', className: 'mr-1' })}Copier le texte
+    </button>`;
 }
 
-function renderResultScreen(result) {
-  renderResultHero(result);
-  renderResultTabsContent(result);
-}
-
-function buildResultDetailHtml(result, index) {
+/** Contenu empilhé réutilisable — résultat final et vue complète (sans tabs). */
+function buildResultBodyHtml(result, shareHtml = '') {
   const view = getResultPresentation(result);
-  const shareHTML = typeof shareSectionHTML === 'function' ? shareSectionHTML(index) : '';
 
   return `
-    <div class="result-detail-content">
-      ${buildResultHeroSectionHtml(view, { className: 'result-hero-card result-detail-hero' })}
-
-      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-detail-section" aria-labelledby="result-detail-bars-label">
-        <div id="result-detail-bars-label" class="type-label text-[#888] mb-5 px-1">RÉPARTITION DES TEMPÉRAMENTS</div>
+      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-flow-section" aria-labelledby="result-bars-label">
+        <div id="result-bars-label" class="type-label text-[#888] mb-5 px-1">RÉPARTITION DES TEMPÉRAMENTS</div>
         <div class="space-y-6">${buildResultBarsHtml(result)}</div>
       </section>
 
-      <section class="layout-grid-2 info-tab-grid result-detail-section" aria-label="Profil et tempérament secondaire">
+      <section class="layout-grid-2 info-tab-grid result-flow-section" aria-label="Profil et tempérament secondaire">
         <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
           <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
           <div class="flex items-center gap-x-3">${view.secondaryHtml}</div>
@@ -262,12 +243,12 @@ function buildResultDetailHtml(result, index) {
         </div>
       </section>
 
-      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-detail-section" aria-labelledby="result-detail-about-label">
-        <div id="result-detail-about-label" class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
+      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-flow-section" aria-labelledby="result-about-label">
+        <div id="result-about-label" class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
         <div class="type-result-body text-[#ccc]">${view.description}</div>
       </section>
 
-      <section class="layout-grid-2 result-detail-section" aria-label="Points forts et axes d'amélioration">
+      <section class="layout-grid-2 result-flow-section" aria-label="Points forts et axes d'amélioration">
         <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
           ${sectionHeading('strengths', 'TES POINTS FORTS', 'success')}
           <ul class="space-y-[7px]">${view.strengthsHtml}</ul>
@@ -278,7 +259,7 @@ function buildResultDetailHtml(result, index) {
         </div>
       </section>
 
-      <section class="layout-grid-2 result-detail-section" aria-label="Carrières et activités">
+      <section class="layout-grid-2 result-flow-section" aria-label="Carrières et activités">
         <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
           ${sectionHeading('careers', 'CARRIÈRES RECOMMANDÉES')}
           <ul class="space-y-[7px]">${view.careersHtml}</ul>
@@ -289,12 +270,31 @@ function buildResultDetailHtml(result, index) {
         </div>
       </section>
 
-      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-7 result-detail-section result-detail-share" aria-labelledby="result-detail-share-label">
+      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-7 result-flow-section result-flow-share" aria-labelledby="result-share-label">
         ${sectionHeading('share', 'PARTAGER LE RÉSULTAT')}
-        <div id="result-detail-share-label" class="sr-only">Options de partage</div>
-        ${shareHTML}
+        <div id="result-share-label" class="sr-only">Options de partage</div>
+        ${shareHtml}
         <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ce résultat avec tes amis !</p>
-      </section>
+      </section>`;
+}
+
+function renderResultScreen(result) {
+  renderResultHero(result);
+
+  const body = document.getElementById('results-body');
+  if (body) {
+    body.innerHTML = buildResultBodyHtml(result, buildLiveShareHtml());
+  }
+}
+
+function buildResultDetailHtml(result, index) {
+  const view = getResultPresentation(result);
+  const shareHTML = typeof shareSectionHTML === 'function' ? shareSectionHTML(index) : '';
+
+  return `
+    <div class="result-flow-content">
+      ${buildResultHeroSectionHtml(view, { className: 'result-hero-card result-detail-hero' })}
+      ${buildResultBodyHtml(result, shareHTML)}
     </div>`;
 }
 
@@ -334,11 +334,6 @@ function showResults() {
     renderBalancedResult(result);
   } else {
     renderDominantResult(result);
-  }
-
-  const resultsTabs = document.getElementById('results-info-tabs');
-  if (resultsTabs && typeof activateInfoTab === 'function') {
-    activateInfoTab(resultsTabs, 'profile');
   }
 
   if (typeof saveUserPreferences === 'function') {
@@ -437,6 +432,8 @@ window.getResultPresentation = getResultPresentation;
 window.buildResultHeroCardHtml = buildResultHeroCardHtml;
 window.buildResultHeroSectionHtml = buildResultHeroSectionHtml;
 window.applyResultHeroCard = applyResultHeroCard;
+window.buildResultBodyHtml = buildResultBodyHtml;
+window.buildLiveShareHtml = buildLiveShareHtml;
 window.renderResultScreen = renderResultScreen;
 window.buildResultDetailHtml = buildResultDetailHtml;
 window.showResults = showResults;
