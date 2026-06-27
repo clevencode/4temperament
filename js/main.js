@@ -159,24 +159,12 @@ window.navigateToResults = navigateToResults;
  * Isso garante que nome + histórico sobrevivam a reinícios do app.
  */
 function loadUserState() {
-    // Carregar preferências (nome + flag de já completou)
-    const prefs = loadPreferences();
-    if (prefs) {
-        if (prefs.userName) {
-            userName = prefs.userName;
-        }
-    }
+    // Carregar preferências (sem restaurar nome — teste 100 % anonyme)
+    loadPreferences();
 
     // Carregar histórico completo
     currentHistoryCache = HistoryManager.load();
-
-    // Se não tiver nome salvo nas prefs, tenta pegar do último resultado do histórico
-    if (!userName && currentHistoryCache.length > 0) {
-        const last = currentHistoryCache[0];
-        if (last.userName && last.userName !== 'Anônimo') {
-            userName = last.userName;
-        }
-    }
+    userName = '';
 
     console.log('%c[Quiz] Estado do usuário carregado do localStorage (persistência ativa)', 'color:#4ade80');
 }
@@ -207,42 +195,12 @@ function initializeTailwind() {
 
 // Fonctions de navigation principales
 function startQuiz() {
-    // Usar navegação centralizada
-    const prefs = loadPreferences();
-
-    if (prefs && prefs.hasCompletedTest) {
-        // Usuário já fez o teste antes → vai direto para o questionário (novo ou après historique)
-        currentEditingId = null;
-        navigateToQuiz();
-        currentQuestionIndex = 0;
-        answers = {};
-        showQuestion();
-        return;
-    }
-
-    // Première visite → explication directe, sans demander de nom
     userName = '';
     currentEditingId = null;
-    showScreen('about-screen');
-}
-
-function saveNameAndContinue() {
-    const nameInput = document.getElementById('user-name-input');
-    const name = nameInput ? nameInput.value.trim() : '';
-    
-    userName = name;
-    currentEditingId = null;
-    saveNameOnly();
-    
-    // Navigation centralisée vers about (explication)
-    showScreen('about-screen');
-}
-
-function continueAnonymously() {
-    userName = '';
-    currentEditingId = null;
-    
-    showScreen('about-screen');
+    currentQuestionIndex = 0;
+    answers = {};
+    navigateToQuiz();
+    showQuestion();
 }
 
 // Melhor prática: função única para salvar preferências do usuário
@@ -251,7 +209,6 @@ function saveUserPreferences(extra = {}) {
         const existing = localStorage.getItem(PREFS_KEY);
         let prefs = existing ? JSON.parse(existing) : {};
 
-        if (userName) prefs.userName = userName;
         if (extra.hasCompletedTest) prefs.hasCompletedTest = true;
 
         Object.assign(prefs, extra);
@@ -260,10 +217,6 @@ function saveUserPreferences(extra = {}) {
     } catch(e) {
         console.warn('Erro ao salvar preferências do usuário');
     }
-}
-
-function saveNameOnly() {
-    saveUserPreferences();
 }
 
 // === HISTÓRICO DE RESULTADOS FINAIS ===
@@ -300,10 +253,6 @@ function saveResultToHistory(resultData) {
         HistoryManager.add(entry);
     }
 
-    // Garante que o nome do usuário fique salvo nas preferências (melhor prática)
-    if (userName) {
-        saveUserPreferences();
-    }
 }
 
 function loadResultsHistory() {
@@ -680,18 +629,6 @@ function shareSectionHTML(index) {
     `;
 }
 
-// Permettre d'appuyer sur Entrée dans le champ nom
-function setupNameInput() {
-    const nameInput = document.getElementById('user-name-input');
-    if (nameInput) {
-        nameInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                saveNameAndContinue();
-            }
-        });
-    }
-}
-
 // Compartilhar resultado específico do histórico (apenas WhatsApp)
 function shareResultFromHistory(index) {
     const entry = currentHistoryCache[index];
@@ -808,9 +745,7 @@ function refazerTeste(index) {
     // Business logic: edition met à jour l'entrée existante (pas de duplication)
     currentEditingId = entry.id;
     answers = entry.answers ? JSON.parse(JSON.stringify(entry.answers)) : {};
-    if (entry.userName && entry.userName.length > 0) {
-        userName = entry.userName;
-    }
+    userName = '';
 
     currentQuestionIndex = 0;
     navigateToQuiz();
