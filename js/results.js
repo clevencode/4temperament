@@ -37,7 +37,7 @@ function renderResultBars(result) {
     div.innerHTML = `
       <div class="flex justify-between items-center mb-1.5 px-1">
         <div class="flex items-center gap-x-2">
-          <span class="text-lg sm:text-xl">${t.emoji}</span>
+          ${temperamentEmoji(t.emoji, 'sm', isDominant ? t.color : null)}
           <span class="type-ui font-semibold text-base sm:text-lg ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
           ${isDominant ? `<span class="type-caption px-2 py-px rounded" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
         </div>
@@ -72,7 +72,7 @@ function renderBalancedResult(result) {
   document.getElementById('result-subtitle').style.color = '#aaa';
 
   const iconContainer = document.getElementById('result-icon');
-  iconContainer.innerHTML = '<span style="color:#c9c9c9">⚖️</span>';
+  iconContainer.innerHTML = temperamentEmoji('⚖️', 'xl', '#c9c9c9');
   iconContainer.style.background = 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))';
   iconContainer.style.border = '1px solid #44444440';
 
@@ -90,19 +90,19 @@ function renderBalancedResult(result) {
   document.getElementById('result-description').textContent = BALANCED_COPY.description;
 
   document.getElementById('strengths-list').innerHTML = BALANCED_COPY.strengths.map(s =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="type-list-item">${s}</span></li>`
+    listItem(s, 'checkCircle', 'silver')
   ).join('');
 
   document.getElementById('weaknesses-list').innerHTML = BALANCED_COPY.weaknesses.map(w =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="type-list-item">${w}</span></li>`
+    listItem(w, 'minus', 'subtle')
   ).join('');
 
   document.getElementById('careers-list').innerHTML = BALANCED_COPY.careers.map(c =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${c}</span></li>`
+    listItem(c, 'arrowRight', 'muted')
   ).join('');
 
   document.getElementById('activities-list').innerHTML = BALANCED_COPY.activities.map(a =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${a}</span></li>`
+    listItem(a, 'arrowRight', 'muted')
   ).join('');
 }
 
@@ -133,14 +133,14 @@ function renderDominantResult(result) {
   document.getElementById('result-subtitle').style.color = '#aaa';
 
   const iconContainer = document.getElementById('result-icon');
-  iconContainer.innerHTML = `<span style="color:${dominant.color}">${dominant.emoji}</span>`;
+  iconContainer.innerHTML = temperamentEmoji(dominant.emoji, 'xl', dominant.color);
   iconContainer.style.background = 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))';
   iconContainer.style.border = `1px solid ${dominant.color}40`;
 
   renderResultBars(result);
 
   document.getElementById('secondary-result').innerHTML = `
-    <div class="text-4xl" style="color: ${secondary.color}">${secondary.emoji}</div>
+    ${temperamentEmoji(secondary.emoji, 'lg', secondary.color)}
     <div>
       <div class="type-ui font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
       <div class="type-body text-sm text-[#888]">${secondary.subtitle} — ${result.secondaryPercent}%</div>
@@ -159,28 +159,28 @@ function renderDominantResult(result) {
 
   if (isRejection) {
     document.getElementById('strengths-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="type-list-item">Tu as clarifié ce qui te ressemble moins (${dominant.name})</span></li>`;
+      listItem(`Tu as clarifié ce qui te ressemble moins (${dominant.name})`, 'checkCircle', 'silver');
     document.getElementById('weaknesses-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="type-list-item">Relance le test en répondant ce qui t'identifie positivement</span></li>`;
+      listItem('Relance le test en répondant ce qui t\'identifie positivement', 'minus', 'subtle');
     document.getElementById('careers-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">Non applicable — profil basé sur le désaccord</span></li>`;
+      listItem('Non applicable — profil basé sur le désaccord', 'arrowRight', 'muted');
     document.getElementById('activities-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">Explore librement sans te limiter à un seul type</span></li>`;
+      listItem('Explore librement sans te limiter à un seul type', 'arrowRight', 'muted');
   } else {
     document.getElementById('strengths-list').innerHTML = dominant.strengths.map(s =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="type-list-item">${s}</span></li>`
+      listItem(s, 'checkCircle', 'silver')
     ).join('');
 
     document.getElementById('weaknesses-list').innerHTML = dominant.weaknesses.map(w =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="type-list-item">${w}</span></li>`
+      listItem(w, 'minus', 'subtle')
     ).join('');
 
     document.getElementById('careers-list').innerHTML = (dominant.recommendedCareers || []).map(c =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${c}</span></li>`
+      listItem(c, 'arrowRight', 'muted')
     ).join('');
 
     document.getElementById('activities-list').innerHTML = (dominant.preferredActivities || []).map(a =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${a}</span></li>`
+      listItem(a, 'arrowRight', 'muted')
     ).join('');
   }
 }

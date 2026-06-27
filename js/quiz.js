@@ -54,8 +54,8 @@ function showQuestion() {
         btn.dataset.value = option.value;
 
         btn.innerHTML = `
-            <div class="likert-value w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs font-semibold ${isSelected ? 'border-[#c9c9c9] bg-[#c9c9c9] text-black' : 'border-[#3a3a3a] text-[#888]'}">
-                ${isSelected ? '<i class="fa-solid fa-check text-xs"></i>' : option.value}
+            <div class="likert-value w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex-shrink-0 ${isSelected ? 'is-selected' : 'border-[#3a3a3a] text-[#888]'}">
+                ${isSelected ? icon('check', { size: 'xs', tone: 'inherit' }) : option.value}
             </div>
             <div class="flex-1 min-w-0">
                 <div class="type-likert-label">${option.text}</div>
@@ -82,12 +82,12 @@ function showQuestion() {
     if (currentQuestionIndex === QUESTIONS.length - 1) {
         btnNext.innerHTML = `
             <span>VOIR LE RÉSULTAT</span>
-            <i class="fa-solid fa-chart-bar ml-2"></i>
+            ${icon('results', { size: 'sm', tone: 'silver', className: 'ml-2' })}
         `;
     } else {
         btnNext.innerHTML = `
             <span>SUIVANT</span>
-            <i class="fa-solid fa-arrow-right"></i>
+            ${icon('arrowRight', { size: 'sm', tone: 'silver' })}
         `;
     }
 
@@ -121,7 +121,7 @@ function selectOption(questionId, value, element) {
 
         const circle = opt.querySelector('.likert-value');
         if (circle) {
-            circle.classList.remove('border-[#c9c9c9]', 'bg-[#c9c9c9]', 'text-black');
+            circle.classList.remove('is-selected');
             circle.classList.add('border-[#3a3a3a]', 'text-[#888]');
             circle.textContent = opt.dataset.value;
         }
@@ -134,8 +134,8 @@ function selectOption(questionId, value, element) {
     const circle = element.querySelector('.likert-value');
     if (circle) {
         circle.classList.remove('border-[#3a3a3a]', 'text-[#888]');
-        circle.classList.add('border-[#c9c9c9]', 'bg-[#c9c9c9]', 'text-black');
-        circle.innerHTML = '<i class="fa-solid fa-check text-xs"></i>';
+        circle.classList.add('is-selected');
+        circle.innerHTML = icon('check', { size: 'xs', tone: 'inherit' });
     }
 
     answers[questionId] = value;

@@ -22,16 +22,15 @@
                     onclick="navigateToIntro()"
                     class="flex items-center gap-x-3 text-left rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
                     aria-label="Retour à l'accueil">
-                <div class="w-9 h-9 rounded-xl metallic flex items-center justify-center relative pointer-events-none">
-                    <i class="fa-solid fa-brain text-[#c9c9c9] text-xl"></i>
-                    <div class="absolute inset-0 rounded-xl border border-white/10"></div>
-                </div>
+                <span class="icon-badge icon-badge--md icon-badge--chrome pointer-events-none" aria-hidden="true">
+                    <i class="icon icon--md icon--silver fa-solid fa-brain"></i>
+                </span>
                 <span class="type-display y2k-heading text-xl sm:text-2xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
             </button>
             <button onclick="showAboutModal()" 
                     class="type-btn flex items-center gap-x-2 px-5 py-2 text-[#999] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#444]"
                     aria-label="À propos des 4 Tempéraments">
-                <i class="fa-solid fa-info-circle mr-1.5"></i>
+                <i class="icon icon--sm icon--muted fa-solid fa-circle-info mr-1.5" aria-hidden="true"></i>
                 <span>À propos</span>
             </button>
         </div>
@@ -40,9 +39,9 @@
     <!-- HERO / INTRO SCREEN -->
     <div id="intro-screen" class="max-w-4xl mx-auto px-6 pt-14 pb-16 relative">
         <!-- étoiles décoratives -->
-        <div class="absolute top-12 left-8 text-[#c9c9c9] opacity-10 text-xl select-none">✧</div>
-        <div class="absolute top-28 right-14 text-[#c9c9c9] opacity-10 text-base select-none">✦</div>
-        <div class="absolute top-6 right-1/4 text-[#c9c9c9] opacity-10 text-2xl select-none">★</div>
+        <div class="icon-deco-star icon-deco-star--lg absolute top-12 left-8" aria-hidden="true">✧</div>
+        <div class="icon-deco-star icon-deco-star--sm absolute top-28 right-14" aria-hidden="true">✦</div>
+        <div class="icon-deco-star icon-deco-star--md absolute top-6 right-1/4" aria-hidden="true">★</div>
 
         <div class="text-center relative z-10">
             <!-- Badge -->
@@ -66,14 +65,14 @@
                 <button id="intro-start-btn" onclick="startQuiz()" 
                         class="type-btn chrome-button group inline-flex items-center justify-center gap-x-3 px-6 sm:px-10 py-3 sm:py-4 glossy-btn text-[#e5e5e5] rounded-2xl">
                     <span id="intro-start-label">COMMENCER LE TEST</span>
-                    <i id="intro-start-icon" class="fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition"></i>
+                    <i id="intro-start-icon" class="icon icon--sm icon--silver fa-solid fa-arrow-right icon--animate-nudge group-active:translate-x-0.5 transition" aria-hidden="true"></i>
                 </button>
                 <p id="intro-continue-hint" class="type-caption hidden text-[#777] normal-case tracking-normal"></p>
             </div>
 
             <div class="type-caption mt-8 flex items-center justify-center gap-x-7">
                 <div class="flex items-center gap-x-2">
-                    <i class="fa-regular fa-clock"></i>
+                    <i class="icon icon--sm icon--subtle fa-solid fa-clock" aria-hidden="true"></i>
                     <span>~8 MIN</span>
                 </div>
                 <div class="h-px w-3 bg-[#333]"></div>
@@ -83,7 +82,7 @@
             <div class="mt-6">
                 <button onclick="showResultsHistory()" 
                         class="type-link flex items-center gap-x-1 mx-auto">
-                    <i class="fa-solid fa-history text-xs"></i>
+                    <i class="icon icon--xs icon--muted fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                     <span class="normal-case tracking-normal">Voir l'historique des résultats</span>
                 </button>
             </div>
@@ -125,7 +124,7 @@
             </button>
             <button onclick="navigateToIntro()" 
                     class="type-link flex items-center gap-x-1.5">
-                <i class="fa-solid fa-arrow-left"></i>
+                <i class="icon icon--xs icon--muted fa-solid fa-arrow-left" aria-hidden="true"></i>
                 <span>RETOUR À L'ACCUEIL</span>
             </button>
         </div>
@@ -140,7 +139,7 @@
                 <button onclick="restartQuiz()" 
                         class="type-caption flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full"
                         aria-label="Recommencer le test">
-                    <i class="fa-solid fa-redo text-xs"></i>
+                    <i class="icon icon--xs icon--subtle fa-solid fa-rotate-right" aria-hidden="true"></i>
                     <span>RECOMMENCER</span>
                 </button>
             </div>
@@ -190,7 +189,7 @@
                 <button onclick="prevQuestion()" 
                         id="btn-prev"
                         class="type-btn min-h-[44px] px-4 sm:px-5 py-3 flex items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full disabled:opacity-40">
-                    <i class="fa-solid fa-arrow-left"></i>
+                    <i class="icon icon--sm icon--silver fa-solid fa-arrow-left" aria-hidden="true"></i>
                     <span>PRÉCÉDENT</span>
                 </button>
 
@@ -198,7 +197,7 @@
                         id="btn-next"
                         class="type-btn chrome-button min-h-[44px] px-6 sm:px-9 py-3 flex items-center gap-x-2 glossy-btn text-[#ddd] rounded-full">
                     <span id="btn-next-text">SUIVANT</span>
-                    <i class="fa-solid fa-arrow-right"></i>
+                    <i class="icon icon--sm icon--silver fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
@@ -226,8 +225,7 @@
                     <div id="result-subtitle" class="type-ui text-xl sm:text-2xl tracking-tight opacity-80"></div>
                 </div>
                 <div class="flex-shrink-0 text-center">
-                    <div id="result-icon" class="w-20 h-20 sm:w-28 sm:h-28 mx-auto rounded-2xl flex items-center justify-center text-[50px] sm:text-[65px] mb-1 ring-1 ring-white/10" 
-                         style="background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));"></div>
+                    <div id="result-icon" class="temperament-icon-shell temperament-icon-shell--result mx-auto mb-1"></div>
                 </div>
             </div>
         </div>
@@ -268,15 +266,15 @@
         <!-- Strengths & Weaknesses -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
             <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
-                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
-                    <i class="fa-solid fa-check"></i>
+                <div class="section-heading">
+                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--success fa-solid fa-circle-check" aria-hidden="true"></i></span>
                     <h3 class="type-label">TES POINTS FORTS</h3>
                 </div>
                 <ul id="strengths-list" class="space-y-[7px]"></ul>
             </div>
             <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
-                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
-                    <i class="fa-solid fa-exclamation"></i>
+                <div class="section-heading">
+                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--warning fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
                     <h3 class="type-label">À AMÉLIORER</h3>
                 </div>
                 <ul id="weaknesses-list" class="space-y-[7px]"></ul>
@@ -286,15 +284,15 @@
         <!-- Recommended Careers & Activities -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
             <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
-                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
-                    <i class="fa-solid fa-briefcase"></i>
+                <div class="section-heading">
+                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-briefcase" aria-hidden="true"></i></span>
                     <h3 class="type-label">CARRIÈRES RECOMMANDÉES</h3>
                 </div>
                 <ul id="careers-list" class="space-y-[7px]"></ul>
             </div>
             <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
-                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
-                    <i class="fa-solid fa-heart"></i>
+                <div class="section-heading">
+                    <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-heart" aria-hidden="true"></i></span>
                     <h3 class="type-label">ACTIVITÉS PRÉFÉRÉES</h3>
                 </div>
                 <ul id="activities-list" class="space-y-[7px]"></ul>
@@ -303,27 +301,27 @@
 
         <!-- Share Result -->
         <div class="y2k-card chrome-border rounded-3xl p-7 mb-8">
-            <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
-                <i class="fa-solid fa-share-alt"></i>
+            <div class="section-heading">
+                <span class="icon-badge icon-badge--sm"><i class="icon icon--sm icon--muted fa-solid fa-share-nodes" aria-hidden="true"></i></span>
                 <h3 class="type-label">PARTAGER MON RÉSULTAT</h3>
             </div>
             <div class="flex flex-wrap gap-2">
                 <button onclick="shareOnWhatsApp()" 
                         class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
-                    <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
+                    <i class="icon icon--sm icon--whatsapp fa-brands fa-whatsapp mr-1" aria-hidden="true"></i>WhatsApp
                 </button>
                 <button onclick="shareOnTelegram()" 
                         class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
-                    <i class="fa-brands fa-telegram mr-1"></i>Telegram
+                    <i class="icon icon--sm icon--telegram fa-brands fa-telegram mr-1" aria-hidden="true"></i>Telegram
                 </button>
                 <button onclick="shareOnInstagram()" 
                         class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
-                    <i class="fa-brands fa-instagram mr-1"></i>Instagram
+                    <i class="icon icon--sm icon--instagram fa-brands fa-instagram mr-1" aria-hidden="true"></i>Instagram
                 </button>
             </div>
             <button onclick="copyResultToClipboard()" 
                     class="type-btn mt-3 min-h-[40px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
-                <i class="fa-solid fa-copy mr-2"></i>Copier le texte
+                <i class="icon icon--sm icon--muted fa-solid fa-copy mr-2" aria-hidden="true"></i>Copier le texte
             </button>
             <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
         </div>
@@ -332,13 +330,13 @@
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
             <button onclick="restartQuiz()" 
                     class="type-btn px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full flex">
-                <i class="fa-solid fa-redo"></i>
+                <i class="icon icon--sm icon--muted fa-solid fa-rotate-right" aria-hidden="true"></i>
                 <span class="ml-2">RECOMMENCER LE TEST</span>
             </button>
             
             <button onclick="showAllTemperaments()" 
                     class="type-btn chrome-button px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full flex">
-                <i class="fa-solid fa-list"></i>
+                <i class="icon icon--sm icon--silver fa-solid fa-table-cells" aria-hidden="true"></i>
                 <span class="ml-2">VOIR LES 4 TEMPÉRAMENTS</span>
             </button>
         </div>
@@ -346,7 +344,7 @@
         <div class="text-center mt-4">
             <button onclick="showResultsHistory()" 
                     class="type-link flex items-center gap-x-1 mx-auto">
-                <i class="fa-solid fa-history text-xs"></i>
+                <i class="icon icon--xs icon--muted fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
                 <span class="normal-case tracking-normal">Voir l'historique des résultats</span>
             </button>
         </div>
@@ -404,6 +402,7 @@
     <!-- Scripts modulaires (ordre important) -->
     <script src="js/data.js"></script>
     <script src="js/scoring.js"></script>
+    <script src="js/icons.js"></script>
     <script src="js/quiz.js"></script>
     <script src="js/results.js"></script>
     <script src="js/modals.js"></script>

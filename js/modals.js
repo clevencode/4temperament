@@ -13,8 +13,8 @@ function showAllTemperaments() {
         
         card.innerHTML = `
             <div class="flex items-center gap-x-3 mb-4">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-3xl ring-1 ring-white/10" style="background: #111; color: ${t.color}">
-                    ${t.emoji}
+                <div class="icon-badge icon-badge--lg icon-badge--chrome" style="color: ${t.color}">
+                    ${temperamentEmoji(t.emoji, 'md', t.color)}
                 </div>
                 <div>
                     <div class="type-display y2k-heading text-2xl" style="color: ${t.color}">${t.name}</div>

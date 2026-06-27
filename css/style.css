@@ -256,6 +256,171 @@ body {
     text-shadow: none;
 }
 
+/* ── Iconography system ────────────────────────────────────
+   FA icons (UI) + emoji (tempéraments) — Y2K chrome + legível
+   ─────────────────────────────────────────────────────── */
+
+:root {
+    --icon-xs: 0.6875rem;
+    --icon-sm: 0.8125rem;
+    --icon-md: 1rem;
+    --icon-lg: 1.25rem;
+    --icon-xl: 1.5rem;
+
+    --icon-default: var(--silver);
+    --icon-muted: var(--text-tertiary);
+    --icon-subtle: var(--text-quaternary);
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+    vertical-align: middle;
+    color: var(--icon-default);
+}
+
+.icon--xs { font-size: var(--icon-xs); }
+.icon--sm { font-size: var(--icon-sm); }
+.icon--md { font-size: var(--icon-md); }
+.icon--lg { font-size: var(--icon-lg); }
+.icon--xl { font-size: var(--icon-xl); }
+
+.icon--silver { color: var(--silver); }
+.icon--muted { color: var(--icon-muted); }
+.icon--subtle { color: var(--icon-subtle); }
+.icon--success { color: var(--success); }
+.icon--warning { color: #fbbf24; }
+.icon--danger { color: var(--error); }
+.icon--inherit { color: inherit; }
+.icon--whatsapp { color: #25d366; }
+.icon--telegram { color: #29b6f6; }
+.icon--instagram { color: #e1306c; }
+
+.icon--animate-nudge {
+    transition: transform 0.15s ease;
+}
+
+.icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, #2a2a2a 0%, #111 50%, #0a0a0a 100%);
+    border: 1px solid #3a3a3a;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 2px 6px rgba(0,0,0,0.4);
+}
+
+.icon-badge--sm {
+    width: 1.625rem;
+    height: 1.625rem;
+}
+
+.icon-badge--md {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+}
+
+.icon-badge--lg {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-md);
+}
+
+.icon-badge--chrome {
+    position: relative;
+}
+
+.icon-badge--chrome::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255,255,255,0.1);
+    pointer-events: none;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.list-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+.list-icon {
+    margin-top: 0;
+}
+
+.temperament-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.temperament-icon--xs { font-size: 1.125rem; }
+.temperament-icon--sm { font-size: 1.5rem; }
+.temperament-icon--md { font-size: 2rem; }
+.temperament-icon--lg { font-size: 2.5rem; }
+.temperament-icon--xl { font-size: 3.25rem; }
+
+.temperament-icon-shell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.temperament-icon-shell--result {
+    width: 5rem;
+    height: 5rem;
+    font-size: 3rem;
+}
+
+@media (min-width: 640px) {
+    .temperament-icon-shell--result {
+        width: 7rem;
+        height: 7rem;
+        font-size: 4rem;
+    }
+}
+
+.icon-deco-star {
+    color: var(--silver);
+    opacity: 0.1;
+    user-select: none;
+    pointer-events: none;
+    animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+.icon-deco-star--sm { font-size: var(--text-base); }
+.icon-deco-star--md { font-size: var(--text-lg); }
+.icon-deco-star--lg { font-size: var(--text-xl); }
+
+.likert-value .icon {
+    font-size: var(--icon-xs);
+}
+
 /* Cards & Surfaces */
 .y2k-card {
     background: var(--card);
@@ -387,6 +552,19 @@ body {
     font-variant-numeric: tabular-nums;
     font-weight: 600;
     font-size: var(--text-xs);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.likert-value.is-selected {
+    border-color: var(--silver);
+    background: var(--silver);
+    color: #050505;
+}
+
+.likert-value.is-selected .icon {
+    color: #050505;
 }
 
 /* Progress */

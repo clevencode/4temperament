@@ -231,8 +231,8 @@ function updateIntroCta() {
     const answered = Object.keys(saved.answers).length;
     const qIndex = Math.min(saved.currentQuestionIndex ?? 0, (typeof QUESTIONS !== 'undefined' ? QUESTIONS.length : 30) - 1);
     label.textContent = 'CONTINUER';
-    if (icon) {
-      icon.className = 'fa-solid fa-play text-sm group-active:translate-x-0.5 transition';
+    if (icon && typeof setIntroStartIcon === 'function') {
+      setIntroStartIcon(icon, 'continue');
     }
     if (hint) {
       hint.textContent = `Reprendre à la question ${qIndex + 1} — ${answered} réponse${answered > 1 ? 's' : ''} sauvegardée${answered > 1 ? 's' : ''}`;
@@ -240,8 +240,8 @@ function updateIntroCta() {
     }
   } else {
     label.textContent = 'COMMENCER LE TEST';
-    if (icon) {
-      icon.className = 'fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition';
+    if (icon && typeof setIntroStartIcon === 'function') {
+      setIntroStartIcon(icon, 'start');
     }
     if (hint) hint.classList.add('hidden');
   }
@@ -422,7 +422,7 @@ function showResultsHistory() {
     // Bouton pour nouveau test (intuitif: séparer nouveau vs modifier)
     const newTestBtn = document.createElement('button');
     newTestBtn.className = 'w-full mb-4 px-4 py-2 glossy-btn rounded-full text-xs tracking-widest uppercase flex items-center justify-center gap-x-2';
-    newTestBtn.innerHTML = `<i class="fa-solid fa-plus"></i><span>Nouveau test</span>`;
+    newTestBtn.innerHTML = `${icon('plus', { size: 'sm', tone: 'silver' })}<span>Nouveau test</span>`;
     newTestBtn.onclick = () => {
         closeModal(modal);
         currentEditingId = null;
@@ -492,7 +492,7 @@ function showResultsHistory() {
                 <div class="flex justify-between items-start mb-2">
                     <div>
                         <div class="flex items-center gap-x-2">
-                            <span class="text-2xl">${dominant.emoji}</span>
+                            ${temperamentEmoji(dominant.emoji, 'sm', dominant.color)}
                             <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
                         </div>
                         <div class="text-[10px] sm:text-xs text-[#888]">${dateStr}</div>
@@ -506,13 +506,13 @@ function showResultsHistory() {
             actions.className = 'flex flex-wrap gap-2 mt-3';
             actions.innerHTML = `
                 <button data-action="share" class="px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
-                    <i class="fa-brands fa-whatsapp"></i><span>Partager</span>
+                    ${icon('whatsapp', { size: 'sm', tone: 'whatsapp' })}<span>Partager</span>
                 </button>
                 <button data-action="edit" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
-                    <i class="fa-solid fa-edit"></i><span>Modifier</span>
+                    ${icon('edit', { size: 'sm', tone: 'muted' })}<span>Modifier</span>
                 </button>
                 <button data-action="view" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
-                    <i class="fa-solid fa-eye"></i><span>Détails</span>
+                    ${icon('eye', { size: 'sm', tone: 'muted' })}<span>Détails</span>
                 </button>
             `;
 
@@ -595,13 +595,13 @@ function showFullResult(index) {
 
     const repartitionHtml = Object.keys(percentages).map(key => {
         const t = TEMPERAMENTS[key];
-        return `<div class="flex justify-between"><span>${t.emoji} ${t.name}</span><span class="font-semibold">${percentages[key]}%</span></div>`;
+        return `<div class="flex justify-between items-center gap-x-2"><span class="flex items-center gap-x-1.5">${temperamentEmoji(t.emoji, 'xs', t.color)}<span>${t.name}</span></span><span class="font-semibold">${percentages[key]}%</span></div>`;
     }).join('');
 
     const profileHtml = isBalanced ? `
             <div>
                 <div class="flex items-center gap-x-3 mb-2">
-                    <span class="text-4xl sm:text-5xl">⚖️</span>
+                    ${temperamentEmoji('⚖️', 'lg', '#c9c9c9')}
                     <div>
                         <div class="text-xs tracking-widest text-[#666]">RÉSULTAT</div>
                         <div class="text-2xl sm:text-3xl font-bold" style="color: #c9c9c9">Équilibré</div>
@@ -617,7 +617,7 @@ function showFullResult(index) {
     : `
             <div>
                 <div class="flex items-center gap-x-3 mb-2">
-                    <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
+                    ${temperamentEmoji(dominant.emoji, 'lg', dominant.color)}
                     <div>
                         <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
                         <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
@@ -629,7 +629,7 @@ function showFullResult(index) {
             <div>
                 <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
                 <div class="flex items-center gap-x-2">
-                    <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
+                    ${temperamentEmoji(secondary.emoji, 'md', secondary.color)}
                     <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
                     <span class="text-sm text-[#888]">(${Math.round(percentages[resolved.secondary])}%)</span>
                 </div>
@@ -637,31 +637,19 @@ function showFullResult(index) {
 
     const detailsHtml = isBalanced ? '' : `
             <div>
-                <div class="flex items-center gap-x-2 mb-2 text-emerald-400">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Points forts</span>
-                </div>
+                ${sectionHeading('strengths', 'Points forts', 'success')}
                 <ul class="space-y-1 text-sm text-[#ccc]">${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}</ul>
             </div>
             <div>
-                <div class="flex items-center gap-x-2 mb-2 text-amber-400">
-                    <i class="fa-solid fa-exclamation"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">À améliorer</span>
-                </div>
+                ${sectionHeading('weaknesses', 'À améliorer', 'warning')}
                 <ul class="space-y-1 text-sm text-[#ccc]">${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}</ul>
             </div>
             <div>
-                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                    <i class="fa-solid fa-briefcase"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Carrières recommandées</span>
-                </div>
+                ${sectionHeading('careers', 'Carrières recommandées')}
                 <ul class="space-y-1 text-sm text-[#ccc]">${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}</ul>
             </div>
             <div>
-                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                    <i class="fa-solid fa-heart"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Activités préférées</span>
-                </div>
+                ${sectionHeading('activities', 'Activités préférées')}
                 <ul class="space-y-1 text-sm text-[#ccc]">${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}</ul>
             </div>`;
 
@@ -689,7 +677,7 @@ function showFullResult(index) {
 
         <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex flex-wrap gap-2 items-center justify-between text-xs text-[#666]">
             <button class="edit-from-full px-4 py-1.5 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1">
-                <i class="fa-solid fa-edit"></i>
+                ${icon('edit', { size: 'sm', tone: 'muted' })}
                 <span>Modifier</span>
             </button>
             <button class="close-full px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
@@ -742,19 +730,19 @@ function shareSectionHTML(index) {
         <div class="flex flex-wrap gap-2">
             <button onclick="if(window.shareFullResultOnWhatsApp)window.shareFullResultOnWhatsApp(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
-                <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
+                ${icon('whatsapp', { size: 'sm', tone: 'whatsapp', className: 'mr-1' })}WhatsApp
             </button>
             <button onclick="if(window.shareFullResultOnTelegram)window.shareFullResultOnTelegram(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
-                <i class="fa-brands fa-telegram mr-1"></i>Telegram
+                ${icon('telegram', { size: 'sm', tone: 'telegram', className: 'mr-1' })}Telegram
             </button>
             <button onclick="if(window.shareFullResultOnInstagram)window.shareFullResultOnInstagram(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
-                <i class="fa-brands fa-instagram mr-1"></i>Instagram
+                ${icon('instagram', { size: 'sm', tone: 'instagram', className: 'mr-1' })}Instagram
             </button>
             <button onclick="if(window.copyFullResult)window.copyFullResult(${index});" 
                     class="min-h-[40px] px-3 sm:px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
-                <i class="fa-solid fa-copy mr-1"></i>Copier
+                ${icon('copy', { size: 'sm', tone: 'muted', className: 'mr-1' })}Copier
             </button>
         </div>
     `;
