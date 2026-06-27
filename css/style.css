@@ -417,6 +417,11 @@ body {
 .icon-deco-star--md { font-size: var(--text-lg); }
 .icon-deco-star--lg { font-size: var(--text-xl); }
 
+.intro-meta {
+    max-width: 100%;
+    letter-spacing: 0.06em;
+}
+
 .likert-value .icon {
     font-size: var(--icon-xs);
 }
