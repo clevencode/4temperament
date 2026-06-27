@@ -136,23 +136,13 @@
         <div class="quiz-container">
             <!-- Header -->
             <div class="flex items-center justify-between mb-4 sm:mb-6">
-                <div class="flex items-baseline gap-x-2 sm:gap-x-3">
-                    <span class="text-[10px] sm:text-xs font-semibold tracking-[3px] text-[#777]">QUESTIONNAIRE</span>
-                    <div class="text-lg sm:text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-2xl sm:text-3xl">1</span> <span class="text-[#555]">/ <span id="total-questions">30</span></span></div>
-                </div>
-                <div class="flex items-center gap-x-2">
-                    <button onclick="restartQuiz()" 
-                            class="text-[10px] sm:text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full"
-                            aria-label="Recommencer le test">
-                        <i class="fa-solid fa-redo text-xs"></i>
-                        <span>RECOMMENCER</span>
-                    </button>
-                    <button onclick="navigateToIntro()" 
-                            class="text-[10px] sm:text-xs flex items-center gap-x-1 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 py-1 rounded-full"
-                            aria-label="Retour à l'accueil">
-                        <i class="fa-solid fa-home text-xs"></i>
-                    </button>
-                </div>
+                <div class="text-lg sm:text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-2xl sm:text-3xl">1</span> <span class="text-[#555]">/ <span id="total-questions">30</span></span></div>
+                <button onclick="restartQuiz()" 
+                        class="text-[10px] sm:text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full"
+                        aria-label="Recommencer le test">
+                    <i class="fa-solid fa-redo text-xs"></i>
+                    <span>RECOMMENCER</span>
+                </button>
             </div>
 
             <!-- Edit mode indicator for intuitiveness when editing from history -->
