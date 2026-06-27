@@ -56,34 +56,55 @@
                 </span>
                 <span class="type-display y2k-heading text-xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
             </button>
-            <div class="nav-toolbar" role="tablist" aria-label="Sections">
-                <button type="button" class="nav-tab" role="tab" data-nav-tab="theory"
-                        aria-selected="false" onclick="openAboutFromNav('theory')">
-                    <span class="nav-tab__head">
-                        <span class="nav-tab__title">4 tempéraments</span>
-                        <i class="icon fa-solid fa-circle-info nav-tab__icon" aria-hidden="true"></i>
-                    </span>
-                    <span class="nav-tab__desc">Théorie</span>
-                </button>
-                <button type="button" class="nav-tab" role="tab" data-nav-tab="screen"
-                        aria-selected="false" onclick="openAboutFromNav('screen')">
-                    <span class="nav-tab__head">
-                        <span class="nav-tab__title">À propos</span>
-                        <i class="icon fa-solid fa-table-cells nav-tab__icon" aria-hidden="true"></i>
-                    </span>
-                    <span class="nav-tab__desc">Fonctionnement</span>
-                </button>
-                <button type="button" class="nav-tab" role="tab" data-nav-tab="history"
-                        aria-selected="false" onclick="openAboutFromNav('history')">
-                    <span class="nav-tab__head">
-                        <span class="nav-tab__title">Historique</span>
-                        <i class="icon fa-solid fa-clock-rotate-left nav-tab__icon" aria-hidden="true"></i>
-                    </span>
-                    <span class="nav-tab__desc">Résultats</span>
-                </button>
-            </div>
+            <button type="button" id="nav-menu-toggle"
+                    class="nav-menu-toggle"
+                    onclick="toggleNavMenu()"
+                    aria-expanded="false"
+                    aria-controls="nav-mobile-menu"
+                    aria-label="Ouvrir le menu">
+                <span class="nav-menu-toggle__icons" aria-hidden="true">
+                    <i class="icon icon--md icon--silver fa-solid fa-bars nav-menu-toggle__icon nav-menu-toggle__icon--mobile"></i>
+                    <i class="icon icon--md icon--silver fa-solid fa-circle-info nav-menu-toggle__icon nav-menu-toggle__icon--desktop"></i>
+                    <i class="icon icon--md icon--silver fa-solid fa-xmark nav-menu-toggle__icon nav-menu-toggle__icon--close"></i>
+                </span>
+                <span class="nav-menu-toggle__label">Informations</span>
+            </button>
         </div>
     </nav>
+
+    <div id="nav-mobile-menu" class="nav-mobile-menu" aria-hidden="true">
+        <div class="nav-mobile-menu__backdrop" onclick="closeNavMenu()" aria-hidden="true"></div>
+        <nav class="nav-mobile-menu__panel y2k-card chrome-border" aria-label="Menu informations">
+            <div class="type-caption px-4 pt-4 pb-2 text-[#666]">INFORMATIONS</div>
+            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('theory')">
+                <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                    <i class="icon icon--sm icon--muted fa-solid fa-circle-info"></i>
+                </span>
+                <span>
+                    <span class="nav-mobile-menu__title">Les 4 tempéraments</span>
+                    <span class="nav-mobile-menu__desc">Théorie classique</span>
+                </span>
+            </button>
+            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('screen')">
+                <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                    <i class="icon icon--sm icon--muted fa-solid fa-table-cells"></i>
+                </span>
+                <span>
+                    <span class="nav-mobile-menu__title">À propos du test</span>
+                    <span class="nav-mobile-menu__desc">Comment ça fonctionne</span>
+                </span>
+            </button>
+            <button type="button" class="nav-mobile-menu__item" onclick="openAboutFromNav('history')">
+                <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                    <i class="icon icon--sm icon--muted fa-solid fa-clock-rotate-left"></i>
+                </span>
+                <span>
+                    <span class="nav-mobile-menu__title">Historique</span>
+                    <span class="nav-mobile-menu__desc">Résultats enregistrés</span>
+                </span>
+            </button>
+        </nav>
+    </div>
 
     <main id="app-main">
 

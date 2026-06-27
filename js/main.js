@@ -160,23 +160,70 @@ let currentDetailIndex = null;
 // + helpers pour flux alignés à la logique métier (self-discovery guidé)
 // Évite les toggles dispersés, focus management, règles UI (notice edition)
 // =====================================================
-const NAV_TAB_BY_SCREEN = {
-  'temperaments-about-screen': 'theory',
-  'about-screen': 'screen',
-  'history-screen': 'history',
-  'result-detail-screen': 'history'
-};
+function isDesktopNav() {
+  return window.matchMedia('(min-width: 768px)').matches;
+}
 
-function syncNavToolbar(screenId) {
-  const activeTab = NAV_TAB_BY_SCREEN[screenId] || null;
-  document.querySelectorAll('[data-nav-tab]').forEach(btn => {
-    const isActive = btn.dataset.navTab === activeTab;
-    btn.classList.toggle('is-active', isActive);
-    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+function updateNavToggleLabel(isOpen) {
+  const toggle = document.getElementById('nav-menu-toggle');
+  if (!toggle) return;
+  if (isOpen) {
+    toggle.setAttribute('aria-label', 'Fermer le menu');
+    return;
+  }
+  toggle.setAttribute('aria-label', isDesktopNav() ? 'Informations' : 'Ouvrir le menu');
+}
+
+function openNavMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  const toggle = document.getElementById('nav-menu-toggle');
+  if (!menu || !toggle) return;
+
+  menu.classList.add('is-open');
+  menu.setAttribute('aria-hidden', 'false');
+  toggle.classList.add('is-open');
+  toggle.setAttribute('aria-expanded', 'true');
+  updateNavToggleLabel(true);
+  document.body.classList.add('nav-menu-open');
+
+  const firstItem = menu.querySelector('.nav-mobile-menu__item');
+  if (firstItem) setTimeout(() => firstItem.focus(), 80);
+}
+
+function closeNavMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  const toggle = document.getElementById('nav-menu-toggle');
+  if (!menu || !menu.classList.contains('is-open')) return;
+
+  menu.classList.remove('is-open');
+  menu.setAttribute('aria-hidden', 'true');
+  if (toggle) {
+    toggle.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    updateNavToggleLabel(false);
+  }
+  document.body.classList.remove('nav-menu-open');
+}
+
+function toggleNavMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  if (!menu) return;
+  if (menu.classList.contains('is-open')) closeNavMenu();
+  else openNavMenu();
+}
+
+function initNavMenu() {
+  updateNavToggleLabel(false);
+  window.addEventListener('resize', () => {
+    const menu = document.getElementById('nav-mobile-menu');
+    if (menu?.classList.contains('is-open')) return;
+    updateNavToggleLabel(false);
   });
 }
 
 function showScreen(screenId) {
+  closeNavMenu();
+
   // Cacher tous les écrans principaux
   document.querySelectorAll('[id$="-screen"]').forEach(s => {
     s.classList.add('hidden');
@@ -188,8 +235,6 @@ function showScreen(screenId) {
 
   screen.classList.remove('hidden');
   screen.removeAttribute('aria-hidden');
-
-  syncNavToolbar(screenId);
 
   if (typeof applyPageSeo === 'function') {
     applyPageSeo(screenId);
@@ -231,6 +276,7 @@ function navigateToTemperamentsAbout() {
 }
 
 function openAboutFromNav(target) {
+  closeNavMenu();
   if (target === 'theory') {
     navigateToTemperamentsAbout();
   } else if (target === 'screen') {
@@ -306,6 +352,9 @@ window.navigateToTemperamentsAbout = navigateToTemperamentsAbout;
 window.navigateToQuiz = navigateToQuiz;
 window.navigateToResults = navigateToResults;
 window.openAboutFromNav = openAboutFromNav;
+window.toggleNavMenu = toggleNavMenu;
+window.openNavMenu = openNavMenu;
+window.closeNavMenu = closeNavMenu;
 window.navigateToHistory = navigateToHistory;
 window.showResultsHistory = showResultsHistory;
 window.startNewTestFromHistory = startNewTestFromHistory;
@@ -945,12 +994,20 @@ function initializeApp() {
     initResultDetailScreen();
     if (typeof initInfoTabs === 'function') initInfoTabs();
     if (typeof initSeo === 'function') initSeo();
+    initNavMenu();
 
     // Centralized navigation already exposed earlier. Delegate for external use.
     window.showScreen = showScreen;
 
     // Support clavier
     document.addEventListener('keydown', function(e) {
+        const menu = document.getElementById('nav-mobile-menu');
+        if (e.key === 'Escape' && menu?.classList.contains('is-open')) {
+            closeNavMenu();
+            document.getElementById('nav-menu-toggle')?.focus();
+            return;
+        }
+
         const quizVisible = !document.getElementById('quiz-screen').classList.contains('hidden');
         if (!quizVisible) return;
 
