@@ -61,12 +61,20 @@
                 30 affirmations avec échelle d'accord — de « pas du tout d'accord » à « tout à fait d'accord ».
             </p>
 
-            <div class="flex flex-col items-center justify-center gap-2">
-                <button id="intro-start-btn" onclick="startQuiz()" 
-                        class="type-btn chrome-button group inline-flex items-center justify-center gap-x-3 px-6 sm:px-10 py-3 sm:py-4 glossy-btn text-[#e5e5e5] rounded-2xl">
-                    <span id="intro-start-label">COMMENCER LE TEST</span>
-                    <i id="intro-start-icon" class="icon icon--sm icon--silver fa-solid fa-arrow-right icon--animate-nudge group-active:translate-x-0.5 transition" aria-hidden="true"></i>
-                </button>
+            <div class="flex flex-col items-center justify-center gap-2 w-full max-w-lg mx-auto">
+                <div class="flex flex-row flex-wrap items-stretch justify-center gap-3 w-full">
+                    <button id="intro-start-btn" onclick="startQuiz()" 
+                            class="type-btn chrome-button group flex-1 inline-flex items-center justify-center gap-x-3 px-6 sm:px-8 py-3 sm:py-4 glossy-btn text-[#e5e5e5] rounded-2xl min-h-[48px]">
+                        <span id="intro-start-label">COMMENCER LE TEST</span>
+                        <i id="intro-start-icon" class="icon icon--sm icon--silver fa-solid fa-arrow-right icon--animate-nudge group-active:translate-x-0.5 transition" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" onclick="showResultsHistory()" 
+                            class="type-btn flex items-center justify-center gap-x-2 px-5 sm:px-6 py-3 sm:py-4 border border-[#292929] hover:bg-[#111] hover:border-[#444] text-[#999] hover:text-[#c9c9c9] rounded-2xl transition-colors min-h-[48px]"
+                            aria-label="Voir l'historique des résultats">
+                        <i class="icon icon--sm icon--muted fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        <span>HISTORIQUE</span>
+                    </button>
+                </div>
                 <p id="intro-continue-hint" class="type-caption hidden text-[#777] normal-case tracking-normal"></p>
             </div>
 
@@ -77,14 +85,6 @@
                 </div>
                 <div class="h-px w-3 bg-[#333]"></div>
                 <div>30 QUESTIONS • ANONYME</div>
-            </div>
-
-            <div class="mt-6">
-                <button onclick="showResultsHistory()" 
-                        class="type-link flex items-center gap-x-1 mx-auto">
-                    <i class="icon icon--xs icon--muted fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-                    <span class="normal-case tracking-normal">Voir l'historique des résultats</span>
-                </button>
             </div>
         </div>
     </div>
