@@ -330,11 +330,11 @@ function showResultsHistory() {
                     <div>
                         <div class="flex items-center gap-x-2">
                             <span class="text-2xl">${dominant.emoji}</span>
-                            <span class="font-semibold text-lg" style="color: ${dominant.color}">${dominant.name}</span>
+                            <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
                         </div>
-                        <div class="text-xs text-[#888]">${dateStr} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
+                        <div class="text-[10px] sm:text-xs text-[#888]">${dateStr} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
                     </div>
-                    <div class="text-right text-xs">
+                    <div class="text-right text-[10px] sm:text-xs">
                         <div>Principal: <span class="font-semibold">${Math.round(entry.percentages[entry.dominant])}%</span></div>
                         <div class="text-[#888]">Secundário: ${secondary.name} (${Math.round(entry.percentages[entry.secondary])}%)</div>
                     </div>
@@ -457,7 +457,7 @@ function showFullResult(index) {
                 <!-- Dominant -->
                 <div>
                     <div class="flex items-center gap-x-3 mb-2">
-                        <span class="text-5xl">${dominant.emoji}</span>
+                        <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
                         <div>
                             <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
                             <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
@@ -471,7 +471,7 @@ function showFullResult(index) {
                 <div>
                     <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
                     <div class="flex items-center gap-x-2">
-                        <span class="text-3xl">${secondary.emoji}</span>
+                        <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
                         <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
                         <span class="text-sm text-[#888]">(${Math.round(entry.percentages[entry.secondary])}%)</span>
                     </div>

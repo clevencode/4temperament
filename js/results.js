@@ -82,8 +82,8 @@ function showResults() {
                 </div>
                 <span class="font-semibold tabular-nums w-10 text-right" style="color:#c9c9c9">${percent}%</span>
             </div>
-            <div class="h-[5px] bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
-                <div class="h-[5px] rounded-full result-bar" 
+            <div class="h-1 sm:h-[5px] bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
+                <div class="h-1 sm:h-[5px] rounded-full result-bar" 
                      style="width: ${percent}%; background: linear-gradient(to right, ${t.color}, #fff, ${t.color});">
                 </div>
             </div>
