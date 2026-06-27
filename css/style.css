@@ -38,6 +38,20 @@
     /* Typography */
     --font-display: 'Anton', 'Impact', 'Arial Black', sans-serif;
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Type scale (standardized best practice) */
+    --text-xs: 0.6875rem;   /* 11px */
+    --text-sm: 0.75rem;
+    --text-base: 0.875rem;
+    --text-lg: 1rem;
+    --text-xl: 1.125rem;
+
+    /* Icon sizes (standardized) */
+    --icon-xs: 0.75rem;
+    --icon-sm: 0.875rem;
+    --icon-md: 1rem;
+    --icon-lg: 1.25rem;
+    --icon-xl: 1.5rem;
 }
 
 body {
@@ -271,4 +285,43 @@ button:focus-visible,
 @keyframes blink-caret {
     from, to { opacity: 1; }
     50% { opacity: 0; }
+}
+
+/* Standardized Icon System (elegance + consistency) */
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.icon-xs { font-size: var(--icon-xs); }
+.icon-sm { font-size: var(--icon-sm); }
+.icon-md { font-size: var(--icon-md); }
+.icon-lg { font-size: var(--icon-lg); }
+
+/* UI icons default to silver for Y2K chrome feel */
+.icon-ui {
+    color: var(--silver);
+}
+
+.icon-muted {
+    color: var(--text-muted);
+}
+
+/* Temperament accent icons (business aligned - prominent in results) */
+.icon-temperament {
+    transition: transform 0.1s ease;
+}
+
+/* Refined small text legibility */
+.text-label {
+    font-size: var(--text-xs);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.text-caption {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
 }

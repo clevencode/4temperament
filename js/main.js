@@ -356,8 +356,8 @@ function showResultsHistory() {
 
     // Bouton pour nouveau test (intuitif: séparer nouveau vs modifier)
     const newTestBtn = document.createElement('button');
-    newTestBtn.className = 'w-full mb-4 px-4 py-2 glossy-btn rounded-full text-xs tracking-widest uppercase flex items-center justify-center gap-x-2';
-    newTestBtn.innerHTML = `<i class="fa-solid fa-plus"></i><span>Nouveau test</span>`;
+    newTestBtn.className = 'w-full mb-4 px-4 py-2 glossy-btn rounded-full text-xs flex items-center justify-center gap-x-2';
+    newTestBtn.innerHTML = `<i class="fa-solid fa-plus icon icon-sm"></i><span>Nouveau</span>`;
     newTestBtn.onclick = () => {
         closeModal(modal);
         currentEditingId = null;
@@ -414,30 +414,30 @@ function showResultsHistory() {
                 <div class="flex justify-between items-start mb-2">
                     <div>
                         <div class="flex items-center gap-x-2">
-                            <span class="text-2xl">${dominant.emoji}</span>
-                            <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
+                            <span class="text-xl">${dominant.emoji}</span>
+                            <span class="font-semibold text-base" style="color: ${dominant.color}">${dominant.name}</span>
                         </div>
-                        <div class="text-[10px] sm:text-xs text-[#888]">${dateStr} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
+                        <div class="text-caption">${dateStr} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
                     </div>
-                    <div class="text-right text-[10px] sm:text-xs">
-                        <div>Principal: <span class="font-semibold">${Math.round(entry.percentages[entry.dominant])}%</span></div>
-                        <div class="text-[#888]">Secundário: ${secondary.name} (${Math.round(entry.percentages[entry.secondary])}%)</div>
+                    <div class="text-right text-caption">
+                        <div>Principal <span class="font-semibold">${Math.round(entry.percentages[entry.dominant])}%</span></div>
+                        <div class="text-[#888]">${secondary.name} ${Math.round(entry.percentages[entry.secondary])}%</div>
                     </div>
                 </div>
             `;
 
-            // Actions explicites (icônes + labels) pour découvrabilité
+            // Actions (icônes élégantes, minimal text)
             const actions = document.createElement('div');
             actions.className = 'flex flex-wrap gap-2 mt-3';
             actions.innerHTML = `
-                <button data-action="share" class="px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
-                    <i class="fa-brands fa-whatsapp"></i><span>Partager</span>
+                <button data-action="share" class="px-2.5 py-1 text-xs glossy-btn rounded-full flex items-center" aria-label="Partager">
+                    <i class="fa-brands fa-whatsapp icon icon-sm"></i>
                 </button>
-                <button data-action="edit" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
-                    <i class="fa-solid fa-edit"></i><span>Modifier</span>
+                <button data-action="edit" class="px-2.5 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center" aria-label="Modifier">
+                    <i class="fa-solid fa-edit icon icon-sm"></i>
                 </button>
-                <button data-action="view" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
-                    <i class="fa-solid fa-eye"></i><span>Détails</span>
+                <button data-action="view" class="px-2.5 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center" aria-label="Détails">
+                    <i class="fa-solid fa-eye icon icon-sm"></i>
                 </button>
             `;
 
@@ -518,110 +518,61 @@ function showFullResult(index) {
 
     content.innerHTML = `
         <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
-            <h3 class="font-bold text-xl y2k-heading">Vue complète du résultat</h3>
-            <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
+            <h3 class="font-bold text-lg y2k-heading">Résultat</h3>
+            <button class="text-2xl text-[#555] hover:text-white leading-none" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
+        <div class="p-4 sm:p-7 space-y-4 text-sm">
 
-            <!-- Contexte -->
-            <div class="text-xs text-[#888] mb-2">
-                Résultat du ${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}
-            </div>
+            <div class="text-caption">${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
 
             <!-- Dominant -->
-            <div>
-                <div class="flex items-center gap-x-3 mb-2">
-                    <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
-                    <div>
-                        <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
-                        <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
-                        <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(entry.percentages[entry.dominant])}%</div>
-                    </div>
+            <div class="flex items-center gap-x-3">
+                <span class="text-3xl">${dominant.emoji}</span>
+                <div>
+                    <div class="text-2xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
+                    <div>${Math.round(entry.percentages[entry.dominant])}% — ${dominant.subtitle}</div>
                 </div>
-                <p class="text-sm leading-relaxed text-[#ccc]">${dominant.description}</p>
             </div>
 
             <!-- Secondary -->
-            <div>
-                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
-                <div class="flex items-center gap-x-2">
-                    <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
-                    <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
-                    <span class="text-sm text-[#888]">(${Math.round(entry.percentages[entry.secondary])}%)</span>
-                </div>
+            <div class="flex items-center gap-x-2">
+                <span class="text-xl" style="color: ${secondary.color}">${secondary.emoji}</span>
+                <span style="color: ${secondary.color}">${secondary.name}</span>
+                <span class="text-caption">+ ${Math.round(entry.percentages[entry.secondary])}%</span>
             </div>
 
-            <!-- Percentages -->
-            <div>
-                <div class="text-xs tracking-widest text-[#666] mb-2">RÉPARTITION</div>
-                <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">
-                    ${Object.keys(entry.percentages).map(key => {
-                        const t = TEMPERAMENTS[key];
-                        const pct = entry.percentages[key];
-                        return `<div class="flex justify-between"><span>${t.emoji} ${t.name}</span><span class="font-semibold">${pct}%</span></div>`;
-                    }).join('')}
-                </div>
+            <!-- Répartition -->
+            <div class="grid grid-cols-2 gap-x-3 text-xs">
+                ${Object.keys(entry.percentages).map(key => {
+                    const t = TEMPERAMENTS[key];
+                    const pct = entry.percentages[key];
+                    return `<div>${t.emoji} ${t.name} <span class="font-semibold">${pct}%</span></div>`;
+                }).join('')}
             </div>
 
-            <!-- Strengths -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-emerald-400">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Points forts</span>
+            <!-- Points forts / Améliorer -->
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                    <div class="flex items-center gap-x-1 text-emerald-400 mb-1"><i class="fa-solid fa-check icon icon-sm"></i></div>
+                    <ul class="space-y-px text-[#ccc]">${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}</ul>
                 </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}
-                </ul>
-            </div>
-
-            <!-- Weaknesses -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-amber-400">
-                    <i class="fa-solid fa-exclamation"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">À améliorer</span>
+                <div>
+                    <div class="flex items-center gap-x-1 text-amber-400 mb-1"><i class="fa-solid fa-exclamation icon icon-sm"></i></div>
+                    <ul class="space-y-px text-[#ccc]">${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}</ul>
                 </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}
-                </ul>
             </div>
-
-            <!-- Careers -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                    <i class="fa-solid fa-briefcase"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Carrières recommandées</span>
-                </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}
-                </ul>
-            </div>
-
-            <!-- Activities -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                    <i class="fa-solid fa-heart"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Activités préférées</span>
-                </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}
-                </ul>
-            </div>
-
         </div>
 
-        <!-- Share section (réutilisable) -->
-        <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222]">
-            <div class="text-xs uppercase tracking-widest text-[#666] mb-2">Partager le résultat</div>
+        <div class="px-4 sm:px-7 py-4 border-t border-[#222]">
             ${shareHTML}
         </div>
 
-        <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex flex-wrap gap-2 items-center justify-between text-xs text-[#666]">
-            <button class="edit-from-full px-4 py-1.5 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1">
-                <i class="fa-solid fa-edit"></i>
-                <span>Modifier</span>
+        <div class="px-4 sm:px-7 py-4 border-t border-[#222] flex gap-2 text-xs">
+            <button class="edit-from-full px-3 py-1 border border-[#444] rounded-full flex items-center gap-x-1">
+                <i class="fa-solid fa-edit icon icon-sm"></i> <span>Modifier</span>
             </button>
-            <button class="close-full px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
+            <button class="close-full px-5 py-1 glossy-btn rounded-full flex-1">Fermer</button>
         </div>
     `;
 

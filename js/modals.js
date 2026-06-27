@@ -13,30 +13,20 @@ function showAllTemperaments() {
         
         card.innerHTML = `
             <div class="flex items-center gap-x-3 mb-4">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-3xl ring-1 ring-white/10" style="background: #111; color: ${t.color}">
+                <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-2xl ring-1 ring-white/10" style="background: #111; color: ${t.color}">
                     ${t.emoji}
                 </div>
                 <div>
-                    <div class="font-bold text-2xl y2k-heading tracking-[-0.5px]" style="color: ${t.color}">${t.name}</div>
-                    <div class="text-xs tracking-[1.5px] text-[#666]">${t.subtitle}</div>
+                    <div class="font-bold text-xl y2k-heading" style="color: ${t.color}">${t.name}</div>
+                    <div class="text-caption">${t.subtitle}</div>
                 </div>
             </div>
             
-            <p class="text-sm mb-4 text-[#aaa] leading-relaxed">${t.description}</p>
+            <p class="text-sm mb-3 text-[#aaa]">${t.description}</p>
             
-            <div class="grid grid-cols-1 gap-x-6 text-xs">
-                <div>
-                    <div class="uppercase tracking-[1px] font-semibold mb-1.5" style="color:#999">POINTS FORTS</div>
-                    <ul class="space-y-px text-[#aaa]">
-                        ${t.strengths.map(s => `<li class="flex"><span class="mr-1.5 text-[#555]">•</span> ${s}</li>`).join('')}
-                    </ul>
-                </div>
-                <div class="mt-4">
-                    <div class="uppercase tracking-[1px] font-semibold mb-1.5" style="color:#999">À AMÉLIORER</div>
-                    <ul class="space-y-px text-[#aaa]">
-                        ${t.weaknesses.map(w => `<li class="flex"><span class="mr-1.5 text-[#555]">•</span> ${w}</li>`).join('')}
-                    </ul>
-                </div>
+            <div class="text-xs space-y-1">
+                <div class="flex items-center gap-x-1 text-emerald-400"><i class="fa-solid fa-check icon icon-xs"></i> <span class="text-[#999]">Forces</span></div>
+                <div class="text-[#aaa]">${t.strengths.slice(0, 2).join(' • ')}</div>
             </div>
         `;
         content.appendChild(card);
