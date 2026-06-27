@@ -152,6 +152,7 @@ const HistoryManager = {
 // Estado temporário do módulo (evita poluir window global)
 let currentHistoryCache = [];
 let currentEditingId = null;
+let currentDetailIndex = null;
 
 // =====================================================
 // NAVIGATION CENTRALISÉE (Navegabilidade)
@@ -547,165 +548,204 @@ function clearResultsHistory() {
   alert('Historique effacé.');
 }
 
+function buildResultBarsHtml(result) {
+  const order = ['sanguineo', 'colerico', 'melancolico', 'fleumatico'];
+  const dominantBadge = result.profileMode === 'rejection' ? 'MOINS AFFIRMÉ' : 'PRINCIPAL';
+
+  return order.map(key => {
+    const t = TEMPERAMENTS[key];
+    const percent = result.percentages[key];
+    const isDominant = !result.isBalanced && key === result.dominant;
+
+    return `
+      <div>
+        <div class="flex justify-between items-center mb-1.5 px-1">
+          <div class="flex items-center gap-x-2">
+            ${temperamentEmoji(t.emoji, 'sm', isDominant ? t.color : null)}
+            <span class="type-ui font-semibold text-lg ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
+            ${isDominant ? `<span class="type-caption px-2 py-px rounded" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
+          </div>
+          <span class="type-ui font-semibold tabular-nums w-10 text-right text-sm" style="color:#c9c9c9">${percent}%</span>
+        </div>
+        <div class="result-bar-track">
+          <div class="result-bar-fill result-bar" style="width: ${percent}%; background: linear-gradient(to right, ${t.color}, #fff, ${t.color});"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function buildResultDetailHtml(resolved, index) {
+  const isBalanced = resolved.isBalanced;
+  const isRejection = !isBalanced && resolved.profileMode === 'rejection';
+  const dominant = isBalanced ? null : TEMPERAMENTS[resolved.dominant];
+  const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
+  const shareHTML = typeof shareSectionHTML === 'function' ? shareSectionHTML(index) : '';
+
+  let typeLabel, resultName, resultNameColor, resultSubtitle, iconHtml, profileSummary, description;
+  let strengthsHtml, weaknessesHtml, careersHtml, activitiesHtml, secondaryHtml;
+
+  if (isBalanced) {
+    typeLabel = 'RÉSULTAT';
+    resultName = 'ÉQUILIBRÉ';
+    resultNameColor = '#c9c9c9';
+    resultSubtitle = 'Profil sans dominance nette';
+    iconHtml = temperamentEmoji('⚖️', 'xl', '#c9c9c9');
+    profileSummary = 'Tes réponses neutres ne révèlent pas de tempérament dominant. C\'est normal : réponds avec plus de conviction pour un profil plus précis.';
+    description = 'Quand les affirmations reçoivent surtout une réponse « Neutre », aucun tempérament ne se détache clairement. Les quatre parts restent égales (25 % chacun).';
+    secondaryHtml = `
+      <div class="text-3xl opacity-60">—</div>
+      <div>
+        <div class="type-ui font-semibold text-lg text-[#888]">Non déterminé</div>
+        <div class="type-body text-sm text-[#666]">${resolved.allNeutral ? 'Toutes les réponses étaient neutres' : resolved.mostlyNeutral ? 'Majorité de réponses neutres (≥ 80 %)' : 'Signal trop faible pour déterminer un dominant'}</div>
+      </div>`;
+    strengthsHtml = [
+      'Ouverture à tous les styles de personnalité',
+      'Flexibilité comportementale',
+      'Absence de biais fort dans les réponses'
+    ].map(s => listItem(s, 'checkCircle', 'silver')).join('');
+    weaknessesHtml = [
+      'Difficile d\'identifier un tempérament dominant',
+      'Relancer le test avec des réponses plus affirmées'
+    ].map(w => listItem(w, 'minus', 'subtle')).join('');
+    careersHtml = listItem('Tout domaine où la polyvalence est un atout', 'arrowRight', 'muted');
+    activitiesHtml = listItem('Explorer plusieurs activités pour découvrir tes préférences', 'arrowRight', 'muted');
+  } else if (isRejection) {
+    typeLabel = 'TRAIT MOINS AFFIRMÉ';
+    resultName = dominant.name;
+    resultNameColor = dominant.color;
+    resultSubtitle = 'Profil basé sur le désaccord';
+    iconHtml = temperamentEmoji(dominant.emoji, 'xl', dominant.color);
+    profileSummary = `Tu as surtout répondu « pas d'accord ». Le tempérament le moins affirmé dans tes réponses est ${dominant.name} — cela ne signifie pas que tu es l'opposé, mais que ces traits ressortent moins dans ton profil actuel.`;
+    description = 'Ce résultat reflète une prédominance de désaccord dans tes réponses. Les pourcentages indiquent quels tempéraments sont les moins caractérisés par tes choix.';
+    secondaryHtml = `
+      ${temperamentEmoji(secondary.emoji, 'lg', secondary.color)}
+      <div>
+        <div class="type-ui font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
+        <div class="type-body text-sm text-[#888]">${secondary.subtitle} — ${Math.round(resolved.percentages[resolved.secondary])}%</div>
+      </div>`;
+    strengthsHtml = listItem(`Tu as clarifié ce qui te ressemble moins (${dominant.name})`, 'checkCircle', 'silver');
+    weaknessesHtml = listItem('Relance le test en répondant ce qui t\'identifie positivement', 'minus', 'subtle');
+    careersHtml = listItem('Non applicable — profil basé sur le désaccord', 'arrowRight', 'muted');
+    activitiesHtml = listItem('Explore librement sans te limiter à un seul type', 'arrowRight', 'muted');
+  } else {
+    typeLabel = 'TEMPÉRAMENT PRINCIPAL';
+    resultName = dominant.name;
+    resultNameColor = dominant.color;
+    resultSubtitle = dominant.subtitle;
+    iconHtml = temperamentEmoji(dominant.emoji, 'xl', dominant.color);
+    profileSummary = `Tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span> (${Math.round(resolved.percentages[resolved.dominant])}% / ${Math.round(resolved.percentages[resolved.secondary])}%).`;
+    description = dominant.description;
+    secondaryHtml = `
+      ${temperamentEmoji(secondary.emoji, 'lg', secondary.color)}
+      <div>
+        <div class="type-ui font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
+        <div class="type-body text-sm text-[#888]">${secondary.subtitle} — ${Math.round(resolved.percentages[resolved.secondary])}%</div>
+      </div>`;
+    strengthsHtml = dominant.strengths.map(s => listItem(s, 'checkCircle', 'silver')).join('');
+    weaknessesHtml = dominant.weaknesses.map(w => listItem(w, 'minus', 'subtle')).join('');
+    careersHtml = (dominant.recommendedCareers || []).map(c => listItem(c, 'arrowRight', 'muted')).join('');
+    activitiesHtml = (dominant.preferredActivities || []).map(a => listItem(a, 'arrowRight', 'muted')).join('');
+  }
+
+  const cardBorder = isBalanced ? '1px solid #2f2f2f' : `1px solid ${dominant.color}40`;
+  const cardBg = 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)';
+
+  return `
+    <div class="rounded-3xl p-6 text-white premium-shadow relative overflow-hidden page-card" style="background:${cardBg}; border:${cardBorder}">
+      <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+      <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+      <div class="layout-row relative z-10">
+        <div class="layout-row__main">
+          <div class="type-label opacity-60 mb-1">${typeLabel}</div>
+          <div class="type-display type-result-name y2k-title mb-2" style="color:${resultNameColor}">${resultName}</div>
+          <div class="type-ui text-xl tracking-tight opacity-80" style="color:#aaa">${resultSubtitle}</div>
+        </div>
+        <div class="layout-row__aside">
+          <div class="temperament-icon-shell temperament-icon-shell--result mx-auto mb-1">${iconHtml}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="y2k-card chrome-border rounded-3xl p-6 page-card">
+      <div class="type-label text-[#888] mb-5 px-1">RÉPARTITION DES TEMPÉRAMENTS</div>
+      <div class="space-y-6">${buildResultBarsHtml(resolved)}</div>
+    </div>
+
+    <div class="layout-grid-2 page-card">
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
+        <div class="flex items-center gap-x-3">${secondaryHtml}</div>
+      </div>
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        <div class="type-label mb-2.5">TON PROFIL</div>
+        <div class="type-body text-lg leading-snug font-medium text-[#ccc]">${profileSummary}</div>
+      </div>
+    </div>
+
+    <div class="y2k-card chrome-border rounded-3xl p-6 page-card">
+      <div class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
+      <div class="type-result-body text-[#ccc]">${description}</div>
+    </div>
+
+    <div class="layout-grid-2 page-card">
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('strengths', 'TES POINTS FORTS', 'success')}
+        <ul class="space-y-[7px]">${strengthsHtml}</ul>
+      </div>
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('weaknesses', 'À AMÉLIORER', 'warning')}
+        <ul class="space-y-[7px]">${weaknessesHtml}</ul>
+      </div>
+    </div>
+
+    <div class="layout-grid-2 page-card">
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('careers', 'CARRIÈRES RECOMMANDÉES')}
+        <ul class="space-y-[7px]">${careersHtml}</ul>
+      </div>
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('activities', 'ACTIVITÉS PRÉFÉRÉES')}
+        <ul class="space-y-[7px]">${activitiesHtml}</ul>
+      </div>
+    </div>
+
+    <div class="y2k-card chrome-border rounded-3xl p-7 page-card">
+      ${sectionHeading('share', 'PARTAGER LE RÉSULTAT')}
+      ${shareHTML}
+      <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ce résultat avec tes amis !</p>
+    </div>`;
+}
+
 function showFullResult(index) {
-    const entry = currentHistoryCache[index];
-    if (!entry) return;
+  const entry = currentHistoryCache[index];
+  if (!entry) return;
 
-    const resolved = HistoryManager.resolveEntry(entry);
-    const isBalanced = resolved.isBalanced;
-    const dominant = isBalanced ? null : TEMPERAMENTS[resolved.dominant];
-    const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
-    const percentages = resolved.percentages;
+  currentDetailIndex = index;
+  const resolved = HistoryManager.resolveEntry(entry);
 
-    const date = new Date(entry.date).toLocaleDateString('fr-FR', { 
-        day: '2-digit', month: 'long', year: 'numeric', 
-        hour: '2-digit', minute: '2-digit' 
-    });
+  const dateEl = document.getElementById('result-detail-date');
+  if (dateEl) {
+    dateEl.textContent = `Résultat du ${new Date(entry.date).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: 'long', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    })}`;
+  }
 
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
+  const container = document.getElementById('result-detail-content');
+  if (container) {
+    container.innerHTML = buildResultDetailHtml(resolved, index);
+  }
 
-    const backdrop = document.createElement('div');
-    backdrop.className = 'absolute inset-0';
-    backdrop.onclick = () => closeModal(modal);
-
-    const content = document.createElement('div');
-    content.className = 'y2k-card chrome-border rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-auto relative';
-    content.onclick = (e) => e.stopImmediatePropagation();
-
-    const shareHTML = (typeof shareSectionHTML === 'function') ? shareSectionHTML(index) : '';
-
-    const repartitionHtml = Object.keys(percentages).map(key => {
-        const t = TEMPERAMENTS[key];
-        return `<div class="flex justify-between items-center gap-x-2"><span class="flex items-center gap-x-1.5">${temperamentEmoji(t.emoji, 'xs', t.color)}<span>${t.name}</span></span><span class="font-semibold">${percentages[key]}%</span></div>`;
-    }).join('');
-
-    const profileHtml = isBalanced ? `
-            <div>
-                <div class="flex items-center gap-x-3 mb-2">
-                    ${temperamentEmoji('⚖️', 'lg', '#c9c9c9')}
-                    <div>
-                        <div class="text-xs tracking-widest text-[#666]">RÉSULTAT</div>
-                        <div class="text-2xl sm:text-3xl font-bold" style="color: #c9c9c9">Équilibré</div>
-                        <div class="text-sm text-[#aaa]">25% par tempérament — ${resolved.allNeutral ? 'toutes réponses neutres' : 'aucune dominance nette'}</div>
-                    </div>
-                </div>
-                <p class="text-sm leading-relaxed text-[#ccc]">Les réponses neutres ne permettent pas d'identifier un tempérament dominant. Relance le test en choisissant des niveaux d'accord plus affirmés.</p>
-            </div>
-            <div>
-                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
-                <div class="text-sm text-[#888]">Non déterminé</div>
-            </div>`
-    : `
-            <div>
-                <div class="flex items-center gap-x-3 mb-2">
-                    ${temperamentEmoji(dominant.emoji, 'lg', dominant.color)}
-                    <div>
-                        <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
-                        <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
-                        <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(percentages[resolved.dominant])}%</div>
-                    </div>
-                </div>
-                <p class="text-sm leading-relaxed text-[#ccc]">${dominant.description}</p>
-            </div>
-            <div>
-                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
-                <div class="flex items-center gap-x-2">
-                    ${temperamentEmoji(secondary.emoji, 'md', secondary.color)}
-                    <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
-                    <span class="text-sm text-[#888]">(${Math.round(percentages[resolved.secondary])}%)</span>
-                </div>
-            </div>`;
-
-    const detailsHtml = isBalanced ? '' : `
-            <div>
-                ${sectionHeading('strengths', 'Points forts', 'success')}
-                <ul class="space-y-1 text-sm text-[#ccc]">${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}</ul>
-            </div>
-            <div>
-                ${sectionHeading('weaknesses', 'À améliorer', 'warning')}
-                <ul class="space-y-1 text-sm text-[#ccc]">${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}</ul>
-            </div>
-            <div>
-                ${sectionHeading('careers', 'Carrières recommandées')}
-                <ul class="space-y-1 text-sm text-[#ccc]">${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}</ul>
-            </div>
-            <div>
-                ${sectionHeading('activities', 'Activités préférées')}
-                <ul class="space-y-1 text-sm text-[#ccc]">${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}</ul>
-            </div>`;
-
-    content.innerHTML = `
-        <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
-            <h3 class="font-bold text-xl y2k-heading">Vue complète du résultat</h3>
-            <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
-        </div>
-
-        <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
-            <div class="text-xs text-[#888] mb-2">Résultat du ${date}</div>
-            ${profileHtml}
-            <div>
-                <div class="text-xs tracking-widest text-[#666] mb-2">RÉPARTITION</div>
-                <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">${repartitionHtml}</div>
-            </div>
-            ${detailsHtml}
-        </div>
-
-        <!-- Share section (réutilisable) -->
-        <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222]">
-            <div class="text-xs uppercase tracking-widest text-[#666] mb-2">Partager le résultat</div>
-            ${shareHTML}
-        </div>
-
-        <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex flex-wrap gap-2 items-center justify-between text-xs text-[#666]">
-            <button class="edit-from-full px-4 py-1.5 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1">
-                ${icon('edit', { size: 'sm', tone: 'muted' })}
-                <span>Modifier</span>
-            </button>
-            <button class="close-full px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
-        </div>
-    `;
-
-    // Attach handlers after
-    const xBtn = content.querySelector('button[aria-label="Fermer"]');
-    if (xBtn) xBtn.onclick = () => closeModal(modal);
-
-    const editBtn = content.querySelector('.edit-from-full');
-    if (editBtn) editBtn.onclick = () => {
-        closeModal(modal);
-        refazerTeste(index);
-    };
-
-    const closeFooterBtn = content.querySelector('.close-full');
-    if (closeFooterBtn) closeFooterBtn.onclick = () => closeModal(modal);
-
-    modal.append(backdrop, content);
-    document.body.appendChild(modal);
-
-    attachModalEscClose(modal);
+  showScreen('result-detail-screen');
 }
 
-// =====================================================
-// HELPERS MODAUX (standardisation pour navegabilidade)
-// Fermeture cohérente (ESC, backdrop, X) pour tous les modaux dynamiques
-// =====================================================
-function closeModal(modal) {
-  if (!modal) return;
-  if (modal.parentNode) modal.parentNode.removeChild(modal);
-}
-
-function attachModalEscClose(modal, onClose) {
-  const handler = (e) => {
-    if (e.key === 'Escape') {
-      closeModal(modal);
-      if (onClose) onClose();
-      document.removeEventListener('keydown', handler);
-    }
-  };
-  document.addEventListener('keydown', handler, { once: true });
-  return handler;
+function initResultDetailScreen() {
+  const editBtn = document.getElementById('result-detail-edit-btn');
+  if (!editBtn || editBtn.dataset.bound) return;
+  editBtn.dataset.bound = 'true';
+  editBtn.addEventListener('click', () => {
+    if (currentDetailIndex != null) refazerTeste(currentDetailIndex);
+  });
 }
 
 // Função reutilizável para gerar a seção de compartilhamento (utilisée dans results + full view)
@@ -893,6 +933,7 @@ function initializeApp() {
 
     initializeTailwind();
     initHistoryScreen();
+    initResultDetailScreen();
 
     // Centralized navigation already exposed earlier. Delegate for external use.
     window.showScreen = showScreen;
