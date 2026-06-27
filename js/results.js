@@ -22,35 +22,214 @@ function calculateResults() {
   return TemperamentScoring.calculate(answers);
 }
 
-function renderResultBars(result) {
-  const barsContainer = document.getElementById('results-bars');
-  barsContainer.innerHTML = '';
+function buildResultBarsHtml(result) {
   const order = ['sanguineo', 'colerico', 'melancolico', 'fleumatico'];
   const dominantBadge = result.profileMode === 'rejection' ? REJECTION_COPY.badge : 'PRINCIPAL';
 
-  order.forEach(key => {
+  return order.map(key => {
     const t = TEMPERAMENTS[key];
     const percent = result.percentages[key];
     const isDominant = !result.isBalanced && key === result.dominant;
 
-    const div = document.createElement('div');
-    div.innerHTML = `
-      <div class="flex justify-between items-center mb-1.5 px-1">
-        <div class="flex items-center gap-x-2">
-          ${temperamentEmoji(t.emoji, 'sm', isDominant ? t.color : null)}
-          <span class="type-ui font-semibold text-lg ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
-          ${isDominant ? `<span class="type-caption px-2 py-px rounded" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
+    return `
+      <div class="result-bar-item">
+        <div class="flex justify-between items-center mb-1.5 px-1 gap-x-2">
+          <div class="flex items-center gap-x-2 min-w-0">
+            ${temperamentEmoji(t.emoji, 'sm', isDominant ? t.color : null)}
+            <span class="type-ui font-semibold text-lg truncate ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
+            ${isDominant ? `<span class="type-caption px-2 py-px rounded shrink-0" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
+          </div>
+          <span class="type-ui font-semibold tabular-nums w-10 text-right text-sm shrink-0" style="color:#c9c9c9">${percent}%</span>
         </div>
-        <span class="type-ui font-semibold tabular-nums w-10 text-right text-sm" style="color:#c9c9c9">${percent}%</span>
-      </div>
-      <div class="result-bar-track">
-        <div class="result-bar-fill result-bar"
-             style="width: ${percent}%; background: linear-gradient(to right, ${t.color}, #fff, ${t.color});">
+        <div class="result-bar-track">
+          <div class="result-bar-fill result-bar" style="width: ${percent}%; background: linear-gradient(to right, ${t.color}, #fff, ${t.color});"></div>
         </div>
-      </div>
-    `;
-    barsContainer.appendChild(div);
-  });
+      </div>`;
+  }).join('');
+}
+
+function renderResultBars(result) {
+  const barsContainer = document.getElementById('results-bars');
+  if (!barsContainer) return;
+  barsContainer.innerHTML = buildResultBarsHtml(result);
+}
+
+function getBalancedSecondaryReason(result) {
+  if (result.allNeutral) return 'Toutes les réponses étaient neutres';
+  if (result.mostlyNeutral) return 'Majorité de réponses neutres (≥ 80 %)';
+  return 'Signal trop faible pour déterminer un dominant';
+}
+
+function buildSecondaryResultHtml(result) {
+  if (result.isBalanced) {
+    return `
+      <div class="text-3xl opacity-60 shrink-0">—</div>
+      <div class="min-w-0">
+        <div class="type-ui font-semibold text-lg text-[#888]">Non déterminé</div>
+        <div class="type-body text-sm text-[#666]">${getBalancedSecondaryReason(result)}</div>
+      </div>`;
+  }
+
+  const secondary = TEMPERAMENTS[result.secondary];
+  const pct = result.secondaryPercent ?? Math.round(result.percentages[result.secondary]);
+  return `
+    ${temperamentEmoji(secondary.emoji, 'lg', secondary.color)}
+    <div class="min-w-0">
+      <div class="type-ui font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
+      <div class="type-body text-sm text-[#888]">${secondary.subtitle} — ${pct}%</div>
+    </div>`;
+}
+
+/** Présentation unifiée — même logique métier pour résultat final et vue complète historique. */
+function getResultPresentation(result) {
+  if (result.isBalanced) {
+    return {
+      typeLabel: 'RÉSULTAT',
+      resultName: BALANCED_COPY.title,
+      resultNameColor: '#c9c9c9',
+      resultSubtitle: BALANCED_COPY.subtitle,
+      profileSummary: BALANCED_COPY.summary,
+      description: BALANCED_COPY.description,
+      secondaryHtml: buildSecondaryResultHtml(result),
+      strengthsHtml: BALANCED_COPY.strengths.map(s => listItem(s, 'checkCircle', 'silver')).join(''),
+      weaknessesHtml: BALANCED_COPY.weaknesses.map(w => listItem(w, 'minus', 'subtle')).join(''),
+      careersHtml: BALANCED_COPY.careers.map(c => listItem(c, 'arrowRight', 'muted')).join(''),
+      activitiesHtml: BALANCED_COPY.activities.map(a => listItem(a, 'arrowRight', 'muted')).join(''),
+      cardBorder: '1px solid #2f2f2f',
+      cardBg: 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)',
+      iconEmoji: '⚖️',
+      iconColor: '#c9c9c9',
+      iconShellBorder: '1px solid #44444440',
+      iconShellBg: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))',
+      badgeLabel: 'PROFIL ÉQUILIBRÉ',
+      badgeColor: '#c9c9c9'
+    };
+  }
+
+  const dominant = TEMPERAMENTS[result.dominant];
+  const secondary = TEMPERAMENTS[result.secondary];
+  const isRejection = result.profileMode === 'rejection';
+  const domPct = result.dominantPercent ?? Math.round(result.percentages[result.dominant]);
+  const secPct = result.secondaryPercent ?? Math.round(result.percentages[result.secondary]);
+
+  if (isRejection) {
+    return {
+      typeLabel: 'TRAIT MOINS AFFIRMÉ',
+      resultName: dominant.name,
+      resultNameColor: dominant.color,
+      resultSubtitle: REJECTION_COPY.subtitle,
+      profileSummary: REJECTION_COPY.summary(dominant.name),
+      description: REJECTION_COPY.description,
+      secondaryHtml: buildSecondaryResultHtml(result),
+      strengthsHtml: listItem(`Tu as clarifié ce qui te ressemble moins (${dominant.name})`, 'checkCircle', 'silver'),
+      weaknessesHtml: listItem('Relance le test en répondant ce qui t\'identifie positivement', 'minus', 'subtle'),
+      careersHtml: listItem('Non applicable — profil basé sur le désaccord', 'arrowRight', 'muted'),
+      activitiesHtml: listItem('Explore librement sans te limiter à un seul type', 'arrowRight', 'muted'),
+      cardBorder: `1px solid ${dominant.color}40`,
+      cardBg: 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)',
+      iconEmoji: dominant.emoji,
+      iconColor: dominant.color,
+      iconShellBorder: `1px solid ${dominant.color}40`,
+      iconShellBg: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))',
+      badgeLabel: 'MODE DÉSACCORD',
+      badgeColor: dominant.color
+    };
+  }
+
+  return {
+    typeLabel: 'TEMPÉRAMENT PRINCIPAL',
+    resultName: dominant.name,
+    resultNameColor: dominant.color,
+    resultSubtitle: dominant.subtitle,
+    profileSummary: `Tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span> (${domPct}% / ${secPct}%).`,
+    description: dominant.description,
+    secondaryHtml: buildSecondaryResultHtml(result),
+    strengthsHtml: dominant.strengths.map(s => listItem(s, 'checkCircle', 'silver')).join(''),
+    weaknessesHtml: dominant.weaknesses.map(w => listItem(w, 'minus', 'subtle')).join(''),
+    careersHtml: (dominant.recommendedCareers || []).map(c => listItem(c, 'arrowRight', 'muted')).join(''),
+    activitiesHtml: (dominant.preferredActivities || []).map(a => listItem(a, 'arrowRight', 'muted')).join(''),
+    cardBorder: `1px solid ${dominant.color}40`,
+    cardBg: 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)',
+    iconEmoji: dominant.emoji,
+    iconColor: dominant.color,
+    iconShellBorder: `1px solid ${dominant.color}40`,
+    iconShellBg: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))',
+    badgeLabel: dominant.name.toUpperCase(),
+    badgeColor: dominant.color
+  };
+}
+
+function buildResultDetailHtml(result, index) {
+  const view = getResultPresentation(result);
+  const shareHTML = typeof shareSectionHTML === 'function' ? shareSectionHTML(index) : '';
+
+  return `
+    <div class="result-detail-content">
+      <section class="result-detail-hero rounded-3xl p-4 sm:p-6 text-white premium-shadow relative overflow-hidden main-result-bg" style="background:${view.cardBg}; border:${view.cardBorder}" aria-label="Résumé du tempérament">
+        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        <div class="layout-row layout-row--responsive relative z-10">
+          <div class="layout-row__main">
+            <div class="type-label opacity-60 mb-1">${view.typeLabel}</div>
+            <div class="type-display type-result-name y2k-title mb-2" style="color:${view.resultNameColor}">${view.resultName}</div>
+            <div class="type-ui text-lg sm:text-xl tracking-tight opacity-80" style="color:#aaa">${view.resultSubtitle}</div>
+          </div>
+          <div class="layout-row__aside">
+            <div class="temperament-icon-shell temperament-icon-shell--result mx-auto" style="background:${view.iconShellBg}; border:${view.iconShellBorder}">${temperamentEmoji(view.iconEmoji, 'xl', view.iconColor)}</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-detail-section" aria-labelledby="result-detail-bars-label">
+        <div id="result-detail-bars-label" class="type-label text-[#888] mb-5 px-1">RÉPARTITION DES TEMPÉRAMENTS</div>
+        <div class="space-y-6">${buildResultBarsHtml(result)}</div>
+      </section>
+
+      <section class="layout-grid-2 info-tab-grid result-detail-section" aria-label="Profil et tempérament secondaire">
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
+          <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
+          <div class="flex items-center gap-x-3">${view.secondaryHtml}</div>
+        </div>
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
+          <div class="type-label mb-2.5">TON PROFIL</div>
+          <div class="type-body text-base sm:text-lg leading-snug font-medium text-[#ccc]">${view.profileSummary}</div>
+        </div>
+      </section>
+
+      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 result-detail-section" aria-labelledby="result-detail-about-label">
+        <div id="result-detail-about-label" class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
+        <div class="type-result-body text-[#ccc]">${view.description}</div>
+      </section>
+
+      <section class="layout-grid-2 result-detail-section" aria-label="Points forts et axes d'amélioration">
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
+          ${sectionHeading('strengths', 'TES POINTS FORTS', 'success')}
+          <ul class="space-y-[7px]">${view.strengthsHtml}</ul>
+        </div>
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
+          ${sectionHeading('weaknesses', 'À AMÉLIORER', 'warning')}
+          <ul class="space-y-[7px]">${view.weaknessesHtml}</ul>
+        </div>
+      </section>
+
+      <section class="layout-grid-2 result-detail-section" aria-label="Carrières et activités">
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
+          ${sectionHeading('careers', 'CARRIÈRES RECOMMANDÉES')}
+          <ul class="space-y-[7px]">${view.careersHtml}</ul>
+        </div>
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-6 h-full">
+          ${sectionHeading('activities', 'ACTIVITÉS PRÉFÉRÉES')}
+          <ul class="space-y-[7px]">${view.activitiesHtml}</ul>
+        </div>
+      </section>
+
+      <section class="y2k-card chrome-border rounded-3xl p-4 sm:p-7 result-detail-section result-detail-share" aria-labelledby="result-detail-share-label">
+        ${sectionHeading('share', 'PARTAGER LE RÉSULTAT')}
+        <div id="result-detail-share-label" class="sr-only">Options de partage</div>
+        ${shareHTML}
+        <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ce résultat avec tes amis !</p>
+      </section>
+    </div>`;
 }
 
 function renderBalancedResult(result) {
@@ -78,13 +257,7 @@ function renderBalancedResult(result) {
 
   renderResultBars(result);
 
-  document.getElementById('secondary-result').innerHTML = `
-    <div class="text-3xl opacity-60">—</div>
-    <div>
-      <div class="type-ui font-semibold text-lg text-[#888]">Non déterminé</div>
-      <div class="type-body text-sm text-[#666]">${result.allNeutral ? 'Toutes les réponses étaient neutres' : result.mostlyNeutral ? 'Majorité de réponses neutres (≥ 80 %)' : 'Signal trop faible pour déterminer un dominant'}</div>
-    </div>
-  `;
+  document.getElementById('secondary-result').innerHTML = buildSecondaryResultHtml(result);
 
   document.getElementById('profile-summary').textContent = BALANCED_COPY.summary;
   document.getElementById('result-description').textContent = BALANCED_COPY.description;
@@ -139,13 +312,7 @@ function renderDominantResult(result) {
 
   renderResultBars(result);
 
-  document.getElementById('secondary-result').innerHTML = `
-    ${temperamentEmoji(secondary.emoji, 'lg', secondary.color)}
-    <div>
-      <div class="type-ui font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
-      <div class="type-body text-sm text-[#888]">${secondary.subtitle} — ${result.secondaryPercent}%</div>
-    </div>
-  `;
+  document.getElementById('secondary-result').innerHTML = buildSecondaryResultHtml(result);
 
   if (isRejection) {
     document.getElementById('profile-summary').innerHTML =
@@ -311,6 +478,9 @@ function shareOnInstagram() {
   });
 }
 
+window.buildResultBarsHtml = buildResultBarsHtml;
+window.getResultPresentation = getResultPresentation;
+window.buildResultDetailHtml = buildResultDetailHtml;
 window.showResults = showResults;
 window.calculateResults = calculateResults;
 window.copyResultToClipboard = copyResultToClipboard;

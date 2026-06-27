@@ -692,6 +692,69 @@ body {
     text-align: center;
 }
 
+/* Hero result — icône au-dessus du texte sur mobile */
+.layout-row--responsive {
+    flex-direction: column-reverse;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .layout-row--responsive {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        gap: 2rem;
+    }
+
+    .layout-row--responsive .layout-row__aside {
+        text-align: center;
+    }
+}
+
+/* Vue complète du résultat — parité mobile/desktop */
+.result-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .result-detail-content {
+        gap: 2rem;
+    }
+}
+
+.result-detail-section {
+    margin-bottom: 0;
+}
+
+.result-detail-section:last-child {
+    margin-bottom: 0;
+}
+
+.result-detail-share .flex.flex-wrap {
+    gap: 0.5rem;
+}
+
+.result-detail-footer {
+    margin-top: 2rem;
+    padding-top: 0.5rem;
+}
+
+.result-detail-actions {
+    width: 100%;
+    max-width: 28rem;
+}
+
+@media (min-width: 640px) {
+    .result-detail-actions .type-btn {
+        flex: 1 1 auto;
+        min-width: 10rem;
+    }
+}
+
 .layout-actions {
     display: flex;
     flex-direction: row;
