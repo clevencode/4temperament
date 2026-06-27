@@ -404,17 +404,16 @@
         <div id="results-body" class="result-flow-content"></div>
 
         <!-- Actions -->
-        <div class="layout-actions">
-            <button onclick="restartQuiz()" 
-                    class="type-btn px-8 py-3 justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full flex">
+        <div class="layout-actions results-actions">
+            <button type="button" onclick="restartQuiz()"
+                    class="results-actions__btn type-btn min-h-[48px] px-6 sm:px-8 py-3 justify-center items-center gap-x-2 border border-[#292929] hover:bg-[#111] transition-colors rounded-full inline-flex">
                 <i class="icon icon--sm icon--muted fa-solid fa-rotate-right" aria-hidden="true"></i>
-                <span class="ml-2">RECOMMENCER LE TEST</span>
+                <span>RECOMMENCER LE TEST</span>
             </button>
-            
-            <button onclick="showAllTemperaments()" 
-                    class="type-btn chrome-button px-8 py-3 justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full flex">
+            <button type="button" onclick="showAllTemperaments()"
+                    class="results-actions__btn type-btn chrome-button min-h-[48px] px-6 sm:px-8 py-3 justify-center items-center gap-x-2 glossy-btn text-[#ddd] rounded-full inline-flex">
                 <i class="icon icon--sm icon--silver fa-solid fa-table-cells" aria-hidden="true"></i>
-                <span class="ml-2">VOIR LES 4 TEMPÉRAMENTS</span>
+                <span>VOIR LES 4 TEMPÉRAMENTS</span>
             </button>
         </div>
 
