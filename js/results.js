@@ -4,11 +4,18 @@ const BALANCED_COPY = {
   title: 'ÉQUILIBRÉ',
   subtitle: 'Profil sans dominance nette',
   summary: 'Tes réponses neutres ne révèlent pas de tempérament dominant. C\'est normal : réponds avec plus de conviction pour un profil plus précis.',
-  description: 'Quand toutes les affirmations reçoivent une réponse « Neutre », aucun tempérament ne se détache. Les quatre parts restent égales (25 % chacun). Ce résultat invite à relire les affirmations et à choisir le niveau d\'accord qui te correspond vraiment.',
+  description: 'Quand les affirmations reçoivent surtout une réponse « Neutre », aucun tempérament ne se détache clairement. Les quatre parts restent égales (25 % chacun). Relis les affirmations et choisis le niveau d\'accord qui te correspond vraiment.',
   strengths: ['Ouverture à tous les styles de personnalité', 'Flexibilité comportementale', 'Absence de biais fort dans les réponses'],
   weaknesses: ['Difficile d\'identifier un tempérament dominant', 'Relancer le test avec des réponses plus affirmées'],
   careers: ['Tout domaine où la polyvalence est un atout'],
   activities: ['Explorer plusieurs activités pour découvrir tes préférences']
+};
+
+const REJECTION_COPY = {
+  badge: 'MOINS AFFIRMÉ',
+  subtitle: 'Profil basé sur le désaccord',
+  summary: (name) => `Tu as surtout répondu « pas d'accord ». Le tempérament le moins affirmé dans tes réponses est ${name} — cela ne signifie pas que tu es l'opposé, mais que ces traits ressortent moins dans ton profil actuel.`,
+  description: 'Ce résultat reflète une prédominance de désaccord dans tes réponses. Les pourcentages indiquent quels tempéraments sont les moins caractérisés par tes choix. Pour un profil positif plus net, réponds en indiquant ce qui te ressemble vraiment.'
 };
 
 function calculateResults() {
@@ -19,6 +26,7 @@ function renderResultBars(result) {
   const barsContainer = document.getElementById('results-bars');
   barsContainer.innerHTML = '';
   const order = ['sanguineo', 'colerico', 'melancolico', 'fleumatico'];
+  const dominantBadge = result.profileMode === 'rejection' ? REJECTION_COPY.badge : 'PRINCIPAL';
 
   order.forEach(key => {
     const t = TEMPERAMENTS[key];
@@ -31,7 +39,7 @@ function renderResultBars(result) {
         <div class="flex items-center gap-x-2">
           <span class="text-lg sm:text-xl">${t.emoji}</span>
           <span class="font-semibold ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
-          ${isDominant ? `<span class="text-[10px] px-2 py-px rounded tracking-widest" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">PRINCIPAL</span>` : ''}
+          ${isDominant ? `<span class="text-[10px] px-2 py-px rounded tracking-widest" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
         </div>
         <span class="font-semibold tabular-nums w-10 text-right" style="color:#c9c9c9">${percent}%</span>
       </div>
@@ -74,7 +82,7 @@ function renderBalancedResult(result) {
     <div class="text-3xl opacity-60">—</div>
     <div>
       <div class="font-semibold text-lg text-[#888]">Non déterminé</div>
-      <div class="text-sm text-[#666]">${result.allNeutral ? 'Toutes les réponses étaient neutres' : 'Réponses trop proches du neutre'}</div>
+      <div class="text-sm text-[#666]">${result.allNeutral ? 'Toutes les réponses étaient neutres' : result.mostlyNeutral ? 'Majorité de réponses neutres (≥ 80 %)' : 'Signal trop faible pour déterminer un dominant'}</div>
     </div>
   `;
 
@@ -101,22 +109,27 @@ function renderBalancedResult(result) {
 function renderDominantResult(result) {
   const dominant = TEMPERAMENTS[result.dominant];
   const secondary = TEMPERAMENTS[result.secondary];
+  const isRejection = result.profileMode === 'rejection';
 
   const heading = document.querySelector('#results-screen .text-center.mb-9 h2');
   const subheading = document.querySelector('#results-screen .text-center.mb-9 p');
   if (heading) heading.textContent = 'TON PROFIL EST';
-  if (subheading) subheading.textContent = 'Voici ton tempérament principal';
+  if (subheading) {
+    subheading.textContent = isRejection
+      ? 'Tempérament le moins affirmé dans tes réponses'
+      : 'Voici ton tempérament principal';
+  }
 
   const mainCard = document.getElementById('main-result-card');
   mainCard.style.background = 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)';
   mainCard.style.border = '1px solid #2f2f2f';
 
   const typeLabel = document.getElementById('result-type-label');
-  if (typeLabel) typeLabel.textContent = 'TEMPÉRAMENT PRINCIPAL';
+  if (typeLabel) typeLabel.textContent = isRejection ? 'TRAIT MOINS AFFIRMÉ' : 'TEMPÉRAMENT PRINCIPAL';
 
   document.getElementById('result-name').textContent = dominant.name;
   document.getElementById('result-name').style.color = dominant.color;
-  document.getElementById('result-subtitle').textContent = dominant.subtitle;
+  document.getElementById('result-subtitle').textContent = isRejection ? REJECTION_COPY.subtitle : dominant.subtitle;
   document.getElementById('result-subtitle').style.color = '#aaa';
 
   const iconContainer = document.getElementById('result-icon');
@@ -134,26 +147,42 @@ function renderDominantResult(result) {
     </div>
   `;
 
-  document.getElementById('profile-summary').innerHTML =
-    `Tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span> (${result.dominantPercent}% / ${result.secondaryPercent}%).`;
+  if (isRejection) {
+    document.getElementById('profile-summary').innerHTML =
+      REJECTION_COPY.summary(dominant.name);
+    document.getElementById('result-description').textContent = REJECTION_COPY.description;
+  } else {
+    document.getElementById('profile-summary').innerHTML =
+      `Tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span> (${result.dominantPercent}% / ${result.secondaryPercent}%).`;
+    document.getElementById('result-description').textContent = dominant.description;
+  }
 
-  document.getElementById('result-description').textContent = dominant.description;
+  if (isRejection) {
+    document.getElementById('strengths-list').innerHTML =
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">Tu as clarifié ce qui te ressemble moins (${dominant.name})</span></li>`;
+    document.getElementById('weaknesses-list').innerHTML =
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">Relance le test en répondant ce qui t'identifie positivement</span></li>`;
+    document.getElementById('careers-list').innerHTML =
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">Non applicable — profil basé sur le désaccord</span></li>`;
+    document.getElementById('activities-list').innerHTML =
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">Explore librement sans te limiter à un seul type</span></li>`;
+  } else {
+    document.getElementById('strengths-list').innerHTML = dominant.strengths.map(s =>
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">${s}</span></li>`
+    ).join('');
 
-  document.getElementById('strengths-list').innerHTML = dominant.strengths.map(s =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">${s}</span></li>`
-  ).join('');
+    document.getElementById('weaknesses-list').innerHTML = dominant.weaknesses.map(w =>
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">${w}</span></li>`
+    ).join('');
 
-  document.getElementById('weaknesses-list').innerHTML = dominant.weaknesses.map(w =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">${w}</span></li>`
-  ).join('');
+    document.getElementById('careers-list').innerHTML = (dominant.recommendedCareers || []).map(c =>
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${c}</span></li>`
+    ).join('');
 
-  document.getElementById('careers-list').innerHTML = (dominant.recommendedCareers || []).map(c =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${c}</span></li>`
-  ).join('');
-
-  document.getElementById('activities-list').innerHTML = (dominant.preferredActivities || []).map(a =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
-  ).join('');
+    document.getElementById('activities-list').innerHTML = (dominant.preferredActivities || []).map(a =>
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
+    ).join('');
+  }
 }
 
 function showResults() {
@@ -195,6 +224,15 @@ function getResultText() {
   }
 
   const dominant = TEMPERAMENTS[result.dominant];
+
+  if (result.profileMode === 'rejection') {
+    let text = `Mon profil (mode désaccord) : trait le moins affirmé — ${dominant.name} (${result.dominantPercent}%).\n\n`;
+    text += `${REJECTION_COPY.description}\n\n`;
+    text += `Sanguin ${result.percentages.sanguineo}% • Colérique ${result.percentages.colerico}% • Mélancolique ${result.percentages.melancolico}% • Flegmatique ${result.percentages.fleumatico}%\n\n`;
+    text += 'Fais le test toi aussi : https://clevencode.github.io/4temperament';
+    return text;
+  }
+
   let text = `Mon tempérament dominant est ${dominant.name} (${dominant.subtitle}) — ${result.dominantPercent}%.\n\n`;
   text += `Description : ${dominant.description}\n\n`;
   text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;

@@ -80,7 +80,7 @@ const HistoryManager = {
    * Alinhado com a lógica de negócio: um "resultado final" contém
    * o outcome + os dados que levaram até ele (answers)
    */
-  createEntry({ dominant, secondary, percentages, answers, userName, isBalanced, allNeutral }) {
+  createEntry({ dominant, secondary, percentages, answers, userName, isBalanced, allNeutral, profileMode }) {
     return {
       id: Date.now(),
       date: new Date().toISOString(),
@@ -90,7 +90,8 @@ const HistoryManager = {
       percentages,
       answers: answers || {},
       isBalanced: !!isBalanced,
-      allNeutral: !!allNeutral
+      allNeutral: !!allNeutral,
+      profileMode: profileMode || 'agreement'
     };
   },
 
@@ -247,7 +248,8 @@ function saveResultToHistory(resultData) {
         answers: resultData.answers,
         userName,
         isBalanced: resultData.isBalanced,
-        allNeutral: resultData.allNeutral
+        allNeutral: resultData.allNeutral,
+        profileMode: resultData.profileMode
     });
 
     if (currentEditingId) {
@@ -259,6 +261,7 @@ function saveResultToHistory(resultData) {
             answers: entry.answers,
             isBalanced: entry.isBalanced,
             allNeutral: entry.allNeutral,
+            profileMode: entry.profileMode,
             lastEdited: new Date().toISOString()
         });
         currentEditingId = null;
@@ -353,7 +356,12 @@ function showResultsHistory() {
         history.forEach((entry, index) => {
             const resolved = HistoryManager.resolveEntry(entry);
             const isBalanced = resolved.isBalanced;
-            const dominant = isBalanced ? { name: 'Équilibré', emoji: '⚖️', color: '#c9c9c9' } : TEMPERAMENTS[resolved.dominant];
+            const isRejection = !isBalanced && resolved.profileMode === 'rejection';
+            const dominant = isBalanced
+              ? { name: 'Équilibré', emoji: '⚖️', color: '#c9c9c9' }
+              : isRejection
+                ? { name: `↓ ${TEMPERAMENTS[resolved.dominant].name}`, emoji: TEMPERAMENTS[resolved.dominant].emoji, color: TEMPERAMENTS[resolved.dominant].color }
+                : TEMPERAMENTS[resolved.dominant];
             const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
             const dateStr = new Date(entry.date).toLocaleDateString('fr-FR', { 
                 day: '2-digit', month: 'short', year: 'numeric' 
