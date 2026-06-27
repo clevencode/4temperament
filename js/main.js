@@ -1008,6 +1008,8 @@ function initializeApp() {
     if (typeof initInfoTabs === 'function') initInfoTabs();
     if (typeof initSeo === 'function') initSeo();
     initNavMenu();
+    if (typeof initSplashScreen === 'function') initSplashScreen();
+    if (typeof hideSplashScreen === 'function') hideSplashScreen();
 
     // Centralized navigation already exposed earlier. Delegate for external use.
     window.showScreen = showScreen;

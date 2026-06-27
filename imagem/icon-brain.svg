@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Les 4 Tempéraments">
+  <defs>
+    <linearGradient id="badge-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2a2a"/>
+      <stop offset="50%" stop-color="#111111"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <linearGradient id="chrome-shine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#050505"/>
+  <rect x="64" y="64" width="384" height="384" rx="72" fill="url(#badge-bg)" stroke="#3a3a3a" stroke-width="4"/>
+  <rect x="64" y="64" width="384" height="384" rx="72" fill="url(#chrome-shine)"/>
+  <rect x="96" y="96" width="320" height="8" rx="4" fill="#ffffff" fill-opacity="0.08"/>
+  <!-- Font Awesome 6 Free — fa-brain (solid) -->
+  <path fill="#c9c9c9" transform="translate(96 96) scale(0.625)" d="M184.2 86.1c0-1.3 1-2.4 2.3-2.4h29.4c1.3 0 2.3 1.1 2.3 2.4v8.6c0 1.3-1 2.4-2.3 2.4h-29.4c-1.3 0-2.3-1.1-2.3-2.4v-8.6zm-56.6 0c0-1.3 1-2.4 2.3-2.4h29.4c1.3 0 2.3 1.1 2.3 2.4v8.6c0 1.3-1 2.4-2.3 2.4H129.9c-1.3 0-2.3-1.1-2.3-2.4v-8.6zM352 360c0 57.6-46.4 104.1-103.7 104.1S144.6 417.6 144.6 360s46.4-104.1 103.7-104.1S352 302.4 352 360zm-166.3-60.8c0 12.9 10.4 23.4 23.4 23.4s23.4-10.5 23.4-23.4S221.9 276 209 276s-23.4 10.4-23.4 23.2zm239.7-118.5C415.5 128.4 358.7 96 297.8 96c-42.5 0-81.5 16.7-110.6 44.1-15.2 14.3-27.9 31.3-37.1 50-12.6 24.8-17.9 52.8-15.5 81.1 2.5 28.9 13.8 56.3 32.1 78.4 18.3 22.1 43.2 38.5 71.4 46.8 7.3 2.3 14.8 4 22.4 5.1 2.3 .3 4.6 .6 6.9 .8 1.2 .1 2.4 .2 3.6 .3h.3c1.1 .1 2.2 .1 3.3 .2 57.6 2.9 108.3-38.8 114.9-96.2 3.3-29.1-3.4-58.4-18.8-83.2z"/>
+</svg>

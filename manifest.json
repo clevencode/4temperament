@@ -1,0 +1,38 @@
+{
+  "name": "Les 4 Tempéraments",
+  "short_name": "4 Tempéraments",
+  "description": "Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit, 100 % anonyme.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/imagem/icon-brain.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/imagem/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/imagem/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/imagem/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

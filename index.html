@@ -10,7 +10,15 @@
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="theme-color" content="#050505">
     <meta name="application-name" content="Les 4 Tempéraments">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="4 Tempéraments">
     <link rel="canonical" href="https://4temperament.vercel.app/">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/imagem/icon-brain.svg" type="image/svg+xml">
+    <link rel="icon" href="/imagem/icon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="/imagem/apple-touch-icon.png">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -43,7 +51,15 @@
     <!-- Nos styles Y2K Black Premium (modularisés) -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-[#050505] text-[#e5e5e5]">
+<body class="bg-[#050505] text-[#e5e5e5] splash-active">
+    <div id="splash-screen" class="splash-screen" role="presentation" aria-hidden="false">
+        <div class="splash-screen__content">
+            <img src="imagem/icon-brain.svg" alt="" class="splash-screen__icon" width="88" height="88" fetchpriority="high">
+            <p class="splash-screen__title type-display y2k-heading">LES 4 TEMPÉRAMENTS</p>
+            <p class="splash-screen__tagline type-ui">Découvre ton type de personnalité</p>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="nav-bar" aria-label="Navigation principale">
         <div class="nav-bar__inner">
@@ -545,6 +561,7 @@
 
     <!-- Scripts modulaires (ordre important) -->
     <script src="js/data.js"></script>
+    <script src="js/splash.js"></script>
     <script src="js/seo.js"></script>
     <script src="js/scoring.js"></script>
     <script src="js/icons.js"></script>

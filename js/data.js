@@ -26,6 +26,8 @@ const SITE_CONFIG = {
   ogImageAlt: 'Les 4 Tempéraments — test de personnalité Sanguin, Colérique, Mélancolique, Flegmatique',
   ogImageType: 'image/jpeg',
   themeColor: '#050505',
+  iconSvg: 'https://4temperament.vercel.app/imagem/icon-brain.svg',
+  iconPng: 'https://4temperament.vercel.app/imagem/icon-512.png',
   shareCta: 'Fais le test toi aussi :',
   questionCount: 30,
   durationMinutes: 8,
