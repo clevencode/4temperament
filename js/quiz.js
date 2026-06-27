@@ -24,13 +24,17 @@ function showQuestion() {
     const container = document.getElementById('options-container');
     container.innerHTML = '';
 
-    question.options.forEach((option) => {
+    question.options.forEach((option, idx) => {
         const isSelected = answers[question.id] === option.type;
 
-        const div = document.createElement('div');
-        div.className = `option-card cursor-pointer rounded-2xl p-5 flex items-start gap-x-4 ${isSelected ? 'selected border-[#c9c9c9]' : 'border-[#292929]'}`;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `option-card text-left w-full rounded-2xl p-5 flex items-start gap-x-4 ${isSelected ? 'selected border-[#c9c9c9]' : 'border-[#292929] hover:border-[#5a5a5a]'}`;
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+        btn.setAttribute('aria-label', option.text);
         
-        div.innerHTML = `
+        btn.innerHTML = `
             <div class="w-5 h-5 mt-0.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${isSelected ? 'border-[#c9c9c9] bg-[#c9c9c9]' : 'border-[#3a3a3a]'}">
                 ${isSelected ? '<i class="fa-solid fa-check text-xs text-black"></i>' : ''}
             </div>
@@ -39,8 +43,15 @@ function showQuestion() {
             </div>
         `;
 
-        div.onclick = () => selectOption(question.id, option.type, div);
-        container.appendChild(div);
+        btn.onclick = () => selectOption(question.id, option.type, btn);
+        // Keyboard support
+        btn.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectOption(question.id, option.type, btn);
+            }
+        };
+        container.appendChild(btn);
     });
 
     // État des boutons
@@ -63,6 +74,28 @@ function showQuestion() {
             <i class="fa-solid fa-arrow-right"></i>
         `;
     }
+
+    // Keyboard arrow navigation for options (best practice for radiogroup)
+    const options = container.querySelectorAll('[role="radio"]');
+    options.forEach((opt, idx) => {
+        opt.onkeydown = (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const next = options[(idx + 1) % options.length];
+                next.focus();
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const prev = options[(idx - 1 + options.length) % options.length];
+                prev.focus();
+            }
+        };
+    });
+
+    // Focus first option for better UX when question loads
+    if (options.length > 0) {
+        // Don't auto focus if already selected? Simple: focus first
+        setTimeout(() => options[0].focus(), 50);
+    }
 }
 
 function selectOption(questionId, type, element) {
@@ -72,6 +105,7 @@ function selectOption(questionId, type, element) {
         const opt = allOptions[i];
         opt.classList.remove('selected', 'border-[#c9c9c9]');
         opt.classList.add('border-[#292929]');
+        opt.setAttribute('aria-checked', 'false');
         
         const check = opt.querySelector('.fa-check');
         if (check) check.remove();
@@ -86,6 +120,7 @@ function selectOption(questionId, type, element) {
     // Selecionar esta
     element.classList.remove('border-[#292929]');
     element.classList.add('selected', 'border-[#c9c9c9]');
+    element.setAttribute('aria-checked', 'true');
     
     const circle = element.querySelector('div');
     if (circle) {

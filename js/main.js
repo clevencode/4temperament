@@ -289,6 +289,9 @@ function showResultsHistory() {
     const modal = document.createElement('div');
     modal.id = 'results-history-modal';
     modal.className = 'fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'history-title');
 
     // Container principal
     const container = document.createElement('div');
@@ -299,8 +302,8 @@ function showResultsHistory() {
     const header = document.createElement('div');
     header.className = 'flex items-center justify-between px-7 py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]';
     header.innerHTML = `
-        <h3 class="font-bold text-xl y2k-heading">Historique des résultats</h3>
-        <button class="text-3xl text-[#555] hover:text-white leading-none">×</button>
+        <h3 id="history-title" class="font-bold text-xl y2k-heading">Historique des résultats</h3>
+        <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
     `;
     header.querySelector('button').onclick = () => modal.remove();
 
@@ -404,6 +407,15 @@ function showResultsHistory() {
     container.append(header, content, footer);
     modal.append(container);
     document.body.appendChild(modal);
+
+    // ESC to close (best practice for modals)
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler, { once: true });
 }
 
 function clearResultsHistory() {
@@ -538,6 +550,15 @@ function showFullResult(index) {
 
     modal.innerHTML = html;
     document.body.appendChild(modal);
+
+    // ESC to close
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler, { once: true });
 }
 
 // Função reutilizável para gerar a seção de compartilhamento
@@ -668,6 +689,25 @@ function initializeApp() {
 
     initializeTailwind();
 
+    // Screen management helper (focus + a11y)
+    window.showScreen = function(screenId) {
+        // Hide all screens
+        document.querySelectorAll('[id$="-screen"]').forEach(s => {
+            s.classList.add('hidden');
+            s.setAttribute('aria-hidden', 'true');
+        });
+        // Hide modals? handled separately
+
+        const screen = document.getElementById(screenId);
+        if (screen) {
+            screen.classList.remove('hidden');
+            screen.removeAttribute('aria-hidden');
+            // Focus first interactive or heading
+            const focusTarget = screen.querySelector('button, input, [tabindex], h1, h2, h3');
+            if (focusTarget) setTimeout(() => focusTarget.focus(), 50);
+        }
+    };
+
     // Support clavier
     document.addEventListener('keydown', function(e) {
         const quizVisible = !document.getElementById('quiz-screen').classList.contains('hidden');
@@ -699,7 +739,81 @@ function initializeApp() {
     // Configurer le champ nom
     setupNameInput();
 
+    // Typing animation for the hero "TEMPÉRAMENT" word
+    initTemperamentTyping();
+
     console.log('%c[Quiz] Application modularisée chargée avec succès (Y2K Black Premium)', 'color:#666');
+}
+
+// Typing animation for the four temperaments in the hero title
+function initTemperamentTyping() {
+    const typingEl = document.getElementById('temperament-typing');
+    if (!typingEl) return;
+
+    const words = ['SANGUIN', 'COLÉRIQUE', 'MÉLANCOLIQUE', 'FLEGMATIQUE'];
+    const temperamentColors = {
+        'SANGUIN': '#ff8a3d',      // Quente, energético (laranja)
+        'COLÉRIQUE': '#ff5252',    // Fogo, líder (vermelho intenso)
+        'MÉLANCOLIQUE': '#7b7eff', // Profundo, reflexivo (azul índigo)
+        'FLEGMATIQUE': '#3ed9c4'   // Calmo, equilibrado (verde-azulado)
+    };
+
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    const chromeEl = typingEl.parentElement; // o span com a classe chrome-text
+
+    function applyColor(word) {
+        if (!chromeEl) return;
+
+        const color = temperamentColors[word] || '#c9c9c9';
+        // Gradiente tingido com a cor do temperamento, mantendo o efeito metálico
+        chromeEl.style.background = `linear-gradient(145deg, ${color} 0%, #f5f5f5 22%, ${color} 48%, #a0a0a0 62%, ${color} 82%, #f5f5f5 100%)`;
+        chromeEl.style.webkitBackgroundClip = 'text';
+        chromeEl.style.webkitTextFillColor = 'transparent';
+    }
+
+    function type() {
+        const currentWord = words[wordIndex];
+        
+        if (!isDeleting) {
+            // Typing forward
+            typingEl.textContent = currentWord.substring(0, charIndex + 1);
+            charIndex++;
+
+            // Aplica a cor assim que começar a digitar a palavra
+            if (charIndex === 1) {
+                applyColor(currentWord);
+            }
+
+            if (charIndex === currentWord.length) {
+                // Pause at full word
+                isDeleting = true;
+                setTimeout(type, 1600);
+                return;
+            }
+            setTimeout(type, 110);
+        } else {
+            // Deleting
+            typingEl.textContent = currentWord.substring(0, charIndex - 1);
+            charIndex--;
+
+            if (charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                setTimeout(type, 450);
+                return;
+            }
+            setTimeout(type, 60);
+        }
+    }
+
+    // Define a cor inicial para o primeiro temperamento
+    applyColor(words[0]);
+
+    // Start the animation
+    type();
 }
 
 // Initialiser quand le DOM est prêt

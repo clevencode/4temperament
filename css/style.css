@@ -2,20 +2,51 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
 
+/* Design Tokens - Best Practice */
 :root {
+    /* Colors */
     --bg: #050505;
     --card: #0f0f0f;
     --silver: #c9c9c9;
     --chrome-light: #f5f5f5;
     --chrome-dark: #8a8a8a;
+    --text: #e5e5e5;
+    --text-muted: #888;
+    --border: #292929;
+    --error: #f87171;
+    --success: #4ade80;
+
+    /* Temperament colors (business aligned) */
+    --sanguin: #ff8a3d;
+    --colerique: #ff5252;
+    --melancolique: #7b7eff;
+    --flegmatique: #3ed9c4;
+
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+
+    /* Radii */
+    --radius-sm: 0.5rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+    --radius-full: 9999px;
+
+    /* Typography */
+    --font-display: 'Anton', 'Impact', 'Arial Black', sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #050505;
+    font-family: var(--font-body);
+    background: var(--bg);
     background-image: 
         radial-gradient(circle at 25% 30%, rgba(255,255,255,0.025) 0%, transparent 50%),
         radial-gradient(circle at 75% 70%, rgba(255,255,255,0.02) 0%, transparent 60%);
+    color: var(--text);
 }
 
 /* Typography */
@@ -46,15 +77,15 @@ body {
 
 /* Cards & Surfaces */
 .y2k-card {
-    background: #0f0f0f;
-    border: 1px solid #2f2f2f;
+    background: var(--card);
+    border: 1px solid var(--border);
     box-shadow: 
         0 10px 30px -10px rgba(0,0,0,0.8),
         inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .chrome-border {
-    border: 1px solid #3f3f3f;
+    border: 1px solid var(--border);
     box-shadow: 
         0 0 0 1px #1a1a1a,
         inset 0 1px 0 rgba(255,255,255,0.06);
@@ -123,7 +154,7 @@ body {
 .option-card {
     transition: all 0.15s cubic-bezier(0.23, 1, 0.32, 1);
     background: #111111;
-    border: 1.5px solid #292929;
+    border: 1.5px solid var(--border);
     box-shadow: 
         inset 0 1px 0 rgba(255,255,255,0.03),
         0 2px 8px rgba(0,0,0,0.4);
@@ -190,10 +221,22 @@ body {
     to { opacity: 0.25; }
 }
 
+/* Focus states (a11y best practice) */
+button:focus-visible,
+.option-card:focus-visible {
+    outline: 2px solid var(--silver);
+    outline-offset: 2px;
+}
+
 .premium-shadow {
     box-shadow: 
         0 25px 50px -12px rgb(0 0 0 / 0.7),
         0 10px 10px -6px rgb(0 0 0 / 0.6);
+}
+
+.main-result-bg {
+    background: linear-gradient(145deg, #161616 0%, #0a0a0a 100%);
+    border: 1px solid var(--border);
 }
 
 /* Temperament colors */
@@ -206,3 +249,18 @@ body {
 .bg-colerico { background-color: #ff5252; }
 .bg-melancolico { background-color: #7b7eff; }
 .bg-fleumatico { background-color: #3ed9c4; }
+
+/* Typing animation for hero */
+.typing-cursor {
+    display: inline-block;
+    font-weight: 400;
+    animation: blink-caret 1s step-end infinite;
+    color: #c9c9c9;
+    font-size: 0.95em;
+    margin-left: 2px;
+}
+
+@keyframes blink-caret {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+}

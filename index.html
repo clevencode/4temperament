@@ -28,7 +28,8 @@
                 </div>
             </div>
             <button onclick="showAboutModal()" 
-                    class="flex items-center gap-x-2 px-5 py-2 text-xs uppercase tracking-[1.5px] font-semibold text-[#999] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#444]">
+                    class="flex items-center gap-x-2 px-5 py-2 text-xs uppercase tracking-[1.5px] font-semibold text-[#999] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#444]"
+                    aria-label="À propos des 4 Tempéraments">
                 <i class="fa-solid fa-info-circle mr-1.5"></i>
                 <span>À propos</span>
             </button>
@@ -50,13 +51,14 @@
             </div>
 
             <h1 class="text-[72px] md:text-[86px] leading-[0.92] font-bold mb-3 y2k-title tracking-[-4.5px]">
-                DÉCOUVRE<br>TON
-                <span class="chrome-text text-[80px] md:text-[92px] block -mt-2">TEMPÉRAMENT</span>
+                DÉCOUVRE<br>SI TU ES
+                <span class="chrome-text text-[80px] md:text-[92px] block -mt-2">
+                    <span id="temperament-typing"></span><span class="typing-cursor">|</span>
+                </span>
             </h1>
             
             <p class="max-w-[380px] mx-auto text-lg text-[#999] mb-9 tracking-[-0.2px]">
-                Un questionnaire simple basé sur les <span class="text-[#c9c9c9] font-semibold">4 Tempéraments</span>.<br>
-                <span class="text-sm text-[#777]">Style Y2K Black Premium</span>
+                Un questionnaire simple basé sur les 4 Tempéraments.
             </p>
 
             <div class="flex items-center justify-center">
@@ -84,53 +86,13 @@
                 </button>
             </div>
         </div>
-
-        <!-- Aperçu des 4 tempéraments -->
-        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="y2k-card rounded-3xl p-5 chrome-border relative overflow-hidden group">
-                <div class="flex items-center gap-x-3 mb-4">
-                    <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-white" style="background: linear-gradient(#ff8a3d, #d65e1f);">
-                        <i class="fa-solid fa-sun text-sm"></i>
-                    </div>
-                    <div class="font-semibold tracking-[-0.4px] text-[#ddd]">SANGUIN</div>
-                </div>
-                <p class="text-[13px] leading-tight text-[#888]">Sociable, joyeux et plein d'énergie.</p>
-            </div>
-            <div class="y2k-card rounded-3xl p-5 chrome-border relative overflow-hidden group">
-                <div class="flex items-center gap-x-3 mb-4">
-                    <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-white" style="background: linear-gradient(#ff5252, #c61f1f);">
-                        <i class="fa-solid fa-fire text-sm"></i>
-                    </div>
-                    <div class="font-semibold tracking-[-0.4px] text-[#ddd]">COLÉRIQUE</div>
-                </div>
-                <p class="text-[13px] leading-tight text-[#888]">Leader, rapide et décidé.</p>
-            </div>
-            <div class="y2k-card rounded-3xl p-5 chrome-border relative overflow-hidden group">
-                <div class="flex items-center gap-x-3 mb-4">
-                    <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-white" style="background: linear-gradient(#7b7eff, #494cd6);">
-                        <i class="fa-solid fa-brain text-sm"></i>
-                    </div>
-                    <div class="font-semibold tracking-[-0.4px] text-[#ddd]">MÉLANCOLIQUE</div>
-                </div>
-                <p class="text-[13px] leading-tight text-[#888]">Profond, réfléchi et attentif.</p>
-            </div>
-            <div class="y2k-card rounded-3xl p-5 chrome-border relative overflow-hidden group">
-                <div class="flex items-center gap-x-3 mb-4">
-                    <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-white" style="background: linear-gradient(#3ed9c4, #1a9c89);">
-                        <i class="fa-solid fa-water text-sm"></i>
-                    </div>
-                    <div class="font-semibold tracking-[-0.4px] text-[#ddd]">FLEGMATIQUE</div>
-                </div>
-                <p class="text-[13px] leading-tight text-[#888]">Calme, patient et bon écouteur.</p>
-            </div>
-        </div>
     </div>
 
     <!-- NAME INPUT SCREEN -->
     <div id="name-screen" class="hidden max-w-md mx-auto px-6 py-12 text-center">
         <div class="y2k-card chrome-border rounded-3xl p-8">
             <h2 class="text-3xl y2k-title tracking-[-1.5px] mb-2">Bonjour !</h2>
-            <p class="text-[#aaa] mb-6">Pour personnaliser ton expérience, entre ton prénom :</p>
+            <label for="user-name-input" class="block text-[#aaa] mb-2 text-left">Pour personnaliser ton expérience, entre ton prénom :</label>
             
             <input id="user-name-input" 
                    type="text" 
@@ -224,12 +186,18 @@
             </div>
 
             <!-- Options -->
-            <div id="options-container" class="grid grid-cols-1 gap-3 mb-4">
-                <!-- Rempli dynamiquement par JS -->
+            <div id="options-container" 
+                 class="grid grid-cols-1 gap-3 mb-4" 
+                 role="radiogroup" 
+                 aria-labelledby="question-text">
+                <!-- Dynamically populated by JS as accessible buttons -->
             </div>
 
             <!-- Error message for no selection -->
-            <div id="quiz-error" class="hidden text-red-400 text-sm mb-4 text-center font-medium">
+            <div id="quiz-error" 
+                 role="alert" 
+                 aria-live="polite"
+                 class="hidden text-[var(--error)] text-sm mb-4 text-center font-medium">
                 Veuillez choisir au moins une option.
             </div>
 
@@ -262,8 +230,7 @@
 
         <!-- Main Result -->
         <div id="main-result-card" 
-             class="rounded-3xl p-9 md:p-11 mb-8 text-white premium-shadow relative overflow-hidden"
-             style="background: linear-gradient(145deg, #161616 0%, #0a0a0a 100%); border: 1px solid #333;">
+             class="rounded-3xl p-9 md:p-11 mb-8 text-white premium-shadow relative overflow-hidden main-result-bg">
             
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
             <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
