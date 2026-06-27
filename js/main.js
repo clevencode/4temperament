@@ -721,33 +721,6 @@ function buildResultDetailHtml(resolved, index) {
   const cardBorder = isBalanced ? '1px solid #2f2f2f' : `1px solid ${dominant.color}40`;
   const cardBg = 'linear-gradient(145deg, #161616 0%, #0a0a0a 100%)';
 
-  const profilePanel = `
-    <div class="layout-grid-2 info-tab-grid">
-      <div>
-        <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
-        <div class="flex items-center gap-x-3">${secondaryHtml}</div>
-      </div>
-      <div>
-        <div class="type-label mb-2.5">TON PROFIL</div>
-        <div class="type-body text-lg leading-snug font-medium text-[#ccc]">${profileSummary}</div>
-      </div>
-    </div>
-    <div class="info-tab-section">
-      <div class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
-      <div class="type-result-body text-[#ccc]">${description}</div>
-    </div>`;
-
-  const tabsHtml = typeof buildInfoTabsHtml === 'function'
-    ? buildInfoTabsHtml([
-        { id: 'profile', label: 'Profil', icon: 'user', content: profilePanel },
-        { id: 'strengths', label: 'Points forts', icon: 'strengths', content: `${sectionHeading('strengths', 'TES POINTS FORTS', 'success')}<ul class="space-y-[7px]">${strengthsHtml}</ul>` },
-        { id: 'weaknesses', label: 'À améliorer', icon: 'weaknesses', content: `${sectionHeading('weaknesses', 'À AMÉLIORER', 'warning')}<ul class="space-y-[7px]">${weaknessesHtml}</ul>` },
-        { id: 'careers', label: 'Carrières', icon: 'careers', content: `${sectionHeading('careers', 'CARRIÈRES RECOMMANDÉES')}<ul class="space-y-[7px]">${careersHtml}</ul>` },
-        { id: 'activities', label: 'Activités', icon: 'activities', content: `${sectionHeading('activities', 'ACTIVITÉS PRÉFÉRÉES')}<ul class="space-y-[7px]">${activitiesHtml}</ul>` },
-        { id: 'share', label: 'Partager', icon: 'share', content: `${sectionHeading('share', 'PARTAGER LE RÉSULTAT')}${shareHTML}<p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ce résultat avec tes amis !</p>` }
-      ])
-    : '';
-
   return `
     <div class="rounded-3xl p-6 text-white premium-shadow relative overflow-hidden page-card" style="background:${cardBg}; border:${cardBorder}">
       <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
@@ -769,7 +742,49 @@ function buildResultDetailHtml(resolved, index) {
       <div class="space-y-6">${buildResultBarsHtml(resolved)}</div>
     </div>
 
-    ${tabsHtml}`;
+    <div class="layout-grid-2 page-card">
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        <div class="type-label mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
+        <div class="flex items-center gap-x-3">${secondaryHtml}</div>
+      </div>
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        <div class="type-label mb-2.5">TON PROFIL</div>
+        <div class="type-body text-lg leading-snug font-medium text-[#ccc]">${profileSummary}</div>
+      </div>
+    </div>
+
+    <div class="y2k-card chrome-border rounded-3xl p-6 page-card">
+      <div class="type-label text-[#777] mb-2">À PROPOS DE TOI</div>
+      <div class="type-result-body text-[#ccc]">${description}</div>
+    </div>
+
+    <div class="layout-grid-2 page-card">
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('strengths', 'TES POINTS FORTS', 'success')}
+        <ul class="space-y-[7px]">${strengthsHtml}</ul>
+      </div>
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('weaknesses', 'À AMÉLIORER', 'warning')}
+        <ul class="space-y-[7px]">${weaknessesHtml}</ul>
+      </div>
+    </div>
+
+    <div class="layout-grid-2 page-card">
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('careers', 'CARRIÈRES RECOMMANDÉES')}
+        <ul class="space-y-[7px]">${careersHtml}</ul>
+      </div>
+      <div class="y2k-card chrome-border rounded-3xl p-6">
+        ${sectionHeading('activities', 'ACTIVITÉS PRÉFÉRÉES')}
+        <ul class="space-y-[7px]">${activitiesHtml}</ul>
+      </div>
+    </div>
+
+    <div class="y2k-card chrome-border rounded-3xl p-7 page-card">
+      ${sectionHeading('share', 'PARTAGER LE RÉSULTAT')}
+      ${shareHTML}
+      <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ce résultat avec tes amis !</p>
+    </div>`;
 }
 
 function showFullResult(index) {
@@ -790,8 +805,6 @@ function showFullResult(index) {
   const container = document.getElementById('result-detail-content');
   if (container) {
     container.innerHTML = buildResultDetailHtml(resolved, index);
-    const tabs = container.querySelector('[data-info-tabs]');
-    if (tabs && typeof activateInfoTab === 'function') activateInfoTab(tabs, 'profile');
   }
 
   showScreen('result-detail-screen');
