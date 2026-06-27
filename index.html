@@ -200,6 +200,35 @@
         </div>
     </div>
 
+    <!-- HISTORY SCREEN -->
+    <div id="history-screen" class="hidden max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <div class="text-center mb-6 sm:mb-8">
+            <h2 class="type-display type-section-title y2k-title mb-3">Historique des résultats</h2>
+            <p class="type-body text-[#aaa]">Résultats enregistrés sur cet appareil</p>
+        </div>
+
+        <div class="y2k-card chrome-border rounded-3xl p-4 sm:p-8">
+            <div id="history-screen-content"></div>
+        </div>
+
+        <div class="flex flex-col items-center gap-3 mt-6 sm:mt-8">
+            <button type="button" onclick="startNewTestFromHistory()"
+                    class="type-btn chrome-button px-6 sm:px-10 py-3 glossy-btn text-[#ddd] rounded-full inline-flex items-center gap-x-2">
+                <i class="icon icon--sm icon--silver fa-solid fa-plus" aria-hidden="true"></i>
+                <span>NOUVEAU TEST</span>
+            </button>
+            <button type="button" onclick="navigateToIntro()"
+                    class="type-link flex items-center gap-x-1.5">
+                <i class="icon icon--xs icon--muted fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>RETOUR À L'ACCUEIL</span>
+            </button>
+            <button type="button" id="history-clear-btn" onclick="clearResultsHistory()"
+                    class="type-link text-red-400 hover:text-red-300 hidden normal-case tracking-normal">
+                Effacer l'historique
+            </button>
+        </div>
+    </div>
+
     <!-- QUIZ SCREEN -->
     <div id="quiz-screen" class="hidden max-w-[700px] mx-auto px-6 py-8">
         <div class="quiz-container">

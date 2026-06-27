@@ -259,7 +259,7 @@ function openAboutFromNav(target) {
   } else if (target === 'screen') {
     navigateToAbout();
   } else if (target === 'history') {
-    showResultsHistory();
+    navigateToHistory();
   }
 }
 
@@ -332,6 +332,10 @@ window.toggleNavMenu = toggleNavMenu;
 window.openNavMenu = openNavMenu;
 window.closeNavMenu = closeNavMenu;
 window.openAboutFromNav = openAboutFromNav;
+window.navigateToHistory = navigateToHistory;
+window.showResultsHistory = showResultsHistory;
+window.startNewTestFromHistory = startNewTestFromHistory;
+window.clearResultsHistory = clearResultsHistory;
 
 /**
  * MELHOR PRÁTICA: Carrega todo o estado do usuário de uma vez no início.
@@ -465,183 +469,132 @@ function loadResultsHistory() {
     return HistoryManager.load();
 }
 
-/**
- * Exibe o histórico de resultados.
- * Usa abordagem com event delegation para melhor performance e manutenção.
- */
+function navigateToHistory() {
+  closeNavMenu();
+  persistQuizProgressIfNeeded();
+  showScreen('history-screen');
+  renderHistoryScreen();
+}
+
 function showResultsHistory() {
-    const history = loadResultsHistory();
-    currentHistoryCache = history; // cache para event handlers
+  navigateToHistory();
+}
 
-    const modal = document.createElement('div');
-    modal.id = 'results-history-modal';
-    modal.className = 'fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-labelledby', 'history-title');
+function buildHistoryCard(entry, index) {
+  const resolved = HistoryManager.resolveEntry(entry);
+  const isBalanced = resolved.isBalanced;
+  const isRejection = !isBalanced && resolved.profileMode === 'rejection';
+  const dominant = isBalanced
+    ? { name: 'Équilibré', emoji: '⚖️', color: '#c9c9c9' }
+    : isRejection
+      ? { name: `↓ ${TEMPERAMENTS[resolved.dominant].name}`, emoji: TEMPERAMENTS[resolved.dominant].emoji, color: TEMPERAMENTS[resolved.dominant].color }
+      : TEMPERAMENTS[resolved.dominant];
+  const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
+  const dateStr = new Date(entry.date).toLocaleDateString('fr-FR', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
 
-    // Container principal
-    const container = document.createElement('div');
-    container.className = 'y2k-card chrome-border rounded-2xl sm:rounded-3xl max-w-lg w-full max-h-[95dvh] sm:max-h-[85vh] overflow-auto relative';
-    container.onclick = (e) => e.stopImmediatePropagation();
+  const statsHtml = isBalanced
+    ? `<div>Profil: <span class="font-semibold">25% × 4</span></div>
+       <div class="text-[#888]">Aucune dominance nette</div>`
+    : `<div>Principal: <span class="font-semibold">${Math.round(resolved.percentages[resolved.dominant])}%</span></div>
+       <div class="text-[#888]">Secondaire: ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)</div>`;
 
-    // Header
-    const header = document.createElement('div');
-    header.className = 'flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]';
-    header.innerHTML = `
-        <h3 id="history-title" class="font-bold text-xl y2k-heading">Historique des résultats</h3>
-        <button class="text-3xl text-[#555] hover:text-white leading-none" aria-label="Fermer">×</button>
-    `;
-    const headerCloseBtn = header.querySelector('button');
-    headerCloseBtn.onclick = () => closeModal(modal);
-    headerCloseBtn.setAttribute('aria-label', 'Fermer l\'historique');
+  const card = document.createElement('div');
+  card.className = 'border border-[#292929] rounded-2xl p-4 mb-3 last:mb-0 cursor-pointer hover:border-[#555] transition-colors';
+  card.style.borderLeft = `4px solid ${dominant.color}`;
+  card.dataset.historyIndex = index;
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-label', `Voir détails du résultat ${dominant.name}`);
 
-    // Content
-    const content = document.createElement('div');
-    content.className = 'p-4 sm:p-7';
+  card.innerHTML = `
+    <div class="flex justify-between items-start mb-2">
+      <div>
+        <div class="flex items-center gap-x-2">
+          ${temperamentEmoji(dominant.emoji, 'sm', dominant.color)}
+          <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
+        </div>
+        <div class="type-caption normal-case tracking-normal text-[#888]">${dateStr}</div>
+      </div>
+      <div class="text-right type-caption normal-case tracking-normal">${statsHtml}</div>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-3">
+      <button type="button" data-action="share" class="type-btn px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
+        ${icon('whatsapp', { size: 'sm', tone: 'whatsapp' })}<span>Partager</span>
+      </button>
+      <button type="button" data-action="edit" class="type-btn px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
+        ${icon('edit', { size: 'sm', tone: 'muted' })}<span>Modifier</span>
+      </button>
+      <button type="button" data-action="view" class="type-btn px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
+        ${icon('eye', { size: 'sm', tone: 'muted' })}<span>Détails</span>
+      </button>
+    </div>
+  `;
 
-    // Bouton pour nouveau test (intuitif: séparer nouveau vs modifier)
-    const newTestBtn = document.createElement('button');
-    newTestBtn.className = 'w-full mb-4 px-4 py-2 glossy-btn rounded-full text-xs tracking-widest uppercase flex items-center justify-center gap-x-2';
-    newTestBtn.innerHTML = `${icon('plus', { size: 'sm', tone: 'silver' })}<span>Nouveau test</span>`;
-    newTestBtn.onclick = () => {
-        closeModal(modal);
-        currentEditingId = null;
-        startQuiz();
-    };
-    content.appendChild(newTestBtn);
+  return card;
+}
 
-    if (history.length === 0) {
-        const emptyMsg = document.createElement('p');
-        emptyMsg.className = 'text-[#888] text-center py-8';
-        emptyMsg.textContent = 'Aucun résultat enregistré pour le moment.';
-        content.appendChild(emptyMsg);
-    } else {
-        // Use event delegation on the content container for better navegabilidade & perf
-        content.addEventListener('click', (e) => {
-            const card = e.target.closest('[data-history-index]');
-            if (!card) return;
-            const idx = parseInt(card.dataset.historyIndex, 10);
-            if (isNaN(idx)) return;
+function renderHistoryScreen() {
+  const container = document.getElementById('history-screen-content');
+  const clearBtn = document.getElementById('history-clear-btn');
+  if (!container) return;
 
-            if (e.target.closest('[data-action="share"]')) {
-                e.stopImmediatePropagation();
-                shareResultFromHistory(idx);
-            } else if (e.target.closest('[data-action="edit"]')) {
-                e.stopImmediatePropagation();
-                refazerTeste(idx);
-                closeModal(modal);
-            } else if (e.target.closest('[data-action="view"]')) {
-                e.stopImmediatePropagation();
-                showFullResult(idx);
-                closeModal(modal);
-            } else {
-                // Click on card body → vue complète (discoverability)
-                showFullResult(idx);
-                closeModal(modal);
-            }
-        });
+  const history = loadResultsHistory();
+  currentHistoryCache = history;
+  container.innerHTML = '';
 
-        history.forEach((entry, index) => {
-            const resolved = HistoryManager.resolveEntry(entry);
-            const isBalanced = resolved.isBalanced;
-            const isRejection = !isBalanced && resolved.profileMode === 'rejection';
-            const dominant = isBalanced
-              ? { name: 'Équilibré', emoji: '⚖️', color: '#c9c9c9' }
-              : isRejection
-                ? { name: `↓ ${TEMPERAMENTS[resolved.dominant].name}`, emoji: TEMPERAMENTS[resolved.dominant].emoji, color: TEMPERAMENTS[resolved.dominant].color }
-                : TEMPERAMENTS[resolved.dominant];
-            const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
-            const dateStr = new Date(entry.date).toLocaleDateString('fr-FR', { 
-                day: '2-digit', month: 'short', year: 'numeric' 
-            });
+  if (history.length === 0) {
+    container.innerHTML = '<p class="type-body text-[#888] text-center py-6">Aucun résultat enregistré pour le moment.</p>';
+    if (clearBtn) clearBtn.classList.add('hidden');
+    return;
+  }
 
-            const card = document.createElement('div');
-            card.className = 'border border-[#292929] rounded-2xl p-4 mb-3 cursor-pointer hover:border-[#555] transition-colors';
-            card.style.borderLeft = `4px solid ${dominant.color}`;
-            card.dataset.historyIndex = index;
-            card.setAttribute('role', 'button');
-            card.setAttribute('aria-label', `Voir détails du résultat ${dominant.name}`);
+  history.forEach((entry, index) => {
+    container.appendChild(buildHistoryCard(entry, index));
+  });
 
-            const statsHtml = isBalanced
-                ? `<div>Profil: <span class="font-semibold">25% × 4</span></div>
-                   <div class="text-[#888]">Aucune dominance nette</div>`
-                : `<div>Principal: <span class="font-semibold">${Math.round(resolved.percentages[resolved.dominant])}%</span></div>
-                   <div class="text-[#888]">Secondaire: ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)</div>`;
+  if (clearBtn) clearBtn.classList.remove('hidden');
+}
 
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <div class="flex items-center gap-x-2">
-                            ${temperamentEmoji(dominant.emoji, 'sm', dominant.color)}
-                            <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
-                        </div>
-                        <div class="text-[10px] sm:text-xs text-[#888]">${dateStr}</div>
-                    </div>
-                    <div class="text-right text-[10px] sm:text-xs">${statsHtml}</div>
-                </div>
-            `;
+function handleHistoryScreenClick(e) {
+  const card = e.target.closest('[data-history-index]');
+  if (!card) return;
 
-            // Actions explicites (icônes + labels) pour découvrabilité
-            const actions = document.createElement('div');
-            actions.className = 'flex flex-wrap gap-2 mt-3';
-            actions.innerHTML = `
-                <button data-action="share" class="px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1" aria-label="Partager sur WhatsApp">
-                    ${icon('whatsapp', { size: 'sm', tone: 'whatsapp' })}<span>Partager</span>
-                </button>
-                <button data-action="edit" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Modifier ce résultat">
-                    ${icon('edit', { size: 'sm', tone: 'muted' })}<span>Modifier</span>
-                </button>
-                <button data-action="view" class="px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1" aria-label="Voir les détails complets">
-                    ${icon('eye', { size: 'sm', tone: 'muted' })}<span>Détails</span>
-                </button>
-            `;
+  const idx = parseInt(card.dataset.historyIndex, 10);
+  if (isNaN(idx)) return;
 
-            card.appendChild(actions);
-            content.appendChild(card);
-        });
-    }
+  if (e.target.closest('[data-action="share"]')) {
+    e.stopPropagation();
+    shareResultFromHistory(idx);
+  } else if (e.target.closest('[data-action="edit"]')) {
+    e.stopPropagation();
+    refazerTeste(idx);
+  } else if (e.target.closest('[data-action="view"]')) {
+    e.stopPropagation();
+    showFullResult(idx);
+  } else {
+    showFullResult(idx);
+  }
+}
 
-    // Footer
-    const footer = document.createElement('div');
-    footer.className = 'px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex justify-end gap-3';
+function initHistoryScreen() {
+  const container = document.getElementById('history-screen-content');
+  if (!container || container.dataset.bound) return;
+  container.dataset.bound = 'true';
+  container.addEventListener('click', handleHistoryScreenClick);
+}
 
-    if (history.length > 0) {
-        const clearBtn = document.createElement('button');
-        clearBtn.className = 'px-4 py-2 text-xs text-red-400 hover:text-red-300';
-        clearBtn.textContent = 'Effacer l\'historique';
-        clearBtn.onclick = () => {
-            if (confirm('Voulez-vous vraiment effacer tout l\'historique ?')) {
-                HistoryManager.clear();
-                closeModal(modal);
-                // Optionally refresh if needed
-                alert('Historique effacé.');
-            }
-        };
-        footer.appendChild(clearBtn);
-    }
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'px-6 py-2 glossy-btn text-xs tracking-[2px] uppercase rounded-full';
-    closeBtn.textContent = 'FERMER';
-    closeBtn.onclick = () => closeModal(modal);
-    footer.appendChild(closeBtn);
-
-    container.append(header, content, footer);
-    modal.append(container);
-    document.body.appendChild(modal);
-
-    // ESC standardisé
-    attachModalEscClose(modal);
+function startNewTestFromHistory() {
+  currentEditingId = null;
+  startQuiz();
 }
 
 function clearResultsHistory() {
-    if (confirm('Voulez-vous vraiment effacer tout l\'historique des résultats ?')) {
-        HistoryManager.clear();
-        const modal = document.getElementById('results-history-modal');
-        if (modal) closeModal(modal);
-        alert('Historique effacé.');
-    }
+  if (!confirm('Voulez-vous vraiment effacer tout l\'historique des résultats ?')) return;
+
+  HistoryManager.clear();
+  renderHistoryScreen();
+  alert('Historique effacé.');
 }
 
 function showFullResult(index) {
@@ -950,9 +903,6 @@ function refazerTeste(index) {
         return;
     }
 
-    const modal = document.getElementById('results-history-modal');
-    if (modal) modal.remove();
-
     clearQuizProgress();
     currentEditingId = entry.id;
     answers = entry.answers
@@ -992,6 +942,7 @@ function initializeApp() {
     loadUserState();
 
     initializeTailwind();
+    initHistoryScreen();
 
     // Centralized navigation already exposed earlier. Delegate for external use.
     window.showScreen = showScreen;
