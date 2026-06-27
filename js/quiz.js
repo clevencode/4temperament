@@ -58,7 +58,7 @@ function showQuestion() {
                 ${isSelected ? '<i class="fa-solid fa-check text-xs"></i>' : option.value}
             </div>
             <div class="flex-1 min-w-0">
-                <div class="text-sm sm:text-base leading-snug text-[#ddd]">${option.text}</div>
+                <div class="type-likert-label">${option.text}</div>
             </div>
         `;
 

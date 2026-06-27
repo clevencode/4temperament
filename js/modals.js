@@ -17,24 +17,24 @@ function showAllTemperaments() {
                     ${t.emoji}
                 </div>
                 <div>
-                    <div class="font-bold text-2xl y2k-heading tracking-[-0.5px]" style="color: ${t.color}">${t.name}</div>
-                    <div class="text-xs tracking-[1.5px] text-[#666]">${t.subtitle}</div>
+                    <div class="type-display y2k-heading text-2xl" style="color: ${t.color}">${t.name}</div>
+                    <div class="type-caption text-[#666]">${t.subtitle}</div>
                 </div>
             </div>
             
-            <p class="text-sm mb-4 text-[#aaa] leading-relaxed">${t.description}</p>
+            <p class="type-body mb-4 text-[#aaa]">${t.description}</p>
             
-            <div class="grid grid-cols-1 gap-x-6 text-xs">
+            <div class="grid grid-cols-1 gap-x-6">
                 <div>
-                    <div class="uppercase tracking-[1px] font-semibold mb-1.5" style="color:#999">POINTS FORTS</div>
-                    <ul class="space-y-px text-[#aaa]">
-                        ${t.strengths.map(s => `<li class="flex"><span class="mr-1.5 text-[#555]">•</span> ${s}</li>`).join('')}
+                    <div class="type-label mb-1.5" style="color:#999">POINTS FORTS</div>
+                    <ul class="space-y-px">
+                        ${t.strengths.map(s => `<li class="type-list-item flex"><span class="mr-1.5 text-[#555]">•</span> ${s}</li>`).join('')}
                     </ul>
                 </div>
                 <div class="mt-4">
-                    <div class="uppercase tracking-[1px] font-semibold mb-1.5" style="color:#999">À AMÉLIORER</div>
-                    <ul class="space-y-px text-[#aaa]">
-                        ${t.weaknesses.map(w => `<li class="flex"><span class="mr-1.5 text-[#555]">•</span> ${w}</li>`).join('')}
+                    <div class="type-label mb-1.5" style="color:#999">À AMÉLIORER</div>
+                    <ul class="space-y-px">
+                        ${t.weaknesses.map(w => `<li class="type-list-item flex"><span class="mr-1.5 text-[#555]">•</span> ${w}</li>`).join('')}
                     </ul>
                 </div>
             </div>

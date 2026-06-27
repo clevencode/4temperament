@@ -38,10 +38,10 @@ function renderResultBars(result) {
       <div class="flex justify-between items-center mb-1.5 px-1">
         <div class="flex items-center gap-x-2">
           <span class="text-lg sm:text-xl">${t.emoji}</span>
-          <span class="font-semibold ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
-          ${isDominant ? `<span class="text-[10px] px-2 py-px rounded tracking-widest" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
+          <span class="type-ui font-semibold text-base sm:text-lg ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
+          ${isDominant ? `<span class="type-caption px-2 py-px rounded" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">${dominantBadge}</span>` : ''}
         </div>
-        <span class="font-semibold tabular-nums w-10 text-right" style="color:#c9c9c9">${percent}%</span>
+        <span class="type-ui font-semibold tabular-nums w-10 text-right text-sm" style="color:#c9c9c9">${percent}%</span>
       </div>
       <div class="h-1 sm:h-[5px] bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
         <div class="h-1 sm:h-[5px] rounded-full result-bar"
@@ -81,8 +81,8 @@ function renderBalancedResult(result) {
   document.getElementById('secondary-result').innerHTML = `
     <div class="text-3xl opacity-60">—</div>
     <div>
-      <div class="font-semibold text-lg text-[#888]">Non déterminé</div>
-      <div class="text-sm text-[#666]">${result.allNeutral ? 'Toutes les réponses étaient neutres' : result.mostlyNeutral ? 'Majorité de réponses neutres (≥ 80 %)' : 'Signal trop faible pour déterminer un dominant'}</div>
+      <div class="type-ui font-semibold text-lg text-[#888]">Non déterminé</div>
+      <div class="type-body text-sm text-[#666]">${result.allNeutral ? 'Toutes les réponses étaient neutres' : result.mostlyNeutral ? 'Majorité de réponses neutres (≥ 80 %)' : 'Signal trop faible pour déterminer un dominant'}</div>
     </div>
   `;
 
@@ -90,19 +90,19 @@ function renderBalancedResult(result) {
   document.getElementById('result-description').textContent = BALANCED_COPY.description;
 
   document.getElementById('strengths-list').innerHTML = BALANCED_COPY.strengths.map(s =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">${s}</span></li>`
+    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="type-list-item">${s}</span></li>`
   ).join('');
 
   document.getElementById('weaknesses-list').innerHTML = BALANCED_COPY.weaknesses.map(w =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">${w}</span></li>`
+    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="type-list-item">${w}</span></li>`
   ).join('');
 
   document.getElementById('careers-list').innerHTML = BALANCED_COPY.careers.map(c =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${c}</span></li>`
+    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${c}</span></li>`
   ).join('');
 
   document.getElementById('activities-list').innerHTML = BALANCED_COPY.activities.map(a =>
-    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
+    `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${a}</span></li>`
   ).join('');
 }
 
@@ -142,8 +142,8 @@ function renderDominantResult(result) {
   document.getElementById('secondary-result').innerHTML = `
     <div class="text-4xl" style="color: ${secondary.color}">${secondary.emoji}</div>
     <div>
-      <div class="font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
-      <div class="text-sm text-[#888]">${secondary.subtitle} — ${result.secondaryPercent}%</div>
+      <div class="type-ui font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
+      <div class="type-body text-sm text-[#888]">${secondary.subtitle} — ${result.secondaryPercent}%</div>
     </div>
   `;
 
@@ -159,28 +159,28 @@ function renderDominantResult(result) {
 
   if (isRejection) {
     document.getElementById('strengths-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">Tu as clarifié ce qui te ressemble moins (${dominant.name})</span></li>`;
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="type-list-item">Tu as clarifié ce qui te ressemble moins (${dominant.name})</span></li>`;
     document.getElementById('weaknesses-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">Relance le test en répondant ce qui t'identifie positivement</span></li>`;
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="type-list-item">Relance le test en répondant ce qui t'identifie positivement</span></li>`;
     document.getElementById('careers-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">Non applicable — profil basé sur le désaccord</span></li>`;
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">Non applicable — profil basé sur le désaccord</span></li>`;
     document.getElementById('activities-list').innerHTML =
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">Explore librement sans te limiter à un seul type</span></li>`;
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">Explore librement sans te limiter à un seul type</span></li>`;
   } else {
     document.getElementById('strengths-list').innerHTML = dominant.strengths.map(s =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">${s}</span></li>`
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="type-list-item">${s}</span></li>`
     ).join('');
 
     document.getElementById('weaknesses-list').innerHTML = dominant.weaknesses.map(w =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">${w}</span></li>`
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="type-list-item">${w}</span></li>`
     ).join('');
 
     document.getElementById('careers-list').innerHTML = (dominant.recommendedCareers || []).map(c =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${c}</span></li>`
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${c}</span></li>`
     ).join('');
 
     document.getElementById('activities-list').innerHTML = (dominant.preferredActivities || []).map(a =>
-      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
+      `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="type-list-item">${a}</span></li>`
     ).join('');
   }
 }
