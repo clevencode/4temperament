@@ -160,6 +160,8 @@ function startQuiz() {
     if (prefs && prefs.hasCompletedTest) {
         // Usuário já fez o teste antes → vai direto para o questionário
         currentEditingId = null;
+        const notice = document.getElementById('quiz-edit-notice');
+        if (notice) notice.classList.add('hidden');
 
         document.getElementById('quiz-screen').classList.remove('hidden');
         currentQuestionIndex = 0;
@@ -311,8 +313,23 @@ function showResultsHistory() {
     const content = document.createElement('div');
     content.className = 'p-4 sm:p-7';
 
+    // Bouton pour nouveau test (intuitif: séparer nouveau vs modifier)
+    const newTestBtn = document.createElement('button');
+    newTestBtn.className = 'w-full mb-4 px-4 py-2 glossy-btn rounded-full text-xs tracking-widest uppercase flex items-center justify-center gap-x-2';
+    newTestBtn.innerHTML = `<i class="fa-solid fa-plus"></i><span>Nouveau test</span>`;
+    newTestBtn.onclick = () => {
+        modal.remove();
+        // Reset editing state and start fresh
+        currentEditingId = null;
+        startQuiz();
+    };
+    content.appendChild(newTestBtn);
+
     if (history.length === 0) {
-        content.innerHTML = `<p class="text-[#888] text-center py-8">Aucun résultat enregistré pour le moment.</p>`;
+        const emptyMsg = document.createElement('p');
+        emptyMsg.className = 'text-[#888] text-center py-8';
+        emptyMsg.textContent = 'Aucun résultat enregistré pour le moment.';
+        content.appendChild(emptyMsg);
     } else {
         history.forEach((entry, index) => {
             const dominant = TEMPERAMENTS[entry.dominant];
@@ -323,6 +340,7 @@ function showResultsHistory() {
 
             const card = document.createElement('div');
             card.className = 'border border-[#292929] rounded-2xl p-4 mb-3';
+            card.style.borderLeft = `4px solid ${dominant.color}`;
             card.dataset.historyIndex = index;
 
             card.innerHTML = `
@@ -345,7 +363,7 @@ function showResultsHistory() {
             const actions = document.createElement('div');
             actions.className = 'flex flex-wrap gap-2 mt-3';
 
-            // Share (WhatsApp as primary for this feature)
+            // Share (quick WhatsApp)
             const shareBtn = document.createElement('button');
             shareBtn.className = 'px-3 py-1 text-xs glossy-btn rounded-full flex items-center gap-x-1';
             shareBtn.innerHTML = `<i class="fa-brands fa-whatsapp"></i><span>Partager</span>`;
@@ -354,10 +372,10 @@ function showResultsHistory() {
                 shareResultFromHistory(index);
             };
 
-            // Refazer (edit mode)
+            // Modifier (edit previous answers - business logic: update existing)
             const refazerBtn = document.createElement('button');
             refazerBtn.className = 'px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1';
-            refazerBtn.innerHTML = `<i class="fa-solid fa-redo"></i><span>Refaire le test</span>`;
+            refazerBtn.innerHTML = `<i class="fa-solid fa-edit"></i><span>Modifier</span>`;
             refazerBtn.onclick = (e) => {
                 e.stopImmediatePropagation();
                 refazerTeste(index);
@@ -367,7 +385,7 @@ function showResultsHistory() {
             // Full view
             const viewBtn = document.createElement('button');
             viewBtn.className = 'px-3 py-1 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1';
-            viewBtn.innerHTML = `<i class="fa-solid fa-eye"></i><span>Vue complète</span>`;
+            viewBtn.innerHTML = `<i class="fa-solid fa-eye"></i><span>Détails</span>`;
             viewBtn.onclick = (e) => {
                 e.stopImmediatePropagation();
                 showFullResult(index);
@@ -453,6 +471,11 @@ function showFullResult(index) {
             </div>
 
             <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
+
+                <!-- Contexte -->
+                <div class="text-xs text-[#888] mb-2">
+                    Résultat du ${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}
+                </div>
 
                 <!-- Dominant -->
                 <div>
@@ -541,8 +564,11 @@ function showFullResult(index) {
                 ${shareSectionHTML ? shareSectionHTML(index) : ''}
             </div>
 
-            <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex items-center justify-between text-xs text-[#666]">
-                <div>${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
+            <div class="px-4 sm:px-7 py-4 sm:py-5 border-t border-[#222] flex flex-wrap gap-2 items-center justify-between text-xs text-[#666]">
+                <button onclick="refazerTeste(${index}); this.closest('.fixed').remove();" class="px-4 py-1.5 text-xs border border-[#444] hover:bg-[#222] rounded-full flex items-center gap-x-1">
+                    <i class="fa-solid fa-edit"></i>
+                    <span>Modifier</span>
+                </button>
                 <button onclick="this.closest('.fixed').remove()" class="px-5 sm:px-6 py-1.5 glossy-btn text-xs tracking-widest rounded-full">FERMER</button>
             </div>
         </div>
@@ -651,6 +677,10 @@ function refazerTeste(index) {
 
     document.getElementById('quiz-screen').classList.remove('hidden');
 
+    // Mostrar aviso de edição para intuitividade
+    const notice = document.getElementById('quiz-edit-notice');
+    if (notice) notice.classList.remove('hidden');
+
     currentQuestionIndex = 0;
     showQuestion();
 }
@@ -658,6 +688,10 @@ function refazerTeste(index) {
 function startQuizAfterAbout() {
     // Cacher l'écran d'explication
     document.getElementById('about-screen').classList.add('hidden');
+    
+    // Cacher avis d'édition
+    const notice = document.getElementById('quiz-edit-notice');
+    if (notice) notice.classList.add('hidden');
     
     // Afficher l'écran du quiz
     document.getElementById('quiz-screen').classList.remove('hidden');
@@ -673,6 +707,10 @@ function restartQuiz() {
     // Réinitialiser les données
     userName = '';
     currentEditingId = null;
+    
+    // Cacher avis d'édition
+    const notice = document.getElementById('quiz-edit-notice');
+    if (notice) notice.classList.add('hidden');
     
     // Cacher tous les écrans sauf l'accueil
     document.getElementById('results-screen').classList.add('hidden');
