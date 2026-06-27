@@ -140,6 +140,7 @@ function selectOption(questionId, value, element) {
 
     answers[questionId] = value;
     hideQuizError();
+    if (typeof persistQuizProgress === 'function') persistQuizProgress();
 }
 
 function nextQuestion() {
@@ -154,6 +155,7 @@ function nextQuestion() {
 
     if (currentQuestionIndex < QUESTIONS.length - 1) {
         currentQuestionIndex++;
+        if (typeof persistQuizProgress === 'function') persistQuizProgress();
         showQuestion();
     } else if (allQuestionsAnswered()) {
         showResults();
@@ -169,6 +171,7 @@ function allQuestionsAnswered() {
 function prevQuestion() {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
+        if (typeof persistQuizProgress === 'function') persistQuizProgress();
         showQuestion();
     }
 }

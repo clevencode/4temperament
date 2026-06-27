@@ -18,15 +18,16 @@
     <!-- Navbar -->
     <nav class="border-b border-[#1f1f1f] bg-[#050505]">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-9 h-9 rounded-xl metallic flex items-center justify-center relative">
+            <button type="button" id="nav-brand-home"
+                    onclick="navigateToIntro()"
+                    class="flex items-center gap-x-3 text-left rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
+                    aria-label="Retour à l'accueil">
+                <div class="w-9 h-9 rounded-xl metallic flex items-center justify-center relative pointer-events-none">
                     <i class="fa-solid fa-brain text-[#c9c9c9] text-xl"></i>
                     <div class="absolute inset-0 rounded-xl border border-white/10"></div>
                 </div>
-                <div>
-                    <span class="font-bold text-xl sm:text-2xl tracking-[-1.5px] y2k-heading text-[#c9c9c9]">LES 4 TEMPÉRAMENTS</span>
-                </div>
-            </div>
+                <span class="font-bold text-xl sm:text-2xl tracking-[-1.5px] y2k-heading text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
+            </button>
             <button onclick="showAboutModal()" 
                     class="flex items-center gap-x-2 px-5 py-2 text-xs uppercase tracking-[1.5px] font-semibold text-[#999] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#444]"
                     aria-label="À propos des 4 Tempéraments">
@@ -61,12 +62,13 @@
                 30 affirmations avec échelle d'accord — de « pas du tout d'accord » à « tout à fait d'accord ».
             </p>
 
-            <div class="flex items-center justify-center">
-                <button onclick="startQuiz()" 
+            <div class="flex flex-col items-center justify-center gap-2">
+                <button id="intro-start-btn" onclick="startQuiz()" 
                         class="chrome-button group inline-flex items-center justify-center gap-x-3 px-6 sm:px-10 py-3 sm:py-4 glossy-btn text-[#e5e5e5] font-semibold text-sm sm:text-base rounded-2xl tracking-widest uppercase">
-                    <span>COMMENCER LE TEST</span>
-                    <i class="fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition"></i>
+                    <span id="intro-start-label">COMMENCER LE TEST</span>
+                    <i id="intro-start-icon" class="fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition"></i>
                 </button>
+                <p id="intro-continue-hint" class="hidden text-xs text-[#777] tracking-wide"></p>
             </div>
 
             <div class="mt-8 flex items-center justify-center gap-x-7 text-[12px] text-[#666] tracking-[1px] uppercase">

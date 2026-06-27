@@ -3,7 +3,52 @@
 // --- PERSISTENCE (localStorage) ---
 const PREFS_KEY = 'temperamentsPrefs';
 const HISTORY_KEY = 'temperamentsResultsHistory';
+const QUIZ_PROGRESS_KEY = 'temperamentsQuizProgress';
 const MAX_HISTORY_ENTRIES = 20;
+
+// =====================================================
+// QUIZ PROGRESS — brouillon en cours (reprise après retour accueil)
+// =====================================================
+const QuizProgress = {
+  save({ answers: ans, currentQuestionIndex: idx }) {
+    if (!ans || Object.keys(ans).length === 0) {
+      this.clear();
+      return;
+    }
+    try {
+      localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify({
+        answers: ans,
+        currentQuestionIndex: idx,
+        updatedAt: new Date().toISOString()
+      }));
+    } catch (e) {
+      console.warn('Impossible de sauvegarder la progression du quiz');
+    }
+  },
+
+  load() {
+    try {
+      const raw = localStorage.getItem(QUIZ_PROGRESS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  clear() {
+    localStorage.removeItem(QUIZ_PROGRESS_KEY);
+  },
+
+  hasInProgress() {
+    const data = this.load();
+    return !!(data && data.answers && Object.keys(data.answers).length > 0);
+  },
+
+  getAnsweredCount() {
+    const data = this.load();
+    return data?.answers ? Object.keys(data.answers).length : 0;
+  }
+};
 
 // =====================================================
 // HISTORY MANAGER - Lógica de negócio do Histórico
@@ -146,9 +191,60 @@ function showScreen(screenId) {
 
 // Helpers de flux explicites (clarté + maintenabilité)
 function navigateToIntro() {
+  persistQuizProgressIfNeeded();
   currentEditingId = null;
-  // Pas de reset de userName ici (logo simple = retour accueil)
   showScreen('intro-screen');
+  updateIntroCta();
+}
+
+function isQuizScreenVisible() {
+  const el = document.getElementById('quiz-screen');
+  return el && !el.classList.contains('hidden');
+}
+
+/** Sauvegarde le brouillon uniquement pour un nouveau test (pas édition historique). */
+function persistQuizProgressIfNeeded() {
+  if (!isQuizScreenVisible() || currentEditingId != null) return;
+  if (!answers || Object.keys(answers).length === 0) return;
+  QuizProgress.save({ answers, currentQuestionIndex });
+}
+
+function persistQuizProgress() {
+  if (currentEditingId != null) return;
+  QuizProgress.save({ answers, currentQuestionIndex });
+}
+
+function clearQuizProgress() {
+  QuizProgress.clear();
+}
+
+function updateIntroCta() {
+  const label = document.getElementById('intro-start-label');
+  const icon = document.getElementById('intro-start-icon');
+  const hint = document.getElementById('intro-continue-hint');
+  if (!label) return;
+
+  const saved = QuizProgress.load();
+  const hasProgress = saved && saved.answers && Object.keys(saved.answers).length > 0;
+
+  if (hasProgress) {
+    const answered = Object.keys(saved.answers).length;
+    const qIndex = Math.min(saved.currentQuestionIndex ?? 0, (typeof QUESTIONS !== 'undefined' ? QUESTIONS.length : 30) - 1);
+    label.textContent = 'CONTINUER';
+    if (icon) {
+      icon.className = 'fa-solid fa-play text-sm group-active:translate-x-0.5 transition';
+    }
+    if (hint) {
+      hint.textContent = `Reprendre à la question ${qIndex + 1} — ${answered} réponse${answered > 1 ? 's' : ''} sauvegardée${answered > 1 ? 's' : ''}`;
+      hint.classList.remove('hidden');
+    }
+  } else {
+    label.textContent = 'COMMENCER LE TEST';
+    if (icon) {
+      icon.className = 'fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition';
+    }
+    if (hint) hint.classList.add('hidden');
+  }
 }
 
 function navigateToQuiz() {
@@ -176,6 +272,7 @@ function loadUserState() {
     // Carregar histórico completo
     currentHistoryCache = HistoryManager.load();
     userName = '';
+    updateIntroCta();
 
     console.log('%c[Quiz] Estado do usuário carregado do localStorage (persistência ativa)', 'color:#4ade80');
 }
@@ -208,8 +305,19 @@ function initializeTailwind() {
 function startQuiz() {
     userName = '';
     currentEditingId = null;
-    currentQuestionIndex = 0;
-    answers = {};
+
+    const saved = QuizProgress.load();
+    if (saved && saved.answers && Object.keys(saved.answers).length > 0) {
+        answers = JSON.parse(JSON.stringify(saved.answers));
+        currentQuestionIndex = Math.min(
+            saved.currentQuestionIndex ?? 0,
+            QUESTIONS.length - 1
+        );
+    } else {
+        answers = {};
+        currentQuestionIndex = 0;
+    }
+
     navigateToQuiz();
     showQuestion();
 }
@@ -776,7 +884,7 @@ function refazerTeste(index) {
     const modal = document.getElementById('results-history-modal');
     if (modal) modal.remove();
 
-    // Business logic: edition met à jour l'entrée existante (pas de duplication)
+    clearQuizProgress();
     currentEditingId = entry.id;
     answers = entry.answers ? JSON.parse(JSON.stringify(entry.answers)) : {};
     userName = '';
@@ -788,16 +896,18 @@ function refazerTeste(index) {
 }
 
 function startQuizAfterAbout() {
-    // Réinitialiser quiz state pour un nouveau parcours
+    clearQuizProgress();
     currentQuestionIndex = 0;
     answers = {};
-    // Note: currentEditingId doit déjà être null ici (flux normal)
+    currentEditingId = null;
     navigateToQuiz();
     showQuestion();
 }
 
 function restartQuiz() {
-    // Retour à l'accueil propre : réinitialise états + navigation centralisée
+    clearQuizProgress();
+    answers = {};
+    currentQuestionIndex = 0;
     userName = '';
     currentEditingId = null;
     navigateToIntro();
@@ -827,14 +937,6 @@ function initializeApp() {
             prevQuestion();
         }
     });
-
-    // Logo clique → home fiable (navegabilidade)
-    const logo = document.querySelector('.fa-brain');
-    if (logo) {
-        logo.style.cursor = 'pointer';
-        logo.setAttribute('aria-label', 'Retour à l\'accueil');
-        logo.onclick = () => navigateToIntro();
-    }
 
     // Typing animation for the hero "TEMPÉRAMENT" word
     initTemperamentTyping();
@@ -919,3 +1021,6 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 // Expor funções globais úteis
 window.startQuiz = startQuiz;
 window.restartQuiz = restartQuiz;
+window.persistQuizProgress = persistQuizProgress;
+window.clearQuizProgress = clearQuizProgress;
+window.updateIntroCta = updateIntroCta;

@@ -210,6 +210,13 @@ function showResults() {
   if (typeof saveResultToHistory === 'function') {
     saveResultToHistory({ ...result, answers: { ...answers } });
   }
+
+  if (typeof clearQuizProgress === 'function') {
+    clearQuizProgress();
+  }
+  if (typeof updateIntroCta === 'function') {
+    updateIntroCta();
+  }
 }
 
 function getResultText() {
