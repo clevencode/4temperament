@@ -20,7 +20,7 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between">
             <div class="flex items-center gap-x-3">
                 <div class="w-9 h-9 rounded-xl metallic flex items-center justify-center relative">
-                    <i class="fa-solid fa-brain icon icon-lg icon-ui"></i>
+                    <i class="fa-solid fa-brain text-[#c9c9c9] text-xl"></i>
                     <div class="absolute inset-0 rounded-xl border border-white/10"></div>
                 </div>
                 <div>
@@ -28,9 +28,10 @@
                 </div>
             </div>
             <button onclick="showAboutModal()" 
-                    class="flex items-center gap-x-1.5 px-4 py-1.5 text-label font-semibold text-[#888] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#555]"
-                    aria-label="À propos">
-                <i class="fa-solid fa-info icon icon-sm icon-ui"></i>
+                    class="flex items-center gap-x-2 px-5 py-2 text-xs uppercase tracking-[1.5px] font-semibold text-[#999] hover:text-[#c9c9c9] transition-colors border border-[#292929] rounded-full hover:border-[#444]"
+                    aria-label="À propos des 4 Tempéraments">
+                <i class="fa-solid fa-info-circle mr-1.5"></i>
+                <span>À propos</span>
             </button>
         </div>
     </nav>
@@ -44,40 +45,44 @@
 
         <div class="text-center relative z-10">
             <!-- Badge -->
-            <div class="inline-flex items-center gap-x-2 px-4 py-1 rounded-full metallic mb-8 text-label font-semibold border border-[#2a2a2a]">
-                <div class="w-1 h-1 bg-[#c9c9c9] rounded-full"></div>
-                <span class="text-[#a0a0a0]">14 questions</span>
+            <div class="inline-flex items-center gap-x-2 px-5 py-1.5 rounded-full metallic mb-9 text-xs tracking-[2px] uppercase font-semibold border border-[#2a2a2a]">
+                <div class="w-1.5 h-1.5 bg-[#c9c9c9] rounded-full"></div>
+                <span class="text-[#a0a0a0]">TEST CLASSIQUE • 14 QUESTIONS</span>
             </div>
 
-            <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[0.92] font-bold mb-4 y2k-title tracking-[-4px]">
+            <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[0.92] font-bold mb-3 y2k-title tracking-[-4.5px]">
                 DÉCOUVRE<br>SI TU ES
-                <span class="chrome-text text-6xl sm:text-7xl md:text-8xl lg:text-[92px] block -mt-1">
+                <span class="chrome-text text-6xl sm:text-7xl md:text-8xl lg:text-[92px] block -mt-2">
                     <span id="temperament-typing"></span><span class="typing-cursor">|</span>
                 </span>
             </h1>
             
-            <p class="max-w-[340px] mx-auto text-base text-[#999] mb-8 tracking-[-0.1px]">
-                Un questionnaire pour découvrir ton tempérament.
+            <p class="max-w-[380px] mx-auto text-lg text-[#999] mb-9 tracking-[-0.2px]">
+                Un questionnaire simple basé sur les 4 Tempéraments.
             </p>
 
             <div class="flex items-center justify-center">
                 <button onclick="startQuiz()" 
-                        class="chrome-button group inline-flex items-center justify-center gap-x-2 px-7 py-3.5 glossy-btn text-[#e5e5e5] font-semibold text-sm rounded-2xl tracking-[1px]">
-                    <span>COMMENCER</span>
-                    <i class="fa-solid fa-arrow-right icon icon-sm group-active:translate-x-0.5 transition"></i>
+                        class="chrome-button group inline-flex items-center justify-center gap-x-3 px-6 sm:px-10 py-3 sm:py-4 glossy-btn text-[#e5e5e5] font-semibold text-sm sm:text-base rounded-2xl tracking-widest uppercase">
+                    <span>COMMENCER LE TEST</span>
+                    <i class="fa-solid fa-arrow-right text-sm group-active:translate-x-0.5 transition"></i>
                 </button>
             </div>
 
-            <div class="mt-7 flex items-center justify-center text-caption gap-x-2">
-                <i class="fa-regular fa-clock icon icon-sm"></i>
-                <span>~4 min</span>
+            <div class="mt-8 flex items-center justify-center gap-x-7 text-[12px] text-[#666] tracking-[1px] uppercase">
+                <div class="flex items-center gap-x-2">
+                    <i class="fa-regular fa-clock"></i>
+                    <span>~4 MIN</span>
+                </div>
+                <div class="h-px w-3 bg-[#333]"></div>
+                <div>SIMPLE • ANONYME</div>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-6">
                 <button onclick="showResultsHistory()" 
-                        class="text-caption flex items-center gap-x-1.5 mx-auto hover:text-[#c9c9c9] transition-colors">
-                    <i class="fa-solid fa-history icon icon-sm"></i>
-                    <span>Historique</span>
+                        class="text-xs text-[#888] hover:text-[#c9c9c9] transition-colors flex items-center gap-x-1 mx-auto">
+                    <i class="fa-solid fa-history text-xs"></i>
+                    <span>Voir l'historique des résultats</span>
                 </button>
             </div>
         </div>
@@ -88,12 +93,12 @@
         <div class="y2k-card chrome-border rounded-3xl p-6 sm:p-8">
             <div class="mb-4 text-left">
                 <button onclick="navigateToIntro()" 
-                        class="text-caption flex items-center gap-x-1.5">
-                    <i class="fa-solid fa-arrow-left icon icon-sm"></i>
-                    <span>Retour</span>
+                        class="text-xs text-[#888] hover:text-[#c9c9c9] flex items-center gap-x-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>RETOUR</span>
                 </button>
             </div>
-            <h2 class="text-3xl y2k-title tracking-[-1px] mb-4">Bonjour !</h2>
+            <h2 class="text-3xl y2k-title tracking-[-1.5px] mb-2">Bonjour !</h2>
             <label for="user-name-input" class="block text-[#aaa] mb-1 text-left">Pour personnaliser ton expérience, entre ton prénom (optionnel) :</label>
             <p class="text-[10px] text-[#777] mb-2 text-left">Enregistré localement pour ton historique.</p>
             
@@ -103,13 +108,13 @@
                    class="w-full px-4 py-3 bg-[#111] border border-[#292929] rounded-2xl text-[#ddd] focus:outline-none focus:border-[#c9c9c9] mb-4 text-center">
             
             <button onclick="saveNameAndContinue()" 
-                    class="chrome-button w-full px-8 py-3 glossy-btn text-[#ddd] font-semibold text-xs tracking-widest rounded-full uppercase mb-2">
-                Continuer
+                    class="chrome-button w-full px-8 py-3 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase mb-3">
+                CONTINUER
             </button>
 
             <button onclick="continueAnonymously()" 
-                    class="w-full py-2 text-caption text-[#888] hover:text-[#c9c9c9] transition-colors">
-                Continuer anonymement
+                    class="w-full px-8 py-2.5 text-xs tracking-[1.5px] text-[#888] hover:text-[#c9c9c9] border border-[#333] hover:border-[#555] rounded-full uppercase transition-colors">
+                CONTINUER ANONYMEMENT
             </button>
         </div>
     </div>
@@ -159,36 +164,42 @@
     <div id="quiz-screen" class="hidden max-w-[700px] mx-auto px-6 py-8">
         <div class="quiz-container">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-4">
-                <div class="text-xl font-bold y2k-heading tracking-[-0.5px]">
-                    <span id="current-question" class="chrome-text text-2xl">1</span>
-                    <span class="text-[#555]">/ 14</span>
+            <div class="flex items-center justify-between mb-4 sm:mb-6">
+                <div class="flex items-baseline gap-x-2 sm:gap-x-3">
+                    <span class="text-[10px] sm:text-xs font-semibold tracking-[3px] text-[#777]">QUESTIONNAIRE</span>
+                    <div class="text-lg sm:text-xl font-bold y2k-heading tracking-[-1px]">QUESTION <span id="current-question" class="chrome-text text-2xl sm:text-3xl">1</span> <span class="text-[#555]">/ 14</span></div>
                 </div>
                 <div class="flex items-center gap-x-2">
                     <button onclick="restartQuiz()" 
-                            class="text-xs flex items-center gap-x-1 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-3 py-1 rounded-full"
-                            aria-label="Recommencer">
-                        <i class="fa-solid fa-redo icon icon-sm icon-muted"></i>
+                            class="text-[10px] sm:text-xs flex items-center gap-x-2 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 sm:px-3 py-1 rounded-full"
+                            aria-label="Recommencer le test">
+                        <i class="fa-solid fa-redo text-xs"></i>
+                        <span>RECOMMENCER</span>
                     </button>
                     <button onclick="navigateToIntro()" 
-                            class="text-xs flex items-center text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 py-1 rounded-full"
-                            aria-label="Accueil">
-                        <i class="fa-solid fa-home icon icon-sm icon-muted"></i>
+                            class="text-[10px] sm:text-xs flex items-center gap-x-1 text-[#666] hover:text-[#aaa] transition-colors border border-[#292929] px-2 py-1 rounded-full"
+                            aria-label="Retour à l'accueil">
+                        <i class="fa-solid fa-home text-xs"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Edit notice -->
-            <div id="quiz-edit-notice" class="hidden mb-3 text-caption text-[#ff8a3d]">
-                Modification d'un résultat
+            <!-- Edit mode indicator for intuitiveness when editing from history -->
+            <div id="quiz-edit-notice" class="hidden mb-3 text-[10px] text-[#ff8a3d] bg-[#1a1a1a] border border-[#ff8a3d]/30 rounded px-2 py-1 text-center">
+                Modification d'un résultat précédent
             </div>
 
             <!-- Progress -->
-            <div class="mb-5">
-                <div class="h-px bg-[#222] mb-0.5">
-                    <div id="progress-bar" class="h-px bg-[#c9c9c9]" style="width: 7%"></div>
+            <div class="mb-4 sm:mb-7">
+                <div class="flex justify-between text-[9px] sm:text-[10px] mb-1 text-[#666] tracking-widest uppercase px-0.5">
+                    <div>PROGRÈS</div>
+                    <div><span id="progress-text">7</span>%</div>
                 </div>
-                <div class="text-caption"><span id="progress-text">7</span>%</div>
+                <div class="h-1 sm:h-1.5 bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
+                    <div id="progress-bar" 
+                         class="h-1 sm:h-1.5 rounded-full progress-bar"
+                         style="width: 7%"></div>
+                </div>
             </div>
 
             <!-- Question -->
@@ -218,16 +229,16 @@
             <div class="flex items-center justify-between">
                 <button onclick="prevQuestion()" 
                         id="btn-prev"
-                        class="min-h-[44px] px-4 py-3 flex items-center gap-x-2 text-xs border border-[#292929] hover:bg-[#111] transition-colors rounded-full disabled:opacity-40">
-                    <i class="fa-solid fa-arrow-left icon icon-sm"></i>
-                    <span>Précédent</span>
+                        class="min-h-[44px] px-4 sm:px-5 py-3 flex items-center gap-x-2 text-xs font-medium uppercase tracking-widest border border-[#292929] hover:bg-[#111] transition-colors rounded-full disabled:opacity-40">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>PRÉCÉDENT</span>
                 </button>
 
                 <button onclick="nextQuestion()" 
                         id="btn-next"
-                        class="chrome-button min-h-[44px] px-5 py-3 flex items-center gap-x-2 glossy-btn text-[#ddd] text-xs tracking-widest rounded-full">
-                    <span id="btn-next-text">Suivant</span>
-                    <i class="fa-solid fa-arrow-right icon icon-sm"></i>
+                        class="chrome-button min-h-[44px] px-6 sm:px-9 py-3 flex items-center gap-x-2 glossy-btn text-[#ddd] font-semibold text-xs tracking-[1.5px] rounded-full uppercase">
+                    <span id="btn-next-text">SUIVANT</span>
+                    <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
@@ -235,8 +246,10 @@
 
     <!-- RESULTS SCREEN -->
     <div id="results-screen" class="hidden max-w-4xl mx-auto px-6 py-10">
-        <div class="text-center mb-7">
-            <h2 class="text-3xl sm:text-4xl y2k-title tracking-[-1.5px]">Ton profil</h2>
+        <div class="text-center mb-9">
+            <div class="inline-block px-4 py-1 rounded-full text-xs tracking-[2px] border border-[#2a2a2a] text-[#777] mb-4">RÉSULTAT FINAL</div>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl y2k-title tracking-[-2.5px] mb-1">TON PROFIL EST</h2>
+            <p class="text-[#777]">Voici ton tempérament principal</p>
         </div>
 
         <!-- Main Result -->
@@ -246,93 +259,139 @@
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
             <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-            <div class="flex flex-col md:flex-row md:items-center gap-y-6 relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center gap-y-8 relative z-10">
                 <div class="flex-1">
-                    <div id="result-name" class="text-5xl sm:text-6xl leading-none font-bold tracking-[-3px] mb-1 y2k-title"></div>
-                    <div id="result-subtitle" class="text-xl tracking-tight opacity-80"></div>
+                    <div class="uppercase tracking-[3.5px] text-xs font-semibold opacity-60 mb-1">TEMPÉRAMENT PRINCIPAL</div>
+                    <div id="result-name" class="text-5xl sm:text-6xl md:text-[66px] leading-none font-bold tracking-[-3.5px] mb-2 y2k-title"></div>
+                    <div id="result-subtitle" class="text-2xl tracking-tight opacity-80"></div>
                 </div>
-                <div class="flex-shrink-0">
-                    <div id="result-icon" class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-[42px] sm:text-5xl" 
-                         style="background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.2));"></div>
+                <div class="flex-shrink-0 text-center">
+                    <div id="result-icon" class="w-20 h-20 sm:w-28 sm:h-28 mx-auto rounded-2xl flex items-center justify-center text-[50px] sm:text-[65px] mb-1 ring-1 ring-white/10" 
+                         style="background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Répartition -->
-        <div class="y2k-card chrome-border rounded-3xl p-5 mb-6" id="results-bars">
-            <!-- Rempli dynamiquement -->
-        </div>
-
-        <!-- Secondaire + profil -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="y2k-card chrome-border rounded-3xl p-5">
-                <div id="secondary-result" class="flex items-center gap-x-3"></div>
+        <!-- Percentages -->
+        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 mb-8">
+            <div class="flex items-center justify-between mb-5 px-1">
+                <div class="uppercase text-xs tracking-[2px] font-semibold text-[#888]">RÉPARTITION DES TEMPÉRAMENTS</div>
             </div>
-            <div class="y2k-card chrome-border rounded-3xl p-5 text-sm text-[#ccc]">
-                <div id="result-description"></div>
+            
+            <div class="space-y-6" id="results-bars">
+                <!-- Rempli par JS -->
             </div>
         </div>
 
-        <!-- Forces / Améliorations (icon-driven) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="y2k-card chrome-border rounded-3xl p-5">
-                <div class="flex items-center mb-2 text-emerald-400">
-                    <i class="fa-solid fa-check icon icon-sm"></i>
+        <!-- Secondary + Profile -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            <div class="y2k-card chrome-border rounded-3xl p-6">
+                <div class="text-xs uppercase tracking-widest text-[#666] mb-2.5">TEMPÉRAMENT SECONDAIRE</div>
+                <div id="secondary-result" class="flex items-center gap-x-3">
+                    <!-- Rempli par JS -->
                 </div>
-                <ul id="strengths-list" class="space-y-0.5 text-sm"></ul>
             </div>
-            <div class="y2k-card chrome-border rounded-3xl p-5">
-                <div class="flex items-center mb-2 text-amber-400">
-                    <i class="fa-solid fa-exclamation icon icon-sm"></i>
-                </div>
-                <ul id="weaknesses-list" class="space-y-0.5 text-sm"></ul>
+            
+            <div class="y2k-card chrome-border rounded-3xl p-6">
+                <div class="text-xs uppercase tracking-widest text-[#666] mb-2.5">TON PROFIL</div>
+                <div id="profile-summary" class="text-lg leading-tight font-medium text-[#ccc]"></div>
             </div>
         </div>
 
-        <!-- Carrières / Activités -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="y2k-card chrome-border rounded-3xl p-5">
-                <div class="flex items-center mb-2 text-[#888]">
-                    <i class="fa-solid fa-briefcase icon icon-sm"></i>
-                </div>
-                <ul id="careers-list" class="space-y-0.5 text-sm"></ul>
-            </div>
-            <div class="y2k-card chrome-border rounded-3xl p-5">
-                <div class="flex items-center mb-2 text-[#888]">
-                    <i class="fa-solid fa-heart icon icon-sm"></i>
-                </div>
-                <ul id="activities-list" class="space-y-0.5 text-sm"></ul>
+        <!-- Description -->
+        <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-8 mb-8">
+            <div class="uppercase tracking-[1.5px] text-xs text-[#777] mb-2">À PROPOS DE TOI</div>
+            <div id="result-description" class="text-[#ccc] leading-relaxed text-[15px]">
             </div>
         </div>
 
-        <!-- Partage (icon elegant) -->
-        <div class="mb-5">
-            <div class="flex flex-wrap gap-2 justify-center">
-                <button onclick="shareOnWhatsApp()" class="px-3 py-2 border border-[#292929] rounded-full" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp icon icon-lg"></i></button>
-                <button onclick="shareOnTelegram()" class="px-3 py-2 border border-[#292929] rounded-full" aria-label="Telegram"><i class="fa-brands fa-telegram icon icon-lg"></i></button>
-                <button onclick="shareOnInstagram()" class="px-3 py-2 border border-[#292929] rounded-full" aria-label="Instagram"><i class="fa-brands fa-instagram icon icon-lg"></i></button>
-                <button onclick="copyResultToClipboard()" class="px-3 py-2 border border-[#292929] rounded-full" aria-label="Copier"><i class="fa-solid fa-copy icon icon-lg"></i></button>
+        <!-- Strengths & Weaknesses -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                    <i class="fa-solid fa-check"></i>
+                    <h3 class="uppercase tracking-widest text-xs font-semibold">TES POINTS FORTS</h3>
+                </div>
+                <ul id="strengths-list" class="space-y-[7px] text-sm"></ul>
             </div>
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                    <i class="fa-solid fa-exclamation"></i>
+                    <h3 class="uppercase tracking-widest text-xs font-semibold">À AMÉLIORER</h3>
+                </div>
+                <ul id="weaknesses-list" class="space-y-[7px] text-sm"></ul>
+            </div>
+        </div>
+
+        <!-- Recommended Careers & Activities -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <h3 class="uppercase tracking-widest text-xs font-semibold">CARRIÈRES RECOMMANDÉES</h3>
+                </div>
+                <ul id="careers-list" class="space-y-[7px] text-sm"></ul>
+            </div>
+            <div class="y2k-card chrome-border rounded-3xl p-5 sm:p-7">
+                <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                    <i class="fa-solid fa-heart"></i>
+                    <h3 class="uppercase tracking-widest text-xs font-semibold">ACTIVITÉS PRÉFÉRÉES</h3>
+                </div>
+                <ul id="activities-list" class="space-y-[7px] text-sm"></ul>
+            </div>
+        </div>
+
+        <!-- Share Result -->
+        <div class="y2k-card chrome-border rounded-3xl p-7 mb-8">
+            <div class="flex items-center gap-x-2 mb-3 text-[#a3a3a3]">
+                <i class="fa-solid fa-share-alt"></i>
+                <h3 class="uppercase tracking-widest text-xs font-semibold">PARTAGER MON RÉSULTAT</h3>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="shareOnWhatsApp()" 
+                        class="min-h-[40px] px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    <i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp
+                </button>
+                <button onclick="shareOnTelegram()" 
+                        class="min-h-[40px] px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    <i class="fa-brands fa-telegram mr-1"></i>Telegram
+                </button>
+                <button onclick="shareOnInstagram()" 
+                        class="min-h-[40px] px-4 py-2 text-xs glossy-btn rounded-full tracking-widest uppercase flex items-center gap-x-1 border border-[#292929]">
+                    <i class="fa-brands fa-instagram mr-1"></i>Instagram
+                </button>
+            </div>
+            <button onclick="copyResultToClipboard()" 
+                    class="mt-3 min-h-[40px] px-4 py-2 text-xs border border-[#292929] hover:bg-[#111] rounded-full tracking-widest uppercase flex items-center gap-x-1">
+                <i class="fa-solid fa-copy mr-2"></i>Copier le texte
+            </button>
+            <p class="text-[10px] text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-2 justify-center">
-            <button onclick="restartQuiz()" class="px-5 py-2 flex items-center justify-center gap-x-1.5 text-xs border border-[#292929] hover:bg-[#111] rounded-full">
-                <i class="fa-solid fa-redo icon icon-sm"></i>
-                <span>Recommencer</span>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button onclick="restartQuiz()" 
+                    class="px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 text-xs tracking-[2px] font-semibold border border-[#292929] hover:bg-[#111] transition-colors rounded-full flex">
+                <i class="fa-solid fa-redo"></i>
+                <span class="ml-2">RECOMMENCER LE TEST</span>
             </button>
-            <button onclick="showAllTemperaments()" class="chrome-button px-5 py-2 flex items-center justify-center gap-x-1.5 text-xs glossy-btn rounded-full">
-                <i class="fa-solid fa-list icon icon-sm"></i>
-                <span>Les 4 tempéraments</span>
+            
+            <button onclick="showAllTemperaments()" 
+                    class="chrome-button px-8 py-3 flex-1 sm:flex-none justify-center items-center gap-x-2 glossy-btn text-[#ddd] text-xs tracking-[2px] font-semibold rounded-full flex">
+                <i class="fa-solid fa-list"></i>
+                <span class="ml-2">VOIR LES 4 TEMPÉRAMENTS</span>
             </button>
         </div>
 
-        <div class="mt-3 text-center">
-            <button onclick="showResultsHistory()" class="text-caption flex items-center gap-x-1 mx-auto">
-                <i class="fa-solid fa-history icon icon-sm"></i>
-                <span>Historique</span>
+        <div class="text-center mt-4">
+            <button onclick="showResultsHistory()" 
+                    class="text-xs text-[#888] hover:text-[#c9c9c9] flex items-center gap-x-1 mx-auto">
+                <i class="fa-solid fa-history text-xs"></i>
+                <span>Voir l'historique des résultats</span>
             </button>
         </div>
+
+        <p class="text-center text-xs text-[#555] mt-9 tracking-widest">LA PLUPART DES GENS ONT UN MÉLANGE DE DEUX TEMPÉRAMENTS</p>
     </div>
 
     <!-- All Temperaments Modal -->
@@ -340,7 +399,7 @@
         <div onclick="event.stopImmediatePropagation()" class="y2k-card chrome-border rounded-3xl max-w-5xl w-full max-h-[90vh] sm:max-h-[85vh] overflow-auto">
             <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-6 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
                 <h3 class="font-bold text-2xl y2k-heading tracking-[-1px]">LES 4 TEMPÉRAMENTS</h3>
-                <button onclick="hideAllTemperaments()" class="text-2xl leading-none text-[#555] hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="hideAllTemperaments()" class="text-4xl leading-none text-[#555] hover:text-white transition-colors">&times;</button>
             </div>
             
             <div class="p-4 sm:p-7 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5" id="all-temperaments-content">
@@ -357,7 +416,7 @@
                     <h3 class="text-2xl font-bold y2k-heading tracking-tight">À PROPOS DES 4 TEMPÉRAMENTS</h3>
                     <div class="text-xs text-[#666] tracking-widest mt-px">THÉORIE CLASSIQUE</div>
                 </div>
-                <button onclick="hideAboutModal()" class="text-2xl text-[#555] hover:text-white leading-none"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="hideAboutModal()" class="text-3xl text-[#555] hover:text-white leading-none">&times;</button>
             </div>
             <div class="text-sm text-[#aaa] space-y-4 leading-relaxed">
                 <p>La théorie des 4 Tempéraments vient de la Grèce ancienne (Hippocrate et Galien). Elle classe les personnalités en 4 types selon le comportement.</p>

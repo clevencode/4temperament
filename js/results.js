@@ -66,7 +66,7 @@ function showResults() {
     iconContainer.style.background = `linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3))`;
     iconContainer.style.border = `1px solid ${dominant.color}40`;
 
-    // Répartition des tempéraments (icon + typo élégante)
+    // Barras de porcentagem
     const barsContainer = document.getElementById('results-bars');
     barsContainer.innerHTML = '';
 
@@ -79,32 +79,37 @@ function showResults() {
 
         const div = document.createElement('div');
         div.innerHTML = `
-            <div class="flex items-center justify-between text-sm mb-0.5">
-                <span class="flex items-center gap-x-1" style="color: ${isDominant ? t.color : '#aaa'}">
-                    <span class="text-base">${t.emoji}</span> ${t.name}
-                </span>
-                <span class="font-semibold tabular-nums" style="color:#c9c9c9">${percent}%</span>
+            <div class="flex justify-between items-center mb-1.5 px-1">
+                <div class="flex items-center gap-x-2">
+                    <span class="text-lg sm:text-xl">${t.emoji}</span>
+                    <span class="font-semibold ${isDominant ? '' : 'text-[#aaa]'}" style="color: ${isDominant ? t.color : ''}">${t.name}</span>
+                    ${isDominant ? `<span class="text-[10px] px-2 py-px rounded tracking-widest" style="background: ${t.color}25; color: ${t.color}; font-weight:600;">PRINCIPAL</span>` : ''}
+                </div>
+                <span class="font-semibold tabular-nums w-10 text-right" style="color:#c9c9c9">${percent}%</span>
             </div>
-            <div class="h-0.5 bg-[#222] rounded overflow-hidden">
-                <div class="h-0.5 rounded result-bar" style="width: ${percent}%; background: ${t.color};"></div>
+            <div class="h-1 sm:h-[5px] bg-[#111] rounded-full overflow-hidden border border-[#1f1f1f]">
+                <div class="h-1 sm:h-[5px] rounded-full result-bar" 
+                     style="width: ${percent}%; background: linear-gradient(to right, ${t.color}, #fff, ${t.color});">
+                </div>
             </div>
         `;
         barsContainer.appendChild(div);
     });
 
-    // Tempérament secondaire (aligné business)
+    // Tempérament secondaire
     const secondaryEl = document.getElementById('secondary-result');
     secondaryEl.innerHTML = `
-        <div class="text-3xl" style="color: ${secondary.color}">${secondary.emoji}</div>
+        <div class="text-4xl" style="color: ${secondary.color}">${secondary.emoji}</div>
         <div>
-            <div class="font-medium" style="color: ${secondary.color}">${secondary.name}</div>
+            <div class="font-semibold text-xl" style="color: ${secondary.color}">${secondary.name}</div>
+            <div class="text-sm text-[#888]">${secondary.subtitle}</div>
         </div>
     `;
 
-    // Description courte
-    const namePart = userName ? `${userName.split(' ')[0]} — ` : '';
-    document.getElementById('result-description').innerHTML = 
-        `${namePart}<span style="color:${dominant.color}">${dominant.name}</span> + <span style="color:${secondary.color}">${secondary.name}</span>`;
+    // Résumé du profil
+    const namePart = userName ? `${userName.split(' ')[0]}, ` : '';
+    document.getElementById('profile-summary').innerHTML = 
+        `${namePart}tu es principalement <span style="color:${dominant.color}"><strong>${dominant.name}</strong></span> avec des traits forts de <span style="color:${secondary.color}"><strong>${secondary.name}</strong></span>.`;
 
     // Description
     document.getElementById('result-description').textContent = dominant.description;
@@ -112,25 +117,25 @@ function showResults() {
     // Points forts
     const strengthsList = document.getElementById('strengths-list');
     strengthsList.innerHTML = dominant.strengths.map(s => 
-        `<li class="flex items-start gap-x-1.5"><i class="fa-solid fa-check icon icon-sm mt-0.5 text-[#c9c9c9]"></i><span>${s}</span></li>`
+        `<li class="flex items-start gap-x-2"><i class="fa-solid fa-check mt-1" style="color:#c9c9c9"></i><span class="text-[#ccc]">${s}</span></li>`
     ).join('');
 
-    // À améliorer
+    // Points à améliorer
     const weaknessesList = document.getElementById('weaknesses-list');
     weaknessesList.innerHTML = dominant.weaknesses.map(w => 
-        `<li class="flex items-start gap-x-1.5"><i class="fa-solid fa-minus icon icon-sm mt-0.5 text-[#555]"></i><span>${w}</span></li>`
+        `<li class="flex items-start gap-x-2"><i class="fa-solid fa-minus mt-1 text-[#555]"></i><span class="text-[#ccc]">${w}</span></li>`
     ).join('');
 
-    // Carrières
+    // Carrières recommandées
     const careersList = document.getElementById('careers-list');
     careersList.innerHTML = (dominant.recommendedCareers || []).map(c => 
-        `<li class="flex items-start gap-x-1.5"><i class="fa-solid fa-arrow-right icon icon-sm mt-0.5 text-[#888]"></i><span>${c}</span></li>`
+        `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${c}</span></li>`
     ).join('');
 
-    // Activités
+    // Activités préférées
     const activitiesList = document.getElementById('activities-list');
     activitiesList.innerHTML = (dominant.preferredActivities || []).map(a => 
-        `<li class="flex items-start gap-x-1.5"><i class="fa-solid fa-arrow-right icon icon-sm mt-0.5 text-[#888]"></i><span>${a}</span></li>`
+        `<li class="flex items-start gap-x-2"><i class="fa-solid fa-arrow-right mt-1 text-[#888]"></i><span class="text-[#ccc]">${a}</span></li>`
     ).join('');
 
     // Salvar preferências do usuário (melhor prática - persistência)
