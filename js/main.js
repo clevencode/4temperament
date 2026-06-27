@@ -80,7 +80,7 @@ const HistoryManager = {
    * Alinhado com a lógica de negócio: um "resultado final" contém
    * o outcome + os dados que levaram até ele (answers)
    */
-  createEntry({ dominant, secondary, percentages, answers, userName }) {
+  createEntry({ dominant, secondary, percentages, answers, userName, isBalanced, allNeutral }) {
     return {
       id: Date.now(),
       date: new Date().toISOString(),
@@ -88,8 +88,18 @@ const HistoryManager = {
       dominant,
       secondary,
       percentages,
-      answers: answers || {}
+      answers: answers || {},
+      isBalanced: !!isBalanced,
+      allNeutral: !!allNeutral
     };
+  },
+
+  /** Recalcule ou normalise une entrée pour l'affichage (logique métier unique). */
+  resolveEntry(entry) {
+    if (entry?.answers && Object.keys(entry.answers).length > 0 && typeof TemperamentScoring !== 'undefined') {
+      return { ...TemperamentScoring.calculate(entry.answers), answers: entry.answers };
+    }
+    return entry;
   }
 };
 
@@ -235,7 +245,9 @@ function saveResultToHistory(resultData) {
         secondary: resultData.secondary,
         percentages: resultData.percentages,
         answers: resultData.answers,
-        userName
+        userName,
+        isBalanced: resultData.isBalanced,
+        allNeutral: resultData.allNeutral
     });
 
     if (currentEditingId) {
@@ -245,6 +257,8 @@ function saveResultToHistory(resultData) {
             secondary: entry.secondary,
             percentages: entry.percentages,
             answers: entry.answers,
+            isBalanced: entry.isBalanced,
+            allNeutral: entry.allNeutral,
             lastEdited: new Date().toISOString()
         });
         currentEditingId = null;
@@ -337,8 +351,10 @@ function showResultsHistory() {
         });
 
         history.forEach((entry, index) => {
-            const dominant = TEMPERAMENTS[entry.dominant];
-            const secondary = TEMPERAMENTS[entry.secondary];
+            const resolved = HistoryManager.resolveEntry(entry);
+            const isBalanced = resolved.isBalanced;
+            const dominant = isBalanced ? { name: 'Équilibré', emoji: '⚖️', color: '#c9c9c9' } : TEMPERAMENTS[resolved.dominant];
+            const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
             const dateStr = new Date(entry.date).toLocaleDateString('fr-FR', { 
                 day: '2-digit', month: 'short', year: 'numeric' 
             });
@@ -350,6 +366,12 @@ function showResultsHistory() {
             card.setAttribute('role', 'button');
             card.setAttribute('aria-label', `Voir détails du résultat ${dominant.name}`);
 
+            const statsHtml = isBalanced
+                ? `<div>Profil: <span class="font-semibold">25% × 4</span></div>
+                   <div class="text-[#888]">Aucune dominance nette</div>`
+                : `<div>Principal: <span class="font-semibold">${Math.round(resolved.percentages[resolved.dominant])}%</span></div>
+                   <div class="text-[#888]">Secondaire: ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)</div>`;
+
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
                     <div>
@@ -357,12 +379,9 @@ function showResultsHistory() {
                             <span class="text-2xl">${dominant.emoji}</span>
                             <span class="font-semibold text-base sm:text-lg" style="color: ${dominant.color}">${dominant.name}</span>
                         </div>
-                        <div class="text-[10px] sm:text-xs text-[#888]">${dateStr} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}</div>
+                        <div class="text-[10px] sm:text-xs text-[#888]">${dateStr}</div>
                     </div>
-                    <div class="text-right text-[10px] sm:text-xs">
-                        <div>Principal: <span class="font-semibold">${Math.round(entry.percentages[entry.dominant])}%</span></div>
-                        <div class="text-[#888]">Secundário: ${secondary.name} (${Math.round(entry.percentages[entry.secondary])}%)</div>
-                    </div>
+                    <div class="text-right text-[10px] sm:text-xs">${statsHtml}</div>
                 </div>
             `;
 
@@ -432,8 +451,11 @@ function showFullResult(index) {
     const entry = currentHistoryCache[index];
     if (!entry) return;
 
-    const dominant = TEMPERAMENTS[entry.dominant];
-    const secondary = TEMPERAMENTS[entry.secondary];
+    const resolved = HistoryManager.resolveEntry(entry);
+    const isBalanced = resolved.isBalanced;
+    const dominant = isBalanced ? null : TEMPERAMENTS[resolved.dominant];
+    const secondary = isBalanced ? null : TEMPERAMENTS[resolved.secondary];
+    const percentages = resolved.percentages;
 
     const date = new Date(entry.date).toLocaleDateString('fr-FR', { 
         day: '2-digit', month: 'long', year: 'numeric', 
@@ -445,7 +467,6 @@ function showFullResult(index) {
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
 
-    // Backdrop separate for reliable close
     const backdrop = document.createElement('div');
     backdrop.className = 'absolute inset-0';
     backdrop.onclick = () => closeModal(modal);
@@ -456,6 +477,78 @@ function showFullResult(index) {
 
     const shareHTML = (typeof shareSectionHTML === 'function') ? shareSectionHTML(index) : '';
 
+    const repartitionHtml = Object.keys(percentages).map(key => {
+        const t = TEMPERAMENTS[key];
+        return `<div class="flex justify-between"><span>${t.emoji} ${t.name}</span><span class="font-semibold">${percentages[key]}%</span></div>`;
+    }).join('');
+
+    const profileHtml = isBalanced ? `
+            <div>
+                <div class="flex items-center gap-x-3 mb-2">
+                    <span class="text-4xl sm:text-5xl">⚖️</span>
+                    <div>
+                        <div class="text-xs tracking-widest text-[#666]">RÉSULTAT</div>
+                        <div class="text-2xl sm:text-3xl font-bold" style="color: #c9c9c9">Équilibré</div>
+                        <div class="text-sm text-[#aaa]">25% par tempérament — ${resolved.allNeutral ? 'toutes réponses neutres' : 'aucune dominance nette'}</div>
+                    </div>
+                </div>
+                <p class="text-sm leading-relaxed text-[#ccc]">Les réponses neutres ne permettent pas d'identifier un tempérament dominant. Relance le test en choisissant des niveaux d'accord plus affirmés.</p>
+            </div>
+            <div>
+                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
+                <div class="text-sm text-[#888]">Non déterminé</div>
+            </div>`
+    : `
+            <div>
+                <div class="flex items-center gap-x-3 mb-2">
+                    <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
+                    <div>
+                        <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
+                        <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
+                        <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(percentages[resolved.dominant])}%</div>
+                    </div>
+                </div>
+                <p class="text-sm leading-relaxed text-[#ccc]">${dominant.description}</p>
+            </div>
+            <div>
+                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
+                <div class="flex items-center gap-x-2">
+                    <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
+                    <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
+                    <span class="text-sm text-[#888]">(${Math.round(percentages[resolved.secondary])}%)</span>
+                </div>
+            </div>`;
+
+    const detailsHtml = isBalanced ? '' : `
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-emerald-400">
+                    <i class="fa-solid fa-check"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">Points forts</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}</ul>
+            </div>
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-amber-400">
+                    <i class="fa-solid fa-exclamation"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">À améliorer</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}</ul>
+            </div>
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">Carrières recommandées</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}</ul>
+            </div>
+            <div>
+                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="uppercase tracking-widest text-xs font-semibold">Activités préférées</span>
+                </div>
+                <ul class="space-y-1 text-sm text-[#ccc]">${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}</ul>
+            </div>`;
+
     content.innerHTML = `
         <div class="flex items-center justify-between px-4 sm:px-7 py-4 sm:py-5 sticky top-0 bg-[#0f0f0f] border-b border-[#222]">
             <h3 class="font-bold text-xl y2k-heading">Vue complète du résultat</h3>
@@ -463,91 +556,13 @@ function showFullResult(index) {
         </div>
 
         <div class="p-4 sm:p-7 space-y-5 sm:space-y-6">
-
-            <!-- Contexte -->
-            <div class="text-xs text-[#888] mb-2">
-                Résultat du ${date} ${entry.userName && entry.userName.length > 0 ? '• ' + entry.userName : ''}
-            </div>
-
-            <!-- Dominant -->
-            <div>
-                <div class="flex items-center gap-x-3 mb-2">
-                    <span class="text-4xl sm:text-5xl">${dominant.emoji}</span>
-                    <div>
-                        <div class="text-xs tracking-widest text-[#666]">TEMPÉRAMENT DOMINANT</div>
-                        <div class="text-2xl sm:text-3xl font-bold" style="color: ${dominant.color}">${dominant.name}</div>
-                        <div class="text-sm text-[#aaa]">${dominant.subtitle} — ${Math.round(entry.percentages[entry.dominant])}%</div>
-                    </div>
-                </div>
-                <p class="text-sm leading-relaxed text-[#ccc]">${dominant.description}</p>
-            </div>
-
-            <!-- Secondary -->
-            <div>
-                <div class="text-xs tracking-widest text-[#666] mb-1">TEMPÉRAMENT SECONDAIRE</div>
-                <div class="flex items-center gap-x-2">
-                    <span class="text-2xl sm:text-3xl">${secondary.emoji}</span>
-                    <span class="font-semibold text-lg sm:text-xl" style="color: ${secondary.color}">${secondary.name}</span>
-                    <span class="text-sm text-[#888]">(${Math.round(entry.percentages[entry.secondary])}%)</span>
-                </div>
-            </div>
-
-            <!-- Percentages -->
+            <div class="text-xs text-[#888] mb-2">Résultat du ${date}</div>
+            ${profileHtml}
             <div>
                 <div class="text-xs tracking-widest text-[#666] mb-2">RÉPARTITION</div>
-                <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">
-                    ${Object.keys(entry.percentages).map(key => {
-                        const t = TEMPERAMENTS[key];
-                        const pct = entry.percentages[key];
-                        return `<div class="flex justify-between"><span>${t.emoji} ${t.name}</span><span class="font-semibold">${pct}%</span></div>`;
-                    }).join('')}
-                </div>
+                <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 text-xs sm:text-sm">${repartitionHtml}</div>
             </div>
-
-            <!-- Strengths -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-emerald-400">
-                    <i class="fa-solid fa-check"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Points forts</span>
-                </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${dominant.strengths.map(s => `<li>• ${s}</li>`).join('')}
-                </ul>
-            </div>
-
-            <!-- Weaknesses -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-amber-400">
-                    <i class="fa-solid fa-exclamation"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">À améliorer</span>
-                </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${dominant.weaknesses.map(w => `<li>• ${w}</li>`).join('')}
-                </ul>
-            </div>
-
-            <!-- Careers -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                    <i class="fa-solid fa-briefcase"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Carrières recommandées</span>
-                </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${(dominant.recommendedCareers || []).map(c => `<li>• ${c}</li>`).join('')}
-                </ul>
-            </div>
-
-            <!-- Activities -->
-            <div>
-                <div class="flex items-center gap-x-2 mb-2 text-[#888]">
-                    <i class="fa-solid fa-heart"></i>
-                    <span class="uppercase tracking-widest text-xs font-semibold">Activités préférées</span>
-                </div>
-                <ul class="space-y-1 text-sm text-[#ccc]">
-                    ${(dominant.preferredActivities || []).map(a => `<li>• ${a}</li>`).join('')}
-                </ul>
-            </div>
-
+            ${detailsHtml}
         </div>
 
         <!-- Share section (réutilisable) -->
@@ -634,17 +649,18 @@ function shareResultFromHistory(index) {
     const entry = currentHistoryCache[index];
     if (!entry) return;
 
-    const dominant = TEMPERAMENTS[entry.dominant];
-    const secondary = TEMPERAMENTS[entry.secondary];
-
+    const resolved = HistoryManager.resolveEntry(entry);
     let text = `Mon résultat des 4 Tempéraments :\n\n`;
 
-    if (entry.userName && entry.userName.length > 0) {
-        text += `Nom : ${entry.userName}\n`;
+    if (resolved.isBalanced) {
+        text += `Profil équilibré — 25% par tempérament\n\n`;
+    } else {
+        const dominant = TEMPERAMENTS[resolved.dominant];
+        const secondary = TEMPERAMENTS[resolved.secondary];
+        text += `Principal : ${dominant.name} (${Math.round(resolved.percentages[resolved.dominant])}%)\n`;
+        text += `Secondaire : ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)\n\n`;
     }
 
-    text += `Principal : ${dominant.name} (${Math.round(entry.percentages[entry.dominant])}%)\n`;
-    text += `Secondaire : ${secondary.name} (${Math.round(entry.percentages[entry.secondary])}%)\n\n`;
     text += `Fais le test toi aussi : https://clevencode.github.io/4temperament`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
@@ -658,18 +674,28 @@ function shareResultFromHistory(index) {
 function getFullResultText(index) {
     const entry = currentHistoryCache[index];
     if (!entry) return '';
-    const dominant = TEMPERAMENTS[entry.dominant];
-    const secondary = TEMPERAMENTS[entry.secondary];
-    const namePart = (entry.userName && entry.userName.length > 0) ? `${entry.userName} - ` : '';
 
-    let text = `${namePart}Mon tempérament dominant est ${dominant.name} (${dominant.subtitle}).\n\n`;
+    const resolved = HistoryManager.resolveEntry(entry);
+
+    if (resolved.isBalanced) {
+        let text = 'Mon profil des 4 Tempéraments est équilibré (25 % chacun).\n\n';
+        text += `Sanguin ${resolved.percentages.sanguineo}% • Colérique ${resolved.percentages.colerico}% • `;
+        text += `Mélancolique ${resolved.percentages.melancolico}% • Flegmatique ${resolved.percentages.fleumatico}%\n\n`;
+        text += 'Fais le test toi aussi : https://clevencode.github.io/4temperament';
+        return text;
+    }
+
+    const dominant = TEMPERAMENTS[resolved.dominant];
+    const secondary = TEMPERAMENTS[resolved.secondary];
+
+    let text = `Mon tempérament dominant est ${dominant.name} (${dominant.subtitle}).\n\n`;
     text += `Description : ${dominant.description}\n\n`;
-    text += `Principal : ${dominant.name} (${Math.round(entry.percentages[entry.dominant])}%)\n`;
-    text += `Secondaire : ${secondary.name} (${Math.round(entry.percentages[entry.secondary])}%)\n\n`;
+    text += `Principal : ${dominant.name} (${Math.round(resolved.percentages[resolved.dominant])}%)\n`;
+    text += `Secondaire : ${secondary.name} (${Math.round(resolved.percentages[resolved.secondary])}%)\n\n`;
     text += `Points forts : ${dominant.strengths.join(', ')}\n\n`;
     text += `Carrières recommandées : ${(dominant.recommendedCareers || []).join(', ')}\n`;
     text += `Activités préférées : ${(dominant.preferredActivities || []).join(', ')}\n\n`;
-    text += `Fais le test toi aussi : https://clevencode.github.io/4temperament`;
+    text += 'Fais le test toi aussi : https://clevencode.github.io/4temperament';
     return text;
 }
 
