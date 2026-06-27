@@ -1,7 +1,7 @@
 // quiz.js - Logique du questionnaire (échelle Likert)
 
 function updateProgress() {
-    const progress = Math.round(((currentQuestionIndex) / QUESTIONS.length) * 100);
+    const progress = Math.round(((currentQuestionIndex + 1) / QUESTIONS.length) * 100);
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
 
@@ -155,9 +155,15 @@ function nextQuestion() {
     if (currentQuestionIndex < QUESTIONS.length - 1) {
         currentQuestionIndex++;
         showQuestion();
-    } else {
+    } else if (allQuestionsAnswered()) {
         showResults();
+    } else {
+        showQuizError(`Veuillez répondre aux ${QUESTIONS.length} affirmations.`);
     }
+}
+
+function allQuestionsAnswered() {
+    return QUESTIONS.every(q => answers[q.id] >= 1 && answers[q.id] <= 5);
 }
 
 function prevQuestion() {

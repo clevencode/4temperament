@@ -220,19 +220,10 @@ function startQuiz() {
         return;
     }
 
-    // Primeira vez → demande nom (flux guidé)
-    showScreen('name-screen');
-
-    // Pré-preencher nome (persistência)
-    if (userName) {
-        const nameInput = document.getElementById('user-name-input');
-        if (nameInput) nameInput.value = userName;
-    }
-
-    setTimeout(() => {
-        const nameInput = document.getElementById('user-name-input');
-        if (nameInput) nameInput.focus();
-    }, 80);
+    // Première visite → explication directe, sans demander de nom
+    userName = '';
+    currentEditingId = null;
+    showScreen('about-screen');
 }
 
 function saveNameAndContinue() {
@@ -875,9 +866,6 @@ function initializeApp() {
         logo.setAttribute('aria-label', 'Retour à l\'accueil');
         logo.onclick = () => navigateToIntro();
     }
-
-    // Configurer le champ nom
-    setupNameInput();
 
     // Typing animation for the hero "TEMPÉRAMENT" word
     initTemperamentTyping();

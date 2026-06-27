@@ -150,6 +150,8 @@ const LIKERT_OPTIONS = [
     { value: 1, text: "Je ne suis pas du tout d'accord", short: "Pas du tout d'accord" }
 ];
 
+const TOTAL_QUESTIONS = 30;
+
 // Questions du questionnaire (30 affirmations, échelle Likert)
 // type = tempérament mesuré ; reverse = true si « pas d'accord » augmente le score
 const QUESTIONS = [

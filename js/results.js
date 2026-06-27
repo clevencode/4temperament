@@ -14,13 +14,12 @@ function calculateResults() {
         fleumatico: 0
     };
 
-    const questionById = Object.fromEntries(QUESTIONS.map(q => [q.id, q]));
+    // Parcourir les 30 affirmations (pas seulement les réponses enregistrées)
+    QUESTIONS.forEach(question => {
+        const value = answers[question.id];
+        if (value == null) return;
 
-    Object.entries(answers).forEach(([questionId, value]) => {
-        const question = questionById[Number(questionId)];
-        if (!question) return;
-
-        // Compatibilité : ancien format (type de tempérament direct)
+        // Compatibilité : ancien format (14 questions, type direct)
         if (typeof value === 'string' && scores[value] !== undefined) {
             scores[value] += 3;
             return;
