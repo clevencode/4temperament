@@ -411,35 +411,66 @@
             </div>
         </div>
 
-        <!-- Info tabs -->
-        <div id="results-info-tabs" class="info-tabs y2k-card chrome-border rounded-3xl page-card" data-info-tabs>
-            <div class="info-tabs__bar" role="tablist" aria-label="Détails du résultat">
-                <button type="button" class="info-tab-chip is-active" role="tab" id="info-tab-profile" data-info-tab="profile" aria-controls="info-panel-profile" aria-selected="true" tabindex="0">
-                    <i class="icon icon--xs icon--silver fa-solid fa-user info-tab-chip__icon" aria-hidden="true"></i>
-                    <span>Profil</span>
+        <!-- Sections détail — style historique (pas navbar) -->
+        <div id="results-info-tabs" class="result-sections y2k-card chrome-border rounded-3xl p-4 sm:p-8 page-card" data-info-tabs>
+            <div class="type-caption pb-3 text-[#666]">DÉTAILS DU RÉSULTAT</div>
+            <nav class="result-section-nav" role="tablist" aria-label="Détails du résultat">
+                <button type="button" class="result-section-nav__item is-active" role="tab" id="info-tab-profile" data-info-tab="profile" aria-controls="info-panel-profile" aria-selected="true" tabindex="0">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--silver fa-solid fa-user" aria-hidden="true"></i>
+                    </span>
+                    <span class="result-section-nav__text">
+                        <span class="result-section-nav__title">Profil</span>
+                        <span class="result-section-nav__desc">Tempérament et résumé</span>
+                    </span>
                 </button>
-                <button type="button" class="info-tab-chip" role="tab" id="info-tab-strengths" data-info-tab="strengths" aria-controls="info-panel-strengths" aria-selected="false" tabindex="-1">
-                    <i class="icon icon--xs icon--muted fa-solid fa-circle-check info-tab-chip__icon" aria-hidden="true"></i>
-                    <span>Points forts</span>
+                <button type="button" class="result-section-nav__item" role="tab" id="info-tab-strengths" data-info-tab="strengths" aria-controls="info-panel-strengths" aria-selected="false" tabindex="-1">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--success fa-solid fa-circle-check" aria-hidden="true"></i>
+                    </span>
+                    <span class="result-section-nav__text">
+                        <span class="result-section-nav__title">Points forts</span>
+                        <span class="result-section-nav__desc">Tes atouts naturels</span>
+                    </span>
                 </button>
-                <button type="button" class="info-tab-chip" role="tab" id="info-tab-weaknesses" data-info-tab="weaknesses" aria-controls="info-panel-weaknesses" aria-selected="false" tabindex="-1">
-                    <i class="icon icon--xs icon--muted fa-solid fa-triangle-exclamation info-tab-chip__icon" aria-hidden="true"></i>
-                    <span>À améliorer</span>
+                <button type="button" class="result-section-nav__item" role="tab" id="info-tab-weaknesses" data-info-tab="weaknesses" aria-controls="info-panel-weaknesses" aria-selected="false" tabindex="-1">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--warning fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                    </span>
+                    <span class="result-section-nav__text">
+                        <span class="result-section-nav__title">À améliorer</span>
+                        <span class="result-section-nav__desc">Axes de progression</span>
+                    </span>
                 </button>
-                <button type="button" class="info-tab-chip" role="tab" id="info-tab-careers" data-info-tab="careers" aria-controls="info-panel-careers" aria-selected="false" tabindex="-1">
-                    <i class="icon icon--xs icon--muted fa-solid fa-briefcase info-tab-chip__icon" aria-hidden="true"></i>
-                    <span>Carrières</span>
+                <button type="button" class="result-section-nav__item" role="tab" id="info-tab-careers" data-info-tab="careers" aria-controls="info-panel-careers" aria-selected="false" tabindex="-1">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--muted fa-solid fa-briefcase" aria-hidden="true"></i>
+                    </span>
+                    <span class="result-section-nav__text">
+                        <span class="result-section-nav__title">Carrières</span>
+                        <span class="result-section-nav__desc">Métiers recommandés</span>
+                    </span>
                 </button>
-                <button type="button" class="info-tab-chip" role="tab" id="info-tab-activities" data-info-tab="activities" aria-controls="info-panel-activities" aria-selected="false" tabindex="-1">
-                    <i class="icon icon--xs icon--muted fa-solid fa-heart info-tab-chip__icon" aria-hidden="true"></i>
-                    <span>Activités</span>
+                <button type="button" class="result-section-nav__item" role="tab" id="info-tab-activities" data-info-tab="activities" aria-controls="info-panel-activities" aria-selected="false" tabindex="-1">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--muted fa-solid fa-heart" aria-hidden="true"></i>
+                    </span>
+                    <span class="result-section-nav__text">
+                        <span class="result-section-nav__title">Activités</span>
+                        <span class="result-section-nav__desc">Loisirs adaptés</span>
+                    </span>
                 </button>
-                <button type="button" class="info-tab-chip" role="tab" id="info-tab-share" data-info-tab="share" aria-controls="info-panel-share" aria-selected="false" tabindex="-1">
-                    <i class="icon icon--xs icon--muted fa-solid fa-share-nodes info-tab-chip__icon" aria-hidden="true"></i>
-                    <span>Partager</span>
+                <button type="button" class="result-section-nav__item" role="tab" id="info-tab-share" data-info-tab="share" aria-controls="info-panel-share" aria-selected="false" tabindex="-1">
+                    <span class="icon-badge icon-badge--sm" aria-hidden="true">
+                        <i class="icon icon--sm icon--muted fa-solid fa-share-nodes" aria-hidden="true"></i>
+                    </span>
+                    <span class="result-section-nav__text">
+                        <span class="result-section-nav__title">Partager</span>
+                        <span class="result-section-nav__desc">Envoyer à tes proches</span>
+                    </span>
                 </button>
-            </div>
-            <div class="info-tabs__body">
+            </nav>
+            <div class="result-section-body info-tabs__body">
                 <div class="info-tab-panel is-active" role="tabpanel" id="info-panel-profile" data-info-panel="profile" aria-labelledby="info-tab-profile">
                     <div class="layout-grid-2 info-tab-grid">
                         <div>
@@ -490,21 +521,21 @@
                         <h3 class="type-label">PARTAGER MON RÉSULTAT</h3>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="shareOnWhatsApp()" 
-                                class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+                        <button type="button" onclick="shareOnWhatsApp()" 
+                                class="type-btn min-h-[44px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
                             <i class="icon icon--sm icon--whatsapp fa-brands fa-whatsapp mr-1" aria-hidden="true"></i>WhatsApp
                         </button>
-                        <button onclick="shareOnTelegram()" 
-                                class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+                        <button type="button" onclick="shareOnTelegram()" 
+                                class="type-btn min-h-[44px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
                             <i class="icon icon--sm icon--telegram fa-brands fa-telegram mr-1" aria-hidden="true"></i>Telegram
                         </button>
-                        <button onclick="shareOnInstagram()" 
-                                class="type-btn min-h-[40px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
+                        <button type="button" onclick="shareOnInstagram()" 
+                                class="type-btn min-h-[44px] px-4 py-2 glossy-btn rounded-full flex items-center gap-x-1 border border-[#292929]">
                             <i class="icon icon--sm icon--instagram fa-brands fa-instagram mr-1" aria-hidden="true"></i>Instagram
                         </button>
                     </div>
-                    <button onclick="copyResultToClipboard()" 
-                            class="type-btn mt-3 min-h-[40px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
+                    <button type="button" onclick="copyResultToClipboard()" 
+                            class="type-btn mt-3 min-h-[44px] px-4 py-2 border border-[#292929] hover:bg-[#111] rounded-full flex items-center gap-x-1">
                         <i class="icon icon--sm icon--muted fa-solid fa-copy mr-2" aria-hidden="true"></i>Copier le texte
                     </button>
                     <p class="type-caption normal-case tracking-normal text-[#666] mt-3">Partage ton résultat avec tes amis !</p>
