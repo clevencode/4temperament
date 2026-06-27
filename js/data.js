@@ -2,11 +2,11 @@
 
 const SITE_CONFIG = {
   url: 'https://4temperament.vercel.app',
-  ogImage: 'https://4temperament.vercel.app/imagem/og-share.png',
+  ogImage: 'https://4temperament.vercel.app/imagem/snipet.jpg',
   title: 'Les 4 Tempéraments • Découvre ton type de personnalité',
   description: 'Test anonyme de 30 questions pour découvrir ton tempérament dominant. Environ 8 minutes.',
-  ogImageWidth: 1672,
-  ogImageHeight: 941
+  ogImageWidth: 1200,
+  ogImageHeight: 630
 };
 
 // État global du questionnaire
