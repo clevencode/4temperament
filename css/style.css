@@ -65,6 +65,48 @@ body.splash-active {
     overflow: hidden;
 }
 
+/* App brand icon — consistent brain asset */
+.app-brand-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* Home — light grain texture */
+.intro-screen {
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.intro-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+
+.intro-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.035) 0%, transparent 42%),
+        radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.025) 0%, transparent 48%);
+}
+
+.intro-screen__brand {
+    width: 4rem;
+    height: 4rem;
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.45));
+}
+
 /* Splash screen */
 .splash-screen {
     position: fixed;

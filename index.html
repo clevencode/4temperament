@@ -25,11 +25,11 @@
     <meta property="og:url" content="https://4temperament.vercel.app/">
     <meta property="og:title" content="Les 4 Tempéraments • Découvre ton type de personnalité">
     <meta property="og:description" content="Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit de 30 questions (~8 min), 100 % anonyme — tempérament dominant et secondaire.">
-    <meta property="og:image" content="https://4temperament.vercel.app/imagem/snipet.jpg">
-    <meta property="og:image:secure_url" content="https://4temperament.vercel.app/imagem/snipet.jpg">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="900">
-    <meta property="og:image:height" content="473">
+    <meta property="og:image" content="https://4temperament.vercel.app/imagem/og-share.png">
+    <meta property="og:image:secure_url" content="https://4temperament.vercel.app/imagem/og-share.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Les 4 Tempéraments — test de personnalité Sanguin, Colérique, Mélancolique, Flegmatique">
     <meta property="og:locale" content="fr_FR">
     <meta property="og:site_name" content="Les 4 Tempéraments">
@@ -39,7 +39,7 @@
     <meta name="twitter:url" content="https://4temperament.vercel.app/">
     <meta name="twitter:title" content="Les 4 Tempéraments • Découvre ton type de personnalité">
     <meta name="twitter:description" content="Découvre si tu es Sanguin, Colérique, Mélancolique ou Flegmatique. Test gratuit de 30 questions (~8 min), 100 % anonyme — tempérament dominant et secondaire.">
-    <meta name="twitter:image" content="https://4temperament.vercel.app/imagem/snipet.jpg">
+    <meta name="twitter:image" content="https://4temperament.vercel.app/imagem/og-share.png">
     <meta name="twitter:image:alt" content="Les 4 Tempéraments — test de personnalité Sanguin, Colérique, Mélancolique, Flegmatique">
     
     <!-- Tailwind via CDN -->
@@ -67,9 +67,7 @@
                     onclick="navigateToIntro()"
                     class="nav-bar__brand"
                     aria-label="Retour à l'accueil">
-                <span class="icon-badge icon-badge--md icon-badge--chrome pointer-events-none" aria-hidden="true">
-                    <i class="icon icon--md icon--silver fa-solid fa-brain"></i>
-                </span>
+                <img src="imagem/icon-brain.svg" alt="" class="app-brand-icon pointer-events-none" width="36" height="36" aria-hidden="true">
                 <span class="type-display y2k-heading text-xl text-[#c9c9c9] pointer-events-none">LES 4 TEMPÉRAMENTS</span>
             </button>
             <button type="button" id="nav-menu-toggle"
@@ -125,13 +123,14 @@
     <main id="app-main">
 
     <!-- HERO / INTRO SCREEN -->
-    <div id="intro-screen" class="page-shell page-shell--wide relative pt-8">
+    <div id="intro-screen" class="page-shell page-shell--wide intro-screen relative pt-8">
         <!-- étoiles décoratives -->
         <div class="icon-deco-star icon-deco-star--lg absolute top-12 left-8" aria-hidden="true">✧</div>
         <div class="icon-deco-star icon-deco-star--sm absolute top-28 right-14" aria-hidden="true">✦</div>
         <div class="icon-deco-star icon-deco-star--md absolute top-6 right-1/4" aria-hidden="true">★</div>
 
         <div class="text-center relative z-10">
+            <img src="imagem/icon-brain.svg" alt="" class="intro-screen__brand mx-auto mb-6" width="64" height="64" aria-hidden="true">
             <div class="intro-meta" aria-label="30 questions, environ 8 minutes, anonyme">
                 <span class="intro-meta__item">
                     <span class="intro-meta__accent">30</span>
